@@ -21,7 +21,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [[IQKeyboardManager sharedManager] setEnable:NO];
+    [[IQKeyboardManager sharedManager] setEnable:YES];
     [[TMViewTrackerManager sharedManager] setCommitProtocol:[ViewTrackerProxy new]];
 
     [[SLUser defaultUser] loadUserInfoFromLocal];

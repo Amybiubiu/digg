@@ -7,6 +7,7 @@
 
 #import "CaocaoButton.h"
 #import "UIView+CommonKit.h"
+#import "Masonry.h"
 
 @implementation CaocaoButton
 
@@ -97,15 +98,19 @@
     self.titleLabel.left = 0;
     self.imageView.left = self.titleLabel.right + margin;
 
-//    CGFloat totalWidth = labelSize.width + imageSize.width + margin;
-//
-//    //Right image
-//    CGFloat rightDelta = MAX(self.width - totalWidth, 0) / 2;
-//    self.imageView.right = self.width - rightDelta;
-//
-//    //Left title
-//    self.titleLabel.right = self.imageView.left - margin;
-//    self.titleLabel.textAlignment = NSTextAlignmentRight;    
+    // 计算所需的总宽度
+    CGFloat requiredWidth = self.titleLabel.right + margin + imageSize.width;
+    
+    // 如果按钮宽度不足，调整按钮宽度
+    if (self.width < requiredWidth) {
+        [self mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.width.mas_equalTo(requiredWidth + margin);
+        }];
+        
+        // 通知布局系统需要更新
+        [self setNeedsLayout];
+        [self.superview setNeedsLayout];
+    } 
 }
 
 - (void)rightImageAndRightAligment {

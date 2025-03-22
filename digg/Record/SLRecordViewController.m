@@ -164,7 +164,6 @@
             [self.linkField textChangedHeight:self.url];
         }
     }
-    [self.collectionView reloadData];
 }
 
 - (void)updateLinkTextFieldFrame:(CGFloat)height {
@@ -309,19 +308,19 @@
 
 #pragma mark - Action
 
-- (void)startEditing:(UITextField *)sender {
-    if (self.isEditing) {
-        return; // 如果已经在编辑模式，返回
-    }
+ - (void)startEditing:(UITextField *)sender {
+     if (self.isEditing) {
+         return; // 如果已经在编辑模式，返回
+     }
     
-    self.isEditing = YES;
-    self.editingIndexPath = [NSIndexPath indexPathForItem:self.tags.count inSection:0];
+     self.isEditing = YES;
+     self.editingIndexPath = [NSIndexPath indexPathForItem:self.tags.count inSection:0];
     
-    // 让输入框成为第一响应者
-    SLRecordViewTagInputCollectionViewCell *cell = (SLRecordViewTagInputCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.editingIndexPath];
-    [cell startInput:YES];
-    [cell.inputField becomeFirstResponder];
-}
+     // 让输入框成为第一响应者
+     SLRecordViewTagInputCollectionViewCell *cell = (SLRecordViewTagInputCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.editingIndexPath];
+     [cell startInput:YES];
+     [cell.inputField becomeFirstResponder];
+ }
 
 #pragma mark - UITextField Delegate
 - (void)textFieldDidEndEditing:(UITextField *)textField {
