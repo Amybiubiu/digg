@@ -10,11 +10,13 @@
 #import "SLGeneralMacro.h"
 #import "SLColorManager.h"
 
-@interface SLRecordViewTagCollectionViewCell()
+@interface SLRecordViewTagCollectionViewCell ()
 
-@property (nonatomic, strong) UIView *borderView;
-@property (nonatomic, strong) UILabel* nameLabel;
+@property (nonatomic, strong) UIView *containerView;
+@property (nonatomic, strong) UILabel *tagLabel;
+@property (nonatomic, strong) UIButton *deleteButton;
 @property (nonatomic, assign) NSInteger index;
+@property (nonatomic, copy) NSString *tagName;
 
 @end
 
@@ -29,66 +31,65 @@
 }
 
 - (void)setupUI {
-    [self.contentView addSubview:self.borderView];
-    [self.borderView mas_makeConstraints:^(MASConstraintMaker *make) {
+    self.containerView = [[UIView alloc] init];
+    self.containerView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0];
+    self.containerView.layer.cornerRadius = 15;
+    self.containerView.clipsToBounds = YES;
+    [self.contentView addSubview:self.containerView];
+    
+    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.contentView);
+        make.height.mas_equalTo(30);
     }];
-    [self.borderView addSubview:self.closeButton];
-    [self.closeButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.contentView).offset(-15);
-        make.centerY.equalTo(self.contentView);
-        make.size.mas_equalTo(CGSizeMake(12, 12));
+    
+    self.tagLabel = [[UILabel alloc] init];
+    self.tagLabel.font = [UIFont systemFontOfSize:14];
+    self.tagLabel.textColor = [SLColorManager cellTitleColor];
+    [self.containerView addSubview:self.tagLabel];
+    
+    self.deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.deleteButton setImage:[UIImage systemImageNamed:@"xmark.circle.fill"] forState:UIControlStateNormal];
+    self.deleteButton.tintColor = [UIColor lightGrayColor];
+    [self.deleteButton addTarget:self action:@selector(deleteButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.containerView addSubview:self.deleteButton];
+    
+    [self.deleteButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.containerView).offset(-5);
+        make.centerY.equalTo(self.containerView);
+        make.width.height.mas_equalTo(20);
     }];
-    [self.borderView addSubview:self.nameLabel];
-    [self.nameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.top.bottom.equalTo(self.borderView);
-        make.height.mas_equalTo(25);
-        make.left.equalTo(self.contentView).offset(15);
-        make.right.equalTo(self.closeButton.mas_left).offset(-10);
+    
+    [self.tagLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.containerView).offset(10);
+        make.right.equalTo(self.deleteButton.mas_left).offset(-5);
+        make.centerY.equalTo(self.containerView);
     }];
 }
 
-- (void)configDataWithTagName:(NSString *)name index:(NSInteger)index {
-    self.nameLabel.text = name;
+- (void)configDataWithTagName:(NSString *)tagName index:(NSInteger)index {
+    self.tagName = tagName;
     self.index = index;
+    self.tagLabel.text = tagName;
+    
+    // 计算标签宽度
+    UIFont *font = self.tagLabel.font;
+    CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
+    
+    // 设置最小宽度，最大宽度为屏幕宽度减去边距
+    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 60;
+    CGFloat width = MAX(60, textSize.width + 45); // 文本宽度加上左右内边距和删除按钮宽度
+    width = MIN(width, maxWidth);
+    
+    // 更新约束
+    [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(width);
+    }];
 }
 
-- (void)closeBtnClick {
+- (void)deleteButtonTapped {
     if (self.removeTag) {
-        self.removeTag(self.nameLabel.text, self.index);
+        self.removeTag(self.tagName, self.index);
     }
-}
-
-#pragma mark - UI Elements
-- (UIView *)borderView {
-    if (!_borderView) {
-        _borderView = [UIView new];
-        _borderView.backgroundColor = Color16(0xF4F4F4);
-        _borderView.clipsToBounds = YES;
-        _borderView.layer.cornerRadius = 12.5;
-        _borderView.layer.borderColor = Color16(0xDCDCDC).CGColor;
-        _borderView.layer.borderWidth = 1;
-    }
-    return _borderView;
-}
-
-- (UILabel *)nameLabel {
-    if (!_nameLabel) {
-        _nameLabel = [[UILabel alloc] init];
-        _nameLabel.text = @"";
-        _nameLabel.textColor = [SLColorManager cellTitleColor];
-        _nameLabel.font = [UIFont boldSystemFontOfSize:13];
-    }
-    return _nameLabel;
-}
-
-- (UIButton *)closeButton {
-    if (!_closeButton) {
-        _closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_closeButton setImage:[UIImage imageNamed:@"remove_tag_icon"] forState:UIControlStateNormal];
-        [_closeButton addTarget:self action:@selector(closeBtnClick) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _closeButton;
 }
 
 @end

@@ -35,10 +35,15 @@
 @property (nonatomic, strong) UIView *line2View;
 @property (nonatomic, strong) UIView *line3View;
 
-@property (nonatomic, strong) UICollectionView *collectionView; // 显示标签的集合视图
+// @property (nonatomic, strong) UICollectionView *collectionView; // 显示标签的集合视图
 @property (nonatomic, strong) NSMutableArray *tags;             // 存储标签的数组
 @property (nonatomic, strong) NSIndexPath *editingIndexPath;    // 正在编辑的标签的 IndexPath
 @property (nonatomic, assign) BOOL isEditing;                   // 是否处于编辑状态
+
+@property (nonatomic, strong) UIScrollView *tagScrollView;
+@property (nonatomic, strong) UIView *tagContainerView;
+@property (nonatomic, strong) UITextField *tagInputField;
+@property (nonatomic, strong) UIButton *addTagButton;
 
 @property (nonatomic, strong) SLRecordViewModel *viewModel;
 @property (nonatomic, assign) BOOL isUpdateUrl;
@@ -57,6 +62,7 @@
     [self setupUI];
     
     self.isUpdateUrl = NO;
+    self.tagInputField.hidden = YES;
     if (self.isEdit) {
         [self.leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
 
@@ -79,7 +85,9 @@
     } else {
         [self.leftBackButton setTitle:@"清空" forState:UIControlStateNormal];
     }
-    [self.collectionView reloadData];
+    // [self.collectionView reloadData];
+    [self refreshTagsDisplay];
+    [self updateTagsLayout];
 }
 
 #pragma mark - Methods
@@ -159,12 +167,34 @@
         make.right.equalTo(self.contentView).offset(-16);
         make.height.mas_equalTo(0.5);
     }];
-    [self.contentView addSubview:self.collectionView];
-    [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+    // [self.contentView addSubview:self.collectionView];
+    // [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+    //     make.top.equalTo(self.line3View.mas_bottom).offset(16);
+    //     make.left.equalTo(self.contentView).offset(16);
+    //     make.right.equalTo(self.contentView).offset(-16);
+    //     make.bottom.equalTo(self.contentView).offset(-16);
+    // }];
+    [self.contentView addSubview:self.tagScrollView];
+    [self.tagScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line3View.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(16);
         make.right.equalTo(self.contentView).offset(-16);
         make.bottom.equalTo(self.contentView).offset(-16);
+    }];
+
+    [self.tagScrollView addSubview:self.tagContainerView];
+    [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.tagScrollView);
+        make.width.equalTo(self.tagScrollView);
+    }];
+
+    // 添加"+ 标签"按钮
+    [self.tagContainerView addSubview:self.addTagButton];
+    [self.addTagButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.tagContainerView);
+        make.centerY.equalTo(self.tagContainerView);
+        make.height.mas_equalTo(30);
+        make.width.mas_equalTo(100);
     }];
 }
 
@@ -212,7 +242,9 @@
     [self.textView clearContent];
 
     [self.tags removeAllObjects];
-    [self.collectionView reloadData];
+//    [self.collectionView reloadData];
+    [self refreshTagsDisplay];
+    [self updateTagsLayout];
     
     [self.tagView setHidden:YES];
     [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -377,6 +409,188 @@
     [self.linkField addSubview:placeholderLabel];
 }
 
+- (void)addTagFromInput {
+    NSString *tagText = [self.tagInputField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    if (tagText.length > 0) {
+        [self.tags addObject:tagText];
+        [self showTagView]; // 更新顶部标签显示
+        [self refreshTagsDisplay]; // 刷新标签显示
+    }
+    
+    // 重置输入框
+    self.tagInputField.text = @"";
+    [self.tagInputField removeFromSuperview];
+    self.tagInputField.hidden = YES;
+    
+    // 显示添加按钮
+    self.addTagButton.hidden = NO;
+    
+    // 更新布局
+    [self updateTagsLayout];
+    
+    [self.tagInputField resignFirstResponder];
+}
+
+// 刷新标签显示
+- (void)refreshTagsDisplay {
+    // 清除现有标签视图
+    for (UIView *view in self.tagContainerView.subviews) {
+        if (![view isEqual:self.addTagButton] && ![view isEqual:self.tagInputField]) {
+            [view removeFromSuperview];
+        }
+    }
+    
+    // 重新布局所有标签
+    CGFloat xOffset = 0;
+    CGFloat yOffset = 0;
+    CGFloat tagHeight = 30;
+    CGFloat tagSpacing = 10;
+    CGFloat lineSpacing = 10;
+    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 52; // 屏幕宽度减去左右边距(16+16+20)
+    
+    // 根据标签数量更新按钮文案
+    NSString *buttonTitle;
+    if (self.tags.count == 0) {
+        buttonTitle = @"+ 标签";
+    } else if (self.tags.count == 1) {
+        buttonTitle = @"+ 二级标签";
+    } else if (self.tags.count == 2) {
+        buttonTitle = @"+ 三级标签";
+    } else if (self.tags.count == 3) {
+        buttonTitle = @"+ 四级标签";
+    } else if (self.tags.count == 4) {
+        buttonTitle = @"+ 五级标签";
+    } else if (self.tags.count == 5) {
+        buttonTitle = @"+ 六级标签";
+    } else if (self.tags.count == 6) {
+        buttonTitle = @"+ 七级标签";
+    } else if (self.tags.count == 7) {
+        buttonTitle = @"+ 八级标签";
+    } else if (self.tags.count == 8) {
+        buttonTitle = @"+ 九级标签";
+    } else {
+        buttonTitle = [NSString stringWithFormat:@"+ %ld级标签", self.tags.count + 1];
+    }
+    [self.addTagButton setTitle:buttonTitle forState:UIControlStateNormal];
+    
+    // 计算按钮宽度 - 文本宽度 + 左右各10像素的间距
+    UIFont *buttonFont = [UIFont systemFontOfSize:14];
+    CGSize buttonTextSize = [buttonTitle sizeWithAttributes:@{NSFontAttributeName: buttonFont}];
+    CGFloat buttonWidth = buttonTextSize.width + 20; // 左右各10像素的间距
+    
+    // 更新虚线边框
+    for (CALayer *layer in self.addTagButton.layer.sublayers) {
+        if ([layer.name isEqualToString:@"dashedBorder"]) {
+            CAShapeLayer *borderLayer = (CAShapeLayer *)layer;
+            CGRect borderRect = CGRectMake(0, 0, buttonWidth, 30);
+            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:15];
+            borderLayer.path = path.CGPath;
+            break;
+        }
+    }
+
+    for (NSInteger i = 0; i < self.tags.count; i++) {
+        NSString *tagName = self.tags[i];
+        
+        // 计算标签宽度
+        UIFont *font = [UIFont systemFontOfSize:14];
+        CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
+        
+        // 确保删除按钮可见，限制标签最大宽度
+        CGFloat maxTagWidth = maxWidth - xOffset;
+        CGFloat deleteButtonWidth = 30;
+        CGFloat minTagWidth = deleteButtonWidth + 20; // 最小宽度确保删除按钮可见
+        
+        // 如果剩余空间不足以显示最小宽度，则换行
+        if (maxTagWidth < minTagWidth) {
+            xOffset = 0;
+            yOffset += tagHeight + lineSpacing;
+            maxTagWidth = maxWidth;
+        }
+        
+        // 计算实际标签宽度，确保不超过最大宽度
+        CGFloat tagWidth = MIN(textSize.width + 45, maxTagWidth); // 文本宽度 + 删除按钮宽度 + 内边距
+        
+        // 创建标签视图
+        UIView *tagView = [[UIView alloc] init];
+        tagView.layer.cornerRadius = 15;
+        tagView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        tagView.layer.borderWidth = 1;
+        
+        // 创建标签文本
+        UILabel *tagLabel = [[UILabel alloc] init];
+        tagLabel.text = tagName;
+        tagLabel.font = font;
+        tagLabel.textColor = [SLColorManager cellTitleColor];
+        tagLabel.lineBreakMode = NSLineBreakByTruncatingTail; // 添加省略号
+        
+        // 创建删除按钮
+        UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [deleteButton setImage:[[UIImage systemImageNamed:@"xmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [deleteButton setTintColor:[UIColor lightGrayColor]];
+        deleteButton.tag = i; // 使用tag存储索引
+        [deleteButton addTarget:self action:@selector(deleteTag:) forControlEvents:UIControlEventTouchUpInside];
+        
+        // 添加到标签视图
+        [tagView addSubview:tagLabel];
+        [tagView addSubview:deleteButton];
+        
+        // 设置标签视图位置
+        tagView.frame = CGRectMake(xOffset, yOffset, tagWidth, tagHeight);
+        
+        // 计算标签文本最大宽度，确保删除按钮可见
+        CGFloat maxLabelWidth = tagWidth - deleteButtonWidth - 15; // 15是左侧内边距
+        
+        // 设置标签文本和删除按钮位置 - 确保垂直居中
+        tagLabel.frame = CGRectMake(10, (tagHeight - textSize.height) / 2, maxLabelWidth, textSize.height);
+        deleteButton.frame = CGRectMake(tagWidth - deleteButtonWidth, (tagHeight - 20) / 2, 20, 20);
+        
+        [self.tagContainerView addSubview:tagView];
+        
+        // 更新下一个标签的位置
+        xOffset += tagWidth + tagSpacing;
+    }
+    
+    // 检查是否需要为添加按钮换行
+    if (xOffset + buttonWidth > maxWidth) { // 使用计算后的按钮宽度
+        xOffset = 0;
+        yOffset += tagHeight + lineSpacing;
+    }
+    
+    // 更新添加按钮位置和宽度
+    [self.addTagButton mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.tagContainerView).offset(xOffset);
+        make.top.equalTo(self.tagContainerView).offset(yOffset);
+        make.height.mas_equalTo(30);
+        make.width.mas_equalTo(buttonWidth); // 使用计算后的宽度
+    }];
+    
+    // 更新容器高度和宽度
+    CGFloat containerHeight = yOffset + tagHeight;
+    [self.tagContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(maxWidth);
+        make.height.mas_equalTo(containerHeight);
+    }];
+}
+
+// 删除标签
+- (void)deleteTag:(UIButton *)sender {
+    NSInteger index = sender.tag;
+    if (index < self.tags.count) {
+        [self.tags removeObjectAtIndex:index];
+        [self showTagView]; // 更新顶部标签显示
+        [self refreshTagsDisplay]; // 刷新标签显示
+    }
+}
+
+// 更新标签布局
+- (void)updateTagsLayout {
+    [self.tagContainerView layoutIfNeeded];
+    // 设置内容大小，确保可以正常滚动
+    CGSize contentSize = CGSizeMake(self.tagContainerView.bounds.size.width, self.tagContainerView.bounds.size.height);
+    [self.tagScrollView setContentSize:contentSize];
+}
+
 // 实现 UITextViewDelegate 方法来处理占位文本的显示和隐藏
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == self.titleField) {
@@ -486,81 +700,53 @@
     }
 }
 
-#pragma mark - UICollectionView DataSource & Delegate
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.tags.count + 1; // +1 用于显示“添加标签”入口
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.item == self.tags.count) {
-        SLRecordViewTagInputCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"SLRecordViewTagInputCollectionViewCell" forIndexPath:indexPath];
-        [cell configDataWithIndex:indexPath.item];
-        [cell startInput:self.isEditing];
-        cell.inputField.enabled = YES;
-        cell.inputField.delegate = self;
-        [cell.inputField addTarget:self action:@selector(startEditing:) forControlEvents:UIControlEventEditingDidBegin];
-        return cell;
-    } else {
-        SLRecordViewTagCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"SLRecordViewTagCollectionViewCell" forIndexPath:indexPath];
-        NSString* name = self.tags[indexPath.item];
-        [cell configDataWithTagName:name index:indexPath.item];
-        @weakobj(self)
-        cell.removeTag = ^(NSString * _Nonnull tagName, NSInteger index) {
-            @strongobj(self)
-            [self.tags removeObjectAtIndex:index];
-            [self showTagView];
-            [self.collectionView reloadData];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.collectionView reloadData];
-            });
-        };
-        return cell;
+#pragma mark - UITextField Delegate
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if (textField == self.tagInputField) {
+        [self addTagFromInput];
     }
 }
 
-#pragma mark - Action
-
- - (void)startEditing:(UITextField *)sender {
-     if (self.isEditing) {
-         return; // 如果已经在编辑模式，返回
-     }
-    
-     self.isEditing = YES;
-     self.editingIndexPath = [NSIndexPath indexPathForItem:self.tags.count inSection:0];
-    
-     // 让输入框成为第一响应者
-     SLRecordViewTagInputCollectionViewCell *cell = (SLRecordViewTagInputCollectionViewCell *)[self.collectionView cellForItemAtIndexPath:self.editingIndexPath];
-     [cell startInput:YES];
-     [cell.inputField becomeFirstResponder];
- }
-
-#pragma mark - UITextField Delegate
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [self finishInputTag:textField];
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [self finishInputTag:textField];
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    if (textField == self.tagInputField) {
+        NSString *newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        return newText.length <= 30; // 限制最多30个字
+    }
     return YES;
 }
 
-- (void)finishInputTag:(UITextField *)textField {
-    [textField resignFirstResponder];
-    self.isEditing = NO;
-    
-    if (textField.text.length > 0) {
-        // 新标签插入到第一个位置
-        NSString* text = textField.text;
-        if (text.length > 30) {
-            [SVProgressHUD showErrorWithStatus:@"标签字数不能超过30字符"];
-            text = [text substringWithRange:NSMakeRange(0, 30)];
-        }
-        [self.tags addObject:text];
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.tagInputField) {
+        [self addTagFromInput];
     }
-    textField.text = @"";
-    [self.collectionView reloadData]; // 刷新数据
-    [self showTagView];
+    return YES;
+}
+
+- (void)showTagInput {
+    // 隐藏添加按钮
+    self.addTagButton.hidden = YES;
+    
+    // 显示输入框
+    self.tagInputField.hidden = NO;
+    [self.tagContainerView addSubview:self.tagInputField];
+    
+    // 获取添加按钮的位置
+    CGFloat buttonX = self.addTagButton.frame.origin.x;
+    CGFloat buttonY = self.addTagButton.frame.origin.y;
+    
+    // 设置输入框位置 - 从添加按钮的位置开始，延伸到屏幕右侧
+    CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+    CGFloat rightMargin = 52; // 左右边距总和(16+16+20)
+    CGFloat inputWidth = screenWidth - buttonX - rightMargin; // 使用全部可用宽度
+    
+    [self.tagInputField mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.tagContainerView).offset(buttonX);
+        make.top.equalTo(self.tagContainerView).offset(buttonY);
+        make.height.mas_equalTo(30);
+        make.width.mas_equalTo(inputWidth);
+    }];
+    
+    [self.tagInputField becomeFirstResponder];
 }
 
 #pragma mark - UI Elements
@@ -710,24 +896,67 @@
     return _line3View;
 }
 
-- (UICollectionView *)collectionView {
-    if (!_collectionView) {
-        SLCustomFlowLayout *layout = [[SLCustomFlowLayout alloc] init];
-        layout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        layout.minimumLineSpacing = 10;
-        layout.minimumInteritemSpacing = 10;
-        layout.estimatedItemSize = CGSizeMake(100, 25);
-        layout.sectionInset = UIEdgeInsetsZero;
+- (UIScrollView *)tagScrollView {
+    if (!_tagScrollView) {
+        _tagScrollView = [[UIScrollView alloc] init];
+        _tagScrollView.showsHorizontalScrollIndicator = NO;
+        _tagScrollView.showsVerticalScrollIndicator = NO;
+        _tagScrollView.backgroundColor = [UIColor clearColor];
         
-        _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
-        _collectionView.delegate = self;
-        _collectionView.dataSource = self;
-        _collectionView.backgroundColor = [UIColor clearColor];
-        
-        [_collectionView registerClass:[SLRecordViewTagInputCollectionViewCell class] forCellWithReuseIdentifier:@"SLRecordViewTagInputCollectionViewCell"];
-        [_collectionView registerClass:[SLRecordViewTagCollectionViewCell class] forCellWithReuseIdentifier:@"SLRecordViewTagCollectionViewCell"];
+        _tagScrollView.scrollEnabled = YES;
     }
-    return _collectionView;
+    return _tagScrollView;
+}
+
+- (UIView *)tagContainerView {
+    if (!_tagContainerView) {
+        _tagContainerView = [[UIView alloc] init];
+        _tagContainerView.backgroundColor = [UIColor clearColor];
+    }
+    return _tagContainerView;
+}
+
+- (UIButton *)addTagButton {
+    if (!_addTagButton) {
+        _addTagButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        // 初始状态下显示"+ 标签"
+        [_addTagButton setTitle:@"+ 标签" forState:UIControlStateNormal];
+        [_addTagButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
+        _addTagButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        _addTagButton.layer.cornerRadius = 15;
+        _addTagButton.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        
+        // 创建虚线边框
+        CAShapeLayer *borderLayer = [CAShapeLayer layer];
+        borderLayer.strokeColor = [UIColor lightGrayColor].CGColor;
+        borderLayer.lineDashPattern = @[@4, @2];
+        borderLayer.lineWidth = 1.0;
+        borderLayer.fillColor = [UIColor clearColor].CGColor;
+        
+        // 设置路径 - 宽度先设置一个默认值，后续会根据文本动态调整
+        CGRect borderRect = CGRectMake(0, 0, 80, 30);
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:15];
+        borderLayer.path = path.CGPath;
+        borderLayer.name = @"dashedBorder"; // 添加名称以便后续更新
+        
+        [_addTagButton.layer addSublayer:borderLayer];
+        [_addTagButton addTarget:self action:@selector(showTagInput) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _addTagButton;
+}
+
+- (UITextField *)tagInputField {
+    if (!_tagInputField) {
+        _tagInputField = [[UITextField alloc] init];
+        _tagInputField.font = [UIFont systemFontOfSize:14];
+        _tagInputField.textColor = [SLColorManager cellTitleColor];
+        _tagInputField.backgroundColor = UIColor.clearColor;
+        _tagInputField.returnKeyType = UIReturnKeyDone;
+        _tagInputField.delegate = self;
+        _tagInputField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+        _tagInputField.leftViewMode = UITextFieldViewModeAlways;
+    }
+    return _tagInputField;
 }
 
 - (SLRecordViewModel *)viewModel {

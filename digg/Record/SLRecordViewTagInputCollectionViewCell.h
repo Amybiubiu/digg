@@ -14,7 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UITextField *inputField;
 
 - (void)configDataWithIndex:(NSInteger)index;
-- (void)startInput:(BOOL)start;
+- (void)startInput:(BOOL)isEditing;
+- (void)setupDashedBorder;
+- (void)updateInputFieldWidthWithText:(NSString *)text;
+- (void)resetInputField;
 
 @end
 
