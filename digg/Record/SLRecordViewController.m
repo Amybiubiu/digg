@@ -58,13 +58,15 @@
     
     self.isUpdateUrl = NO;
     if (self.isEdit) {
-        [self.leftBackButton setHidden:NO];
+        [self.leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
         [self.textView becomeFirstResponder];
         self.titleField.text = self.titleText;
         self.linkField.text = self.url;
         [self.textView html2AttributedstringWithHtml:self.htmlContent];
         [self.textView showPlaceHolder];
         [self.tags addObjectsFromArray:self.labels];
+    } else {
+        [self.leftBackButton setTitle:@"清空" forState:UIControlStateNormal];
     }
     [self.collectionView reloadData];
 }
@@ -241,7 +243,11 @@
 
 #pragma mark - Actions
 - (void)backPage {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.isEdit) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self clearAll];
+    }
 }
 
 - (void)commitBtnClick {
@@ -365,7 +371,7 @@
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
         [_leftBackButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
-        [_leftBackButton addTarget:self action:@selector(clearAll) forControlEvents:UIControlEventTouchUpInside];
+        [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
 }
