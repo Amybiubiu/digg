@@ -16,11 +16,11 @@
 #import "SLRecordViewModel.h"
 #import "SVProgressHUD.h"
 #import "SLWebViewController.h"
-#import "SLCustomTextField.h"
 #import "SLColorManager.h"
+#import "UIView+Associated.h"
 #import "digg-Swift.h"
 
-@interface SLRecordViewController () <UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate>
+@interface SLRecordViewController () <UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) UIView* navigationView;
 @property (nonatomic, strong) UIButton *leftBackButton;
@@ -28,8 +28,8 @@
 
 @property (nonatomic, strong) UIView* contentView;
 @property (nonatomic, strong) SLHomeTagView *tagView;
-@property (nonatomic, strong) UITextField *titleField; // 标题输入框
-@property (nonatomic, strong) SLCustomTextField *linkField;  // 链接输入框
+@property (nonatomic, strong) UITextView *titleField; // 标题输入框
+@property (nonatomic, strong) UITextView *linkField;  // 链接输入框
 @property (nonatomic, strong) RZRichTextView *textView;    // 多行文本输入框
 @property (nonatomic, strong) UIView *line1View;
 @property (nonatomic, strong) UIView *line2View;
@@ -59,12 +59,23 @@
     self.isUpdateUrl = NO;
     if (self.isEdit) {
         [self.leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
-        [self.textView becomeFirstResponder];
+
         self.titleField.text = self.titleText;
+        UILabel *titlePlaceholder = [self.titleField viewWithTag:999];
+        titlePlaceholder.hidden = self.titleText.length > 0;
+        [self updateTitleFieldHeight];
+
         self.linkField.text = self.url;
+        UILabel *linkPlaceholder = [self.linkField viewWithTag:998];
+        linkPlaceholder.hidden = self.url.length > 0;
+        [self updateLinkFieldHeight];
+
         [self.textView html2AttributedstringWithHtml:self.htmlContent];
         [self.textView showPlaceHolder];
+        [self.textView becomeFirstResponder];
+
         [self.tags addObjectsFromArray:self.labels];
+        [self showTagView];
     } else {
         [self.leftBackButton setTitle:@"清空" forState:UIControlStateNormal];
     }
@@ -106,7 +117,7 @@
         make.top.equalTo(self.contentView);
         make.left.equalTo(self.contentView).offset(22);
         make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(60);
+        make.height.mas_equalTo(60); // 恢复为原来的高度
     }];
     [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.titleField);
@@ -126,6 +137,7 @@
         make.right.equalTo(self.contentView).offset(-20);
         make.height.mas_equalTo(30);
     }];
+
     [self.contentView addSubview:self.line2View];
     [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.linkField.mas_bottom).offset(15);
@@ -156,49 +168,49 @@
     }];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    
-    if (self.linkField.frame.size.width > 0 && self.linkField.frame.size.height > 0) {
-        self.linkField.customFrame = self.linkField.frame;
-        if (self.isEdit && !self.isUpdateUrl) {
-            self.isUpdateUrl = YES;
-            [self.linkField textChangedHeight:self.url];
-        }
-    }
-}
-
-- (void)updateLinkTextFieldFrame:(CGFloat)height {
-    [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(height);
-    }];
-}
-
 #pragma mark - Clear Button
-
-// 创建清除按钮
-- (UIButton *)createClearButtonForTextField:(UITextField *)textField {
-    UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [clearButton setImage:[UIImage systemImageNamed:@"xmark.circle.fill"] forState:UIControlStateNormal];
-    clearButton.frame = CGRectMake(0, 0, 30, 30);
-    [clearButton addTarget:self action:@selector(clearTextField:) forControlEvents:UIControlEventTouchUpInside];
-    return clearButton;
-}
 
 // 清空输入框
 - (void)clearTextField:(UIButton *)sender {
-    if ([self.titleField.rightView isEqual:sender]) {
+    if (sender.tag == 1001) { // 使用 tag 来标识是哪个输入框的清除按钮
         self.titleField.text = @"";
-    } else if ([self.linkField.rightView isEqual:sender]) {
+        UILabel *placeholderLabel = [self.titleField viewWithTag:999];
+        placeholderLabel.hidden = NO;
+        UIButton *clearButton = [self.titleField associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = YES;
+        
+        [self performSelector:@selector(updateTitleFieldHeight) withObject:nil afterDelay:0.1];
+    } else if (sender.tag == 1002) { // 链接输入框的清除按钮
         self.linkField.text = @"";
+        UILabel *placeholderLabel = [self.linkField viewWithTag:998];
+        placeholderLabel.hidden = NO;
+        UIButton *clearButton = [self.linkField associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = YES;
+
+        [self performSelector:@selector(updateLinkFieldHeight) withObject:nil afterDelay:0.1];
     }
 }
 
 - (void)clearAll {
+    [self.titleField resignFirstResponder];
+    [self.linkField resignFirstResponder];
+    [self.textView resignFirstResponder];
+    
     self.titleField.text = @"";
-    [self.linkField clear];
-    self.textView.text = @"";
-    [self.textView showPlaceHolder];
+    UILabel *placeholderLabel = [self.titleField viewWithTag:999];
+    placeholderLabel.hidden = NO;
+    UIButton *clearButton = [self.titleField associatedObjectForKey:@"clearButton"];
+    clearButton.hidden = YES;
+    
+    // 清空链接输入框
+    self.linkField.text = @"";
+    UILabel *linkPlaceholder = [self.linkField viewWithTag:998];
+    linkPlaceholder.hidden = NO;
+    UIButton *clearButton2 = [self.linkField associatedObjectForKey:@"clearButton"];
+    clearButton2.hidden = YES;
+
+    [self.textView clearContent];
+
     [self.tags removeAllObjects];
     [self.collectionView reloadData];
     
@@ -212,6 +224,11 @@
 }
 
 - (void)showTagView {
+    // 获取当前 titleField 的高度
+    CGFloat currentHeight = self.titleField.frame.size.height;
+    // 确保最小高度为 60
+    CGFloat titleHeight = MAX(60, currentHeight);
+    
     if (self.tags.count > 0) {
         [self.tagView setHidden:NO];
         [self.tagView updateWithLabel:self.tags.firstObject];
@@ -219,7 +236,7 @@
             make.top.equalTo(self.contentView);
             make.left.equalTo(self.tagView.mas_right).offset(5);
             make.right.equalTo(self.contentView).offset(-20);
-            make.height.mas_equalTo(60);
+            make.height.mas_equalTo(titleHeight); // 使用计算后的高度
         }];
     } else {
         [self.tagView setHidden:YES];
@@ -227,9 +244,59 @@
             make.top.equalTo(self.contentView);
             make.left.equalTo(self.contentView).offset(23);
             make.right.equalTo(self.contentView).offset(-20);
-            make.height.mas_equalTo(60);
+            make.height.mas_equalTo(titleHeight); // 使用计算后的高度
         }];
     }
+    [self performSelector:@selector(updateTitleFieldHeight) withObject:nil afterDelay:0.1];
+}
+
+- (void)updateTitleFieldHeight {
+    CGFloat fixedWidth = self.titleField.frame.size.width > 0 ? self.titleField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
+    CGSize newSize = [self.titleField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+    CGFloat newHeight = MAX(60, newSize.height); // 最小高度为60
+    
+    [self.titleField mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(newHeight);
+    }];
+    
+    // 更新清除按钮位置
+    UIButton *clearButton = [self.titleField associatedObjectForKey:@"clearButton"];
+    if (clearButton) {
+        CGRect frame = clearButton.frame;
+        // 修改为与父视图右边缘的固定距离，与下方按钮对齐
+        frame.origin.x = self.titleField.bounds.size.width - frame.size.width - 5;
+        frame.origin.y = (self.titleField.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+    }
+    
+    // 确保 line1View 与 titleField 底部保持适当距离
+    [self.line1View mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.titleField.mas_bottom);
+    }];
+}
+
+- (void)updateLinkFieldHeight {
+    CGFloat fixedWidth = self.linkField.frame.size.width > 0 ? self.linkField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
+    CGSize newSize = [self.linkField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+    CGFloat newHeight = MAX(30, newSize.height); // 最小高度为30
+    
+    [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(newHeight);
+    }];
+    
+    // 更新清除按钮位置
+    UIButton *clearButton = [self.linkField associatedObjectForKey:@"clearButton"];
+    if (clearButton) {
+        CGRect frame = clearButton.frame;
+        frame.origin.x = self.linkField.bounds.size.width - frame.size.width;
+        frame.origin.y = (self.linkField.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+    }
+    
+    // 确保 line2View 与 linkField 底部保持适当距离
+    [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.linkField.mas_bottom).offset(15);
+    }];
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
@@ -277,6 +344,145 @@
                 [self clearAll];
             }
         }];
+    }
+}
+
+- (void)setupTitlePlaceholder {
+    UILabel *placeholderLabel = [[UILabel alloc] init];
+    placeholderLabel.text = @"添加标题";
+    placeholderLabel.font = [UIFont systemFontOfSize:20];
+    placeholderLabel.textColor = [UIColor lightGrayColor];
+    placeholderLabel.numberOfLines = 0;
+    [placeholderLabel sizeToFit];
+    
+    // 设置标签位置
+    placeholderLabel.frame = CGRectMake(5, 15, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.tag = 999;
+    
+    [self.titleField addSubview:placeholderLabel];
+}
+
+- (void)setupLinkPlaceholder {
+    UILabel *placeholderLabel = [[UILabel alloc] init];
+    placeholderLabel.text = @"链接";
+    placeholderLabel.font = [UIFont systemFontOfSize:16];
+    placeholderLabel.textColor = [UIColor lightGrayColor];
+    placeholderLabel.numberOfLines = 0;
+    [placeholderLabel sizeToFit];
+    
+    // 设置标签位置
+    placeholderLabel.frame = CGRectMake(5, 8, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.tag = 998;
+    
+    [self.linkField addSubview:placeholderLabel];
+}
+
+// 实现 UITextViewDelegate 方法来处理占位文本的显示和隐藏
+- (void)textViewDidChange:(UITextView *)textView {
+    if (textView == self.titleField) {
+        UILabel *placeholderLabel = [textView viewWithTag:999];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 更新清除按钮状态 - 只有当文本不为空时才显示
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = textView.text.length == 0;
+        
+        // 更新清除按钮位置 - 与下方清除按钮右侧对齐
+        CGRect frame = clearButton.frame;
+        // 修改为与父视图右边缘的固定距离，与下方按钮对齐
+        frame.origin.x = textView.bounds.size.width - frame.size.width;
+        frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+        
+        // 根据内容自动调整高度
+        CGFloat fixedWidth = textView.frame.size.width;
+        CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+        CGFloat newHeight = MAX(60, newSize.height); // 最小高度为60
+        
+        [textView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(newHeight);
+        }];
+        
+        // 确保 line1View 与 titleField 底部保持适当距离
+        [self.line1View mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.titleField.mas_bottom);
+        }];
+    } else if (textView == self.linkField) {
+        UILabel *placeholderLabel = [textView viewWithTag:998];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 更新清除按钮状态 - 只有当文本不为空时才显示
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = textView.text.length == 0;
+        
+        // 更新清除按钮位置
+        CGRect frame = clearButton.frame;
+        frame.origin.x = textView.bounds.size.width - frame.size.width;
+        frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+        
+        // 根据内容自动调整高度
+        CGFloat fixedWidth = textView.frame.size.width;
+        CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+        CGFloat newHeight = MAX(30, newSize.height); // 最小高度为30
+        
+        [textView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(newHeight);
+        }];
+        
+        // 确保 line2View 与 linkField 底部保持适当距离
+        [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.linkField.mas_bottom).offset(15);
+        }];
+    }
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (textView == self.titleField) {
+        UILabel *placeholderLabel = [textView viewWithTag:999];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 显示清除按钮 - 只有当文本不为空时才显示
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = textView.text.length == 0;
+        
+        // 更新清除按钮位置 - 与下方清除按钮右侧对齐
+        CGRect frame = clearButton.frame;
+        // 修改为与父视图右边缘的固定距离，与下方按钮对齐
+        frame.origin.x = textView.bounds.size.width - frame.size.width;
+        frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+    } else if (textView == self.linkField) {
+        UILabel *placeholderLabel = [textView viewWithTag:998];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 显示清除按钮 - 只有当文本不为空时才显示
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = textView.text.length == 0;
+        
+        // 更新清除按钮位置
+        CGRect frame = clearButton.frame;
+        frame.origin.x = textView.bounds.size.width - frame.size.width;
+        frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
+        clearButton.frame = frame;
+    }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    if (textView == self.titleField) {
+        UILabel *placeholderLabel = [textView viewWithTag:999];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 隐藏清除按钮
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = YES;
+    } else if (textView == self.linkField) {
+        UILabel *placeholderLabel = [textView viewWithTag:998];
+        placeholderLabel.hidden = textView.text.length > 0;
+        
+        // 隐藏清除按钮
+        UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
+        clearButton.hidden = YES;
     }
 }
 
@@ -404,26 +610,68 @@
     return _tagView;
 }
 
-- (UITextField *)titleField {
+- (UITextView *)titleField {
     if (!_titleField) {
-        _titleField = [[UITextField alloc] init];
-        _titleField.placeholder = @"添加标题";
-        _titleField.borderStyle = UITextBorderStyleNone;
+        _titleField = [[UITextView alloc] init];
         _titleField.font = [UIFont systemFontOfSize:20];
-        _titleField.clearButtonMode = UITextFieldViewModeAlways;
-        _titleField.rightViewMode = UITextFieldViewModeWhileEditing;
         _titleField.textColor = [SLColorManager cellTitleColor];
+        _titleField.backgroundColor = [UIColor clearColor];
+        _titleField.delegate = self;
+        _titleField.scrollEnabled = YES;
+        _titleField.returnKeyType = UIReturnKeyDefault; // 允许换行
+        _titleField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        
+        // 添加占位文本
+        [self setupTitlePlaceholder];
+
+        // 添加清除按钮
+        UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        // 修改清除按钮的颜色，与下方清除按钮一致
+        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [clearButton setTintColor:[UIColor lightGrayColor]]; // 设置为浅灰色，与下方按钮一致
+        clearButton.frame = CGRectMake(0, 0, 30, 30);
+        clearButton.tag = 1001; // 设置标签以便识别
+        [clearButton addTarget:self action:@selector(clearTextField:) forControlEvents:UIControlEventTouchUpInside];
+        clearButton.hidden = YES; // 初始状态隐藏
+        [_titleField addSubview:clearButton];
+        
+        // 保存清除按钮的引用，以便后续访问
+        [_titleField setAssociatedObject:clearButton forKey:@"clearButton"];
     }
     return _titleField;
 }
 
-- (SLCustomTextField *)linkField {
+- (UITextView *)linkField {
     if (!_linkField) {
-        _linkField = [[SLCustomTextField alloc] initWithFrame:CGRectZero placeholder:@"链接" clear:YES leftView:NULL fontSize:16];
-        __weak typeof(self) weakSelf = self;
-        _linkField.updateFrame = ^(CGFloat height) {
-            [weakSelf updateLinkTextFieldFrame:height];
-        };
+        _linkField = [[UITextView alloc] init];
+        _linkField.font = [UIFont systemFontOfSize:16];
+        _linkField.textColor = [SLColorManager lineTextColor];
+        _linkField.backgroundColor = [UIColor clearColor];
+        _linkField.delegate = self;
+        _linkField.scrollEnabled = YES;
+        _linkField.returnKeyType = UIReturnKeyDefault; // 允许换行
+        _linkField.textContainerInset = UIEdgeInsetsMake(8, 0, 8, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        
+        // 添加占位文本
+        [self setupLinkPlaceholder];
+
+        // 添加清除按钮
+        UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        // 修改清除按钮的颜色
+        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [clearButton setTintColor:[UIColor lightGrayColor]]; // 设置为浅灰色
+        clearButton.frame = CGRectMake(0, 0, 30, 30);
+        clearButton.tag = 1002; // 设置标签以便识别
+        [clearButton addTarget:self action:@selector(clearTextField:) forControlEvents:UIControlEventTouchUpInside];
+        clearButton.hidden = YES; // 初始状态隐藏
+        [_linkField addSubview:clearButton];
+        
+        // 保存清除按钮的引用，以便后续访问
+        [_linkField setAssociatedObject:clearButton forKey:@"clearButton"];
+        
+        // 设置内容优先级，确保不会挤压其他视图
+        [_linkField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+        [_linkField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
     }
     return _linkField;
 }

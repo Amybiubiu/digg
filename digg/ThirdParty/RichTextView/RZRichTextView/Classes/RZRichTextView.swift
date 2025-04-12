@@ -518,6 +518,26 @@ public extension RZRichTextView {
             self.qtextViewHelper.placeHolderLabel?.isHidden = !show
         }
     }
+    /// 清空所有内容，包括富文本内容
+    func clearContent() {
+        // 清空文本存储
+        self.textStorage.deleteCharacters(in: NSRange(location: 0, length: self.textStorage.length))
+        // 重置属性
+        self.typingAttributes = self.viewModel.defaultTypingAttributes
+        self.lastTexttypingAttributes = self.typingAttributes
+        // 清空附件相关
+        self.lastAttachments.forEach { $0.infoLayer.removeFromSuperview() }
+        self.lastAttachments = []
+        // 移除所有列表视图
+        self.subviews.filter({$0.isKind(of: RZTextListView.self)}).forEach({$0.removeFromSuperview()})
+        // 清空历史记录
+        self.addHistoryData()
+        // 显示占位符
+        self.showPlaceHolder()
+        // 更新字数显示
+        self.showInputCount()
+    }
+
     /// 修复有序无序列表的序列号
     func fixTextlistNum() {
         let configure = RZRichTextViewConfigure.shared
