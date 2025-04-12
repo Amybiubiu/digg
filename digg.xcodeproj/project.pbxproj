@@ -82,8 +82,6 @@
 		34D2EBD62D3943660067CC05 /* SLRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD52D3943660067CC05 /* SLRecordViewController.m */; };
 		34D2EBD82D394A8B0067CC05 /* HowToUseDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD72D394A8B0067CC05 /* HowToUseDemo.swift */; };
 		34D2EBDE2D3A01410067CC05 /* SLRecordViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */; };
-		34D2EBE12D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBE02D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.m */; };
-		34D2EBE42D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBE32D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.m */; };
 		34D2EBE72D3A2D340067CC05 /* SLCustomFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */; };
 		34D2EC4C2D3CB72D0067CC05 /* SkeletonAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBFB2D3CB72D0067CC05 /* SkeletonAppearance.swift */; };
 		34D2EC4D2D3CB72D0067CC05 /* GradientDirection+Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EC2E2D3CB72D0067CC05 /* GradientDirection+Animations.swift */; };
@@ -337,10 +335,6 @@
 		34D2EBDB2D394C760067CC05 /* digg-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "digg-Bridging-Header.h"; sourceTree = "<group>"; };
 		34D2EBDC2D3A01410067CC05 /* SLRecordViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRecordViewModel.h; sourceTree = "<group>"; };
 		34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRecordViewModel.m; sourceTree = "<group>"; };
-		34D2EBDF2D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRecordViewTagInputCollectionViewCell.h; sourceTree = "<group>"; };
-		34D2EBE02D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRecordViewTagInputCollectionViewCell.m; sourceTree = "<group>"; };
-		34D2EBE22D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRecordViewTagCollectionViewCell.h; sourceTree = "<group>"; };
-		34D2EBE32D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRecordViewTagCollectionViewCell.m; sourceTree = "<group>"; };
 		34D2EBE52D3A2D340067CC05 /* SLCustomFlowLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCustomFlowLayout.h; sourceTree = "<group>"; };
 		34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCustomFlowLayout.m; sourceTree = "<group>"; };
 		34D2EBF92D3CB72D0067CC05 /* SkeletonAnimationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonAnimationBuilder.swift; sourceTree = "<group>"; };
@@ -783,10 +777,6 @@
 				34D2EBD52D3943660067CC05 /* SLRecordViewController.m */,
 				34D2EBDC2D3A01410067CC05 /* SLRecordViewModel.h */,
 				34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */,
-				34D2EBDF2D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.h */,
-				34D2EBE02D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.m */,
-				34D2EBE22D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.h */,
-				34D2EBE32D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.m */,
 				34D2EBE52D3A2D340067CC05 /* SLCustomFlowLayout.h */,
 				34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */,
 			);
@@ -1450,7 +1440,6 @@
 				34A071132D72D999006BC583 /* UIView+EventTrackingFilter.m in Sources */,
 				34A071142D72D999006BC583 /* UIView+PageName.m in Sources */,
 				34A071152D72D999006BC583 /* UIViewController+TMViewExposure.m in Sources */,
-				34D2EBE12D3A04CC0067CC05 /* SLRecordViewTagInputCollectionViewCell.m in Sources */,
 				E76A45CD2CB93827008B2746 /* CaocaoRefreshFooter.m in Sources */,
 				E76A45E12CBCA827008B2746 /* SLArticleTodayEntity.m in Sources */,
 				E76A45CE2CB93827008B2746 /* CaocaoRefreshHeader.m in Sources */,
@@ -1555,7 +1544,6 @@
 				34D2EBAA2D3941DE0067CC05 /* TZGifPhotoPreviewController.m in Sources */,
 				34D2EBAB2D3941DE0067CC05 /* TZProgressView.m in Sources */,
 				34A0711F2D733882006BC583 /* SLTrackingManager.m in Sources */,
-				34D2EBE42D3A090B0067CC05 /* SLRecordViewTagCollectionViewCell.m in Sources */,
 				E7C137E32CF31F2A00C5053A /* SLHomeWebViewController.m in Sources */,
 				345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */,
 				E7C405792CC26970004D90CD /* SLCommentFeedEntity.m in Sources */,

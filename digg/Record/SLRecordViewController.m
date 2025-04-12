@@ -10,8 +10,6 @@
 #import "EnvConfigHeader.h"
 #import "Masonry.h"
 #import "SLHomeTagView.h"
-#import "SLRecordViewTagInputCollectionViewCell.h"
-#import "SLRecordViewTagCollectionViewCell.h"
 #import "SLCustomFlowLayout.h"
 #import "SLRecordViewModel.h"
 #import "SVProgressHUD.h"
@@ -20,7 +18,7 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 
-@interface SLRecordViewController () <UICollectionViewDelegate, UICollectionViewDataSource, UITextFieldDelegate, UITextViewDelegate>
+@interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) UIView* navigationView;
 @property (nonatomic, strong) UIButton *leftBackButton;
