@@ -590,6 +590,12 @@
     // 设置内容大小，确保可以正常滚动
     CGSize contentSize = CGSizeMake(self.tagContainerView.bounds.size.width, self.tagContainerView.bounds.size.height);
     [self.tagScrollView setContentSize:contentSize];
+
+    if (contentSize.height > self.tagScrollView.bounds.size.height) {
+        self.tagScrollView.scrollEnabled = YES;
+    } else {
+        self.tagScrollView.scrollEnabled = NO;
+    }
 }
 
 // 实现 UITextViewDelegate 方法来处理占位文本的显示和隐藏
@@ -900,8 +906,7 @@
         _tagScrollView.showsHorizontalScrollIndicator = NO;
         _tagScrollView.showsVerticalScrollIndicator = NO;
         _tagScrollView.backgroundColor = [UIColor clearColor];
-        
-        _tagScrollView.scrollEnabled = YES;
+        _tagScrollView.scrollEnabled = NO;
     }
     return _tagScrollView;
 }
