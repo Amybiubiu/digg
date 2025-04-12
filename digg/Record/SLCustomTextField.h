@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void(^updateFrame)(CGFloat height);
 
 - (void)textChangedHeight:(NSString *)text;
+- (void)clear;
 
 @end
 

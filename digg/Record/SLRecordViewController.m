@@ -52,7 +52,7 @@
     // Do any additional setup after loading the view.
     self.navigationController.navigationBar.hidden = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
-    [self.leftBackButton setHidden:YES];
+    [self.leftBackButton setHidden:NO];
     self.tags = [NSMutableArray array];
     [self setupUI];
     
@@ -65,8 +65,8 @@
         [self.textView html2AttributedstringWithHtml:self.htmlContent];
         [self.textView showPlaceHolder];
         [self.tags addObjectsFromArray:self.labels];
-        [self.collectionView reloadData];
     }
+    [self.collectionView reloadData];
 }
 
 #pragma mark - Methods
@@ -194,8 +194,9 @@
 
 - (void)clearAll {
     self.titleField.text = @"";
-    self.linkField.text = @"";
+    [self.linkField clear];
     self.textView.text = @"";
+    [self.textView showPlaceHolder];
     [self.tags removeAllObjects];
     [self.collectionView reloadData];
     
@@ -364,7 +365,7 @@
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
         [_leftBackButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
-        [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
+        [_leftBackButton addTarget:self action:@selector(clearAll) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
 }

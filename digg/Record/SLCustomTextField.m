@@ -70,6 +70,11 @@
     [super deleteBackward];
 }
 
+- (void)clear {
+    [self textChangedHeight:@""];
+    self.text = @"";
+}
+
 /**
  *  监听textField内容的改变
  *

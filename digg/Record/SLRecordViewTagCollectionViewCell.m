@@ -8,6 +8,7 @@
 #import "SLRecordViewTagCollectionViewCell.h"
 #import "Masonry.h"
 #import "SLGeneralMacro.h"
+#import "SLColorManager.h"
 
 @interface SLRecordViewTagCollectionViewCell()
 
@@ -75,7 +76,7 @@
     if (!_nameLabel) {
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"";
-        _nameLabel.textColor = Color16(0x868686);
+        _nameLabel.textColor = [SLColorManager cellTitleColor];
         _nameLabel.font = [UIFont boldSystemFontOfSize:13];
     }
     return _nameLabel;
