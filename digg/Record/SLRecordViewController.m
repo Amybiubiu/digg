@@ -18,6 +18,9 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 
+#define FIELD_DEFAULT_HEIGHT 48
+#define TAG_DEFAULT_HEIGHT 24
+
 @interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) UIView* navigationView;
@@ -33,7 +36,6 @@
 @property (nonatomic, strong) UIView *line2View;
 @property (nonatomic, strong) UIView *line3View;
 
-// @property (nonatomic, strong) UICollectionView *collectionView; // 显示标签的集合视图
 @property (nonatomic, strong) NSMutableArray *tags;             // 存储标签的数组
 @property (nonatomic, strong) NSIndexPath *editingIndexPath;    // 正在编辑的标签的 IndexPath
 @property (nonatomic, assign) BOOL isEditing;                   // 是否处于编辑状态
@@ -83,7 +85,6 @@
     } else {
         [self.leftBackButton setTitle:@"清空" forState:UIControlStateNormal];
     }
-    // [self.collectionView reloadData];
     [self refreshTagsDisplay];
     [self updateTagsLayout];
 }
@@ -98,14 +99,14 @@
     
     [self.navigationView addSubview:self.leftBackButton];
     [self.leftBackButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.navigationView).offset(16);
+        make.left.equalTo(self.navigationView).offset(27);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
     
     [self.navigationView addSubview:self.commitButton];
     [self.commitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.navigationView).offset(-16);
+        make.right.equalTo(self.navigationView).offset(-27);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
@@ -123,7 +124,7 @@
         make.top.equalTo(self.contentView);
         make.left.equalTo(self.contentView).offset(22);
         make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(60); // 恢复为原来的高度
+        make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
     [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.titleField);
@@ -138,23 +139,23 @@
     }];
     [self.contentView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom).offset(15);
+        make.top.equalTo(self.line1View.mas_bottom).offset(10);
         make.left.equalTo(self.contentView).offset(23);
         make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
 
     [self.contentView addSubview:self.line2View];
     [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.linkField.mas_bottom).offset(15);
+        make.top.equalTo(self.linkField.mas_bottom);
         make.left.equalTo(self.contentView).offset(20);
         make.right.equalTo(self.contentView).offset(-20);
         make.height.mas_equalTo(0.5);
     }];
     [self.contentView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line2View.mas_bottom);
-        make.left.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.line2View.mas_bottom).offset(10);
+        make.left.equalTo(self.contentView).offset(17);
         make.right.equalTo(self.contentView).offset(-16);
         make.height.mas_equalTo(300);
     }];
@@ -165,17 +166,10 @@
         make.right.equalTo(self.contentView).offset(-16);
         make.height.mas_equalTo(0.5);
     }];
-    // [self.contentView addSubview:self.collectionView];
-    // [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-    //     make.top.equalTo(self.line3View.mas_bottom).offset(16);
-    //     make.left.equalTo(self.contentView).offset(16);
-    //     make.right.equalTo(self.contentView).offset(-16);
-    //     make.bottom.equalTo(self.contentView).offset(-16);
-    // }];
     [self.contentView addSubview:self.tagScrollView];
     [self.tagScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line3View.mas_bottom).offset(16);
-        make.left.equalTo(self.contentView).offset(16);
+        make.left.equalTo(self.contentView).offset(27);
         make.right.equalTo(self.contentView).offset(-16);
         make.bottom.equalTo(self.contentView).offset(-16);
     }];
@@ -191,7 +185,7 @@
     [self.addTagButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagContainerView);
         make.centerY.equalTo(self.tagContainerView);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
         make.width.mas_equalTo(100);
     }];
 }
@@ -240,7 +234,6 @@
     [self.textView clearContent];
 
     [self.tags removeAllObjects];
-//    [self.collectionView reloadData];
     [self refreshTagsDisplay];
     [self updateTagsLayout];
     
@@ -249,15 +242,13 @@
         make.top.equalTo(self.contentView);
         make.left.equalTo(self.contentView).offset(23);
         make.right.equalTo(self.contentView).offset(-20);
-        make.height.mas_equalTo(60);
+        make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
 }
 
 - (void)showTagView {
-    // 获取当前 titleField 的高度
     CGFloat currentHeight = self.titleField.frame.size.height;
-    // 确保最小高度为 60
-    CGFloat titleHeight = MAX(60, currentHeight);
+    CGFloat titleHeight = MAX(FIELD_DEFAULT_HEIGHT, currentHeight);
     
     if (self.tags.count > 0) {
         [self.tagView setHidden:NO];
@@ -266,7 +257,7 @@
             make.top.equalTo(self.contentView);
             make.left.equalTo(self.tagView.mas_right).offset(5);
             make.right.equalTo(self.contentView).offset(-20);
-            make.height.mas_equalTo(titleHeight); // 使用计算后的高度
+            make.height.mas_equalTo(titleHeight);
         }];
     } else {
         [self.tagView setHidden:YES];
@@ -283,7 +274,7 @@
 - (void)updateTitleFieldHeight {
     CGFloat fixedWidth = self.titleField.frame.size.width > 0 ? self.titleField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
     CGSize newSize = [self.titleField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-    CGFloat newHeight = MAX(60, newSize.height); // 最小高度为60
+    CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height);
     
     [self.titleField mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(newHeight);
@@ -308,7 +299,7 @@
 - (void)updateLinkFieldHeight {
     CGFloat fixedWidth = self.linkField.frame.size.width > 0 ? self.linkField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
     CGSize newSize = [self.linkField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-    CGFloat newHeight = MAX(30, newSize.height); // 最小高度为30
+    CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height);
     
     [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(newHeight);
@@ -322,11 +313,6 @@
         frame.origin.y = (self.linkField.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
     }
-    
-    // 确保 line2View 与 linkField 底部保持适当距离
-    [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.linkField.mas_bottom).offset(15);
-    }];
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
@@ -380,13 +366,13 @@
 - (void)setupTitlePlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"添加标题";
-    placeholderLabel.font = [UIFont systemFontOfSize:20];
-    placeholderLabel.textColor = [UIColor lightGrayColor];
+    placeholderLabel.font = [UIFont systemFontOfSize:18];
+    placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
     
     // 设置标签位置
-    placeholderLabel.frame = CGRectMake(5, 15, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.frame = CGRectMake(5, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
     placeholderLabel.tag = 999;
     
     [self.titleField addSubview:placeholderLabel];
@@ -396,12 +382,12 @@
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"链接";
     placeholderLabel.font = [UIFont systemFontOfSize:16];
-    placeholderLabel.textColor = [UIColor lightGrayColor];
+    placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
     
     // 设置标签位置
-    placeholderLabel.frame = CGRectMake(5, 8, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.frame = CGRectMake(5, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
     placeholderLabel.tag = 998;
     
     [self.linkField addSubview:placeholderLabel];
@@ -441,10 +427,11 @@
     // 重新布局所有标签
     CGFloat xOffset = 0;
     CGFloat yOffset = 0;
-    CGFloat tagHeight = 30;
+    CGFloat tagHeight = TAG_DEFAULT_HEIGHT;
     CGFloat tagSpacing = 10;
     CGFloat lineSpacing = 10;
-    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 52; // 屏幕宽度减去左右边距(16+16+20)
+    CGFloat tagInsetSpacing = 7;
+    CGFloat maxWidth = [UIScreen mainScreen].bounds.size.width - 43; // 屏幕宽度减去左右边距(27+16)
     
     // 根据标签数量更新按钮文案
     NSString *buttonTitle;
@@ -466,22 +453,24 @@
         buttonTitle = @"+ 八级标签";
     } else if (self.tags.count == 8) {
         buttonTitle = @"+ 九级标签";
+    } else if (self.tags.count == 9) {
+        buttonTitle = @"+ 十级标签";
     } else {
         buttonTitle = [NSString stringWithFormat:@"+ %ld级标签", self.tags.count + 1];
     }
     [self.addTagButton setTitle:buttonTitle forState:UIControlStateNormal];
     
     // 计算按钮宽度 - 文本宽度 + 左右各10像素的间距
-    UIFont *buttonFont = [UIFont systemFontOfSize:14];
+    UIFont *buttonFont = [UIFont systemFontOfSize:12];
     CGSize buttonTextSize = [buttonTitle sizeWithAttributes:@{NSFontAttributeName: buttonFont}];
-    CGFloat buttonWidth = buttonTextSize.width + 20; // 左右各10像素的间距
+    CGFloat buttonWidth = buttonTextSize.width + (tagInsetSpacing * 2); // 左右各tagInsetSpacing像素的间距;
     
     // 更新虚线边框
     for (CALayer *layer in self.addTagButton.layer.sublayers) {
         if ([layer.name isEqualToString:@"dashedBorder"]) {
             CAShapeLayer *borderLayer = (CAShapeLayer *)layer;
-            CGRect borderRect = CGRectMake(0, 0, buttonWidth, 30);
-            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:15];
+            CGRect borderRect = CGRectMake(0, 0, buttonWidth, TAG_DEFAULT_HEIGHT);
+            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:TAG_DEFAULT_HEIGHT/2];
             borderLayer.path = path.CGPath;
             break;
         }
@@ -491,41 +480,55 @@
         NSString *tagName = self.tags[i];
         
         // 计算标签宽度
-        UIFont *font = [UIFont systemFontOfSize:14];
+        UIFont *font = [UIFont systemFontOfSize:12];
         CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
         
-        // 确保删除按钮可见，限制标签最大宽度
-        CGFloat maxTagWidth = maxWidth - xOffset;
-        CGFloat deleteButtonWidth = 30;
-        CGFloat minTagWidth = deleteButtonWidth + 20; // 最小宽度确保删除按钮可见
+        // 删除按钮宽度和间距
+        CGFloat deleteButtonWidth = 10; // 删除按钮宽度
+        CGFloat deleteButtonSpacing = 3; // 删除按钮距离文本的间距
         
-        // 如果剩余空间不足以显示最小宽度，则换行
-        if (maxTagWidth < minTagWidth) {
+        // 计算标签总宽度：左侧间距 + 文本宽度 + 删除按钮间距 + 删除按钮宽度 + 右侧间距
+        CGFloat tagWidth = tagInsetSpacing + textSize.width + deleteButtonSpacing + deleteButtonWidth + tagInsetSpacing;
+        
+        // 检查是否需要换行
+        BOOL needNewLine = NO;
+        
+        // 如果标签宽度超过最大宽度的80%，或者剩余空间不足，则换行
+        if (tagWidth > maxWidth * 0.8 || (xOffset > 0 && xOffset + tagWidth > maxWidth)) {
             xOffset = 0;
             yOffset += tagHeight + lineSpacing;
-            maxTagWidth = maxWidth;
+            needNewLine = YES;
         }
         
         // 计算实际标签宽度，确保不超过最大宽度
-        CGFloat tagWidth = MIN(textSize.width + 45, maxTagWidth); // 文本宽度 + 删除按钮宽度 + 内边距
+        CGFloat actualTagWidth = MIN(tagWidth, maxWidth);
         
         // 创建标签视图
         UIView *tagView = [[UIView alloc] init];
-        tagView.layer.cornerRadius = 15;
-        tagView.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        tagView.backgroundColor = [SLColorManager recorderTagBgColor];
+        tagView.layer.cornerRadius = TAG_DEFAULT_HEIGHT/2;
+        tagView.layer.borderColor = [SLColorManager recorderTagBorderColor].CGColor;
         tagView.layer.borderWidth = 1;
         
         // 创建标签文本
         UILabel *tagLabel = [[UILabel alloc] init];
         tagLabel.text = tagName;
         tagLabel.font = font;
-        tagLabel.textColor = [SLColorManager cellTitleColor];
-        tagLabel.lineBreakMode = NSLineBreakByTruncatingTail; // 添加省略号
+        tagLabel.textColor = [SLColorManager recorderTagTextColor];
+        
+        // 只有当一行只有这一个标签且长度超过最大宽度时才使用省略号
+        if (xOffset == 0 && actualTagWidth >= maxWidth) {
+            tagLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        } else {
+            // 否则允许多行显示
+            tagLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            tagLabel.numberOfLines = 0;
+        }
         
         // 创建删除按钮
         UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [deleteButton setImage:[[UIImage systemImageNamed:@"xmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-        [deleteButton setTintColor:[UIColor lightGrayColor]];
+        [deleteButton setTintColor:[SLColorManager recorderTagTextColor]];
         deleteButton.tag = i; // 使用tag存储索引
         [deleteButton addTarget:self action:@selector(deleteTag:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -534,19 +537,19 @@
         [tagView addSubview:deleteButton];
         
         // 设置标签视图位置
-        tagView.frame = CGRectMake(xOffset, yOffset, tagWidth, tagHeight);
+        tagView.frame = CGRectMake(xOffset, yOffset, actualTagWidth, tagHeight);
         
         // 计算标签文本最大宽度，确保删除按钮可见
-        CGFloat maxLabelWidth = tagWidth - deleteButtonWidth - 15; // 15是左侧内边距
+        CGFloat maxLabelWidth = actualTagWidth - tagInsetSpacing - deleteButtonWidth - deleteButtonSpacing - tagInsetSpacing;
         
         // 设置标签文本和删除按钮位置 - 确保垂直居中
-        tagLabel.frame = CGRectMake(10, (tagHeight - textSize.height) / 2, maxLabelWidth, textSize.height);
-        deleteButton.frame = CGRectMake(tagWidth - deleteButtonWidth, (tagHeight - 20) / 2, 20, 20);
+        tagLabel.frame = CGRectMake(tagInsetSpacing, (tagHeight - textSize.height) / 2, maxLabelWidth, textSize.height);
+        deleteButton.frame = CGRectMake(actualTagWidth - deleteButtonWidth - tagInsetSpacing, (tagHeight - deleteButtonWidth) / 2, deleteButtonWidth, deleteButtonWidth);
         
         [self.tagContainerView addSubview:tagView];
         
         // 更新下一个标签的位置
-        xOffset += tagWidth + tagSpacing;
+        xOffset += actualTagWidth + tagSpacing;
     }
     
     // 检查是否需要为添加按钮换行
@@ -559,7 +562,7 @@
     [self.addTagButton mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagContainerView).offset(xOffset);
         make.top.equalTo(self.tagContainerView).offset(yOffset);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
         make.width.mas_equalTo(buttonWidth); // 使用计算后的宽度
     }];
     
@@ -609,7 +612,7 @@
         // 根据内容自动调整高度
         CGFloat fixedWidth = textView.frame.size.width;
         CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-        CGFloat newHeight = MAX(60, newSize.height); // 最小高度为60
+        CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height); // 最小高度为60
         
         [textView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(newHeight);
@@ -640,11 +643,6 @@
         
         [textView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(newHeight);
-        }];
-        
-        // 确保 line2View 与 linkField 底部保持适当距离
-        [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.linkField.mas_bottom).offset(15);
         }];
     }
 }
@@ -760,7 +758,8 @@
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
-        [_leftBackButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
+        _leftBackButton.titleLabel.font = [UIFont systemFontOfSize:16];
+        [_leftBackButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
@@ -770,7 +769,8 @@
     if (!_commitButton) {
         _commitButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_commitButton setTitle:@"提交" forState:UIControlStateNormal];
-        [_commitButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
+        _commitButton.titleLabel.font = [UIFont systemFontOfSize:16];
+        [_commitButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_commitButton addTarget:self action:@selector(commitBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _commitButton;
@@ -797,8 +797,8 @@
 - (UITextView *)titleField {
     if (!_titleField) {
         _titleField = [[UITextView alloc] init];
-        _titleField.font = [UIFont systemFontOfSize:20];
-        _titleField.textColor = [SLColorManager cellTitleColor];
+        _titleField.font = [UIFont systemFontOfSize:18];
+        _titleField.textColor = [SLColorManager recorderTextColor];
         _titleField.backgroundColor = [UIColor clearColor];
         _titleField.delegate = self;
         _titleField.scrollEnabled = YES;
@@ -811,7 +811,7 @@
         // 添加清除按钮
         UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
         // 修改清除按钮的颜色，与下方清除按钮一致
-        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
         [clearButton setTintColor:[UIColor lightGrayColor]]; // 设置为浅灰色，与下方按钮一致
         clearButton.frame = CGRectMake(0, 0, 30, 30);
         clearButton.tag = 1001; // 设置标签以便识别
@@ -834,7 +834,7 @@
         _linkField.delegate = self;
         _linkField.scrollEnabled = YES;
         _linkField.returnKeyType = UIReturnKeyDefault; // 允许换行
-        _linkField.textContainerInset = UIEdgeInsetsMake(8, 0, 8, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        _linkField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
         // 添加占位文本
         [self setupLinkPlaceholder];
@@ -842,7 +842,7 @@
         // 添加清除按钮
         UIButton *clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
         // 修改清除按钮的颜色
-        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle.fill"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [clearButton setImage:[[UIImage systemImageNamed:@"xmark.circle"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
         [clearButton setTintColor:[UIColor lightGrayColor]]; // 设置为浅灰色
         clearButton.frame = CGRectMake(0, 0, 30, 30);
         clearButton.tag = 1002; // 设置标签以便识别
@@ -917,23 +917,23 @@
 - (UIButton *)addTagButton {
     if (!_addTagButton) {
         _addTagButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        // 初始状态下显示"+ 标签"
         [_addTagButton setTitle:@"+ 标签" forState:UIControlStateNormal];
-        [_addTagButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
-        _addTagButton.titleLabel.font = [UIFont systemFontOfSize:14];
-        _addTagButton.layer.cornerRadius = 15;
-        _addTagButton.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        [_addTagButton setTitleColor:[SLColorManager recorderTagTextColor] forState:UIControlStateNormal];
+        _addTagButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        _addTagButton.backgroundColor = [SLColorManager recorderTagBgColor];
+        _addTagButton.layer.cornerRadius = TAG_DEFAULT_HEIGHT / 2;
+        _addTagButton.layer.borderColor = [SLColorManager recorderTagBorderColor].CGColor;
         
         // 创建虚线边框
         CAShapeLayer *borderLayer = [CAShapeLayer layer];
-        borderLayer.strokeColor = [UIColor lightGrayColor].CGColor;
+        borderLayer.strokeColor = [SLColorManager recorderTagBorderColor].CGColor;
         borderLayer.lineDashPattern = @[@4, @2];
         borderLayer.lineWidth = 1.0;
         borderLayer.fillColor = [UIColor clearColor].CGColor;
         
         // 设置路径 - 宽度先设置一个默认值，后续会根据文本动态调整
-        CGRect borderRect = CGRectMake(0, 0, 80, 30);
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:15];
+        CGRect borderRect = CGRectMake(0, 0, 80, TAG_DEFAULT_HEIGHT);
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:borderRect cornerRadius:TAG_DEFAULT_HEIGHT/2];
         borderLayer.path = path.CGPath;
         borderLayer.name = @"dashedBorder"; // 添加名称以便后续更新
         
@@ -946,12 +946,12 @@
 - (UITextField *)tagInputField {
     if (!_tagInputField) {
         _tagInputField = [[UITextField alloc] init];
-        _tagInputField.font = [UIFont systemFontOfSize:14];
-        _tagInputField.textColor = [SLColorManager cellTitleColor];
+        _tagInputField.font = [UIFont systemFontOfSize:12];
+        _tagInputField.textColor = [SLColorManager recorderTagTextColor];
         _tagInputField.backgroundColor = UIColor.clearColor;
         _tagInputField.returnKeyType = UIReturnKeyDone;
         _tagInputField.delegate = self;
-        _tagInputField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 30)];
+        _tagInputField.leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, TAG_DEFAULT_HEIGHT)];
         _tagInputField.leftViewMode = UITextFieldViewModeAlways;
     }
     return _tagInputField;

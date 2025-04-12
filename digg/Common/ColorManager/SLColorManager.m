@@ -132,4 +132,34 @@
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
++ (UIColor *)recorderTextColor {
+    UIColor *lightColor = Color16(0x313131);
+    UIColor *darkColor = Color16A(0xFFFFFF, 0.8);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)recorderTextPlaceholderColor {
+    UIColor *lightColor = Color16(0xbfbfbf);
+    UIColor *darkColor = Color16(0x535353);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)recorderTagBgColor {
+    UIColor *lightColor = Color16(0xF4F4F4);
+    UIColor *darkColor = Color16(0x454545);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)recorderTagTextColor {
+    UIColor *lightColor = Color16(0x363636);
+    UIColor *darkColor = Color16(0xeeeeee);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)recorderTagBorderColor {
+    UIColor *lightColor = Color16A(0x000000, 0.26);
+    UIColor *darkColor = Color16A(0xffffff, 0.26);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
 @end
