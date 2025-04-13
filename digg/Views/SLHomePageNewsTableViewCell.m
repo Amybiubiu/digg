@@ -59,7 +59,7 @@
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy{
     self.entity = entiy;
     self.titleLabel.text = entiy.title;
-    CGFloat lineSpacing = 6;
+    CGFloat lineSpacing = 4;
     
     NSString *contentStr = [entiy.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
@@ -73,10 +73,21 @@
     } else {
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:@"" attributes:attributes];
     }
-
-    [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.likeCnt] forState:UIControlStateNormal];
-    [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.dislikeCnt] forState:UIControlStateNormal];
-    [self.messageBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.commentsCnt] forState:UIControlStateNormal];
+    if (entiy.likeCnt > 0) {
+        [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.likeCnt] forState:UIControlStateNormal];
+    } else {
+        [self.likeBtn setTitle:@"" forState:UIControlStateNormal];
+    }
+    if (entiy.dislikeCnt > 0) {
+        [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.dislikeCnt] forState:UIControlStateNormal];
+    } else {
+        [self.dislikeBtn setTitle:@"" forState:UIControlStateNormal];
+    }
+    if (entiy.commentsCnt > 0) {
+        [self.messageBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.commentsCnt] forState:UIControlStateNormal];
+    } else {
+        [self.messageBtn setTitle:@"" forState:UIControlStateNormal];
+    }
 
     if (!self.isSelected) {
         //重置
@@ -138,7 +149,7 @@
 
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(8);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(10);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     [self.likeBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -201,7 +212,11 @@
             self.likeClick(self.entity);
         }
         [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.likeCnt + 1] forState:UIControlStateNormal];
-        [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.dislikeCnt] forState:UIControlStateNormal];
+        if (self.entity.dislikeCnt > 0) {
+            [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.dislikeCnt] forState:UIControlStateNormal];
+        } else {
+            [self.dislikeBtn setTitle:@"" forState:UIControlStateNormal];
+        }
         
         self.likeBtn.selected = YES;
         self.dislikeBtn.selected = NO;
@@ -210,7 +225,11 @@
             self.cancelLikeClick(self.entity);
         }
         if (self.likeBtn.selected) {
-            [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.likeCnt] forState:UIControlStateNormal];
+            if (self.entity.likeCnt > 0) {
+                [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.likeCnt] forState:UIControlStateNormal];
+            } else {
+                [self.likeBtn setTitle:@"" forState:UIControlStateNormal];
+            }
         }
         self.likeBtn.selected = NO;
     }
@@ -223,8 +242,11 @@
         if (self.dislikeClick) {
             self.dislikeClick(self.entity);
         }
-        
-        [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.likeCnt] forState:UIControlStateNormal];
+        if (self.entity.likeCnt > 0) {
+            [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.likeCnt] forState:UIControlStateNormal];
+        } else {
+            [self.likeBtn setTitle:@"" forState:UIControlStateNormal];
+        }
         [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.dislikeCnt+1] forState:UIControlStateNormal];
         self.likeBtn.selected = NO;
         self.dislikeBtn.selected = YES;
@@ -233,7 +255,11 @@
             self.cancelDisLikeClick(self.entity);
         }
         if (self.dislikeBtn.selected) {
-            [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.dislikeCnt] forState:UIControlStateNormal];
+            if (self.entity.dislikeCnt > 0) {
+                [self.dislikeBtn setTitle:[NSString stringWithFormat:@"%ld",self.entity.dislikeCnt] forState:UIControlStateNormal];
+            } else {
+                [self.dislikeBtn setTitle:@"" forState:UIControlStateNormal];
+            }
         }
         self.dislikeBtn.selected = NO;
     }
@@ -279,7 +305,7 @@
         _likeBtn = [[CaocaoButton alloc] init];
         _likeBtn.imageButtonType = CaocaoRightImageButton;
         _likeBtn.margin = 4;
-        [_likeBtn setTitle:@"--" forState:UIControlStateNormal];
+        [_likeBtn setTitle:@"" forState:UIControlStateNormal];
         _likeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [_likeBtn setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
         [_likeBtn setImage:[UIImage imageNamed:@"agree"] forState:UIControlStateNormal];
@@ -295,7 +321,7 @@
         _dislikeBtn = [[CaocaoButton alloc] init];
         _dislikeBtn.margin = 4;
         _dislikeBtn.imageButtonType = CaocaoRightImageButton;
-        [_dislikeBtn setTitle:@"--" forState:UIControlStateNormal];
+        [_dislikeBtn setTitle:@"" forState:UIControlStateNormal];
         _dislikeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [_dislikeBtn setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
         [_dislikeBtn setImage:[UIImage imageNamed:@"disagree"]forState:UIControlStateNormal];
@@ -311,7 +337,7 @@
         _messageBtn = [[CaocaoButton alloc] init];
         _messageBtn.margin = 4;
         _messageBtn.imageButtonType = CaocaoRightImageButton;
-        [_messageBtn setTitle:@"--" forState:UIControlStateNormal];
+        [_messageBtn setTitle:@"" forState:UIControlStateNormal];
         _messageBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [_messageBtn setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
         [_messageBtn setImage:[UIImage imageNamed:@"message"] forState:UIControlStateNormal];
@@ -335,7 +361,7 @@
     if (!_dot1Label) {
         _dot1Label = [[UILabel alloc] init];
         _dot1Label.text = @"·";
-        _dot1Label.textColor = Color16(0xA0A0A0);
+        _dot1Label.textColor = [SLColorManager categorySelectedTextColor];
         _dot1Label.font = [UIFont systemFontOfSize:12];
     }
     return _dot1Label;
@@ -345,7 +371,7 @@
     if (!_dot2Label) {
         _dot2Label = [[UILabel alloc] init];
         _dot2Label.text = @"·";
-        _dot2Label.textColor = Color16(0xA0A0A0);
+        _dot2Label.textColor = [SLColorManager categorySelectedTextColor];
         _dot2Label.font = [UIFont systemFontOfSize:12];
     }
     return _dot2Label;
@@ -355,7 +381,7 @@
     if (!_dot3Label) {
         _dot3Label = [[UILabel alloc] init];
         _dot3Label.text = @"·";
-        _dot3Label.textColor = Color16(0xA0A0A0);
+        _dot3Label.textColor = [SLColorManager categorySelectedTextColor];
         _dot3Label.font = [UIFont systemFontOfSize:12];
     }
     return _dot3Label;
