@@ -732,19 +732,21 @@
     self.tagInputField.hidden = NO;
     [self.tagContainerView addSubview:self.tagInputField];
     
+    // 确保布局已更新
+    [self.tagContainerView layoutIfNeeded];
     // 获取添加按钮的位置
     CGFloat buttonX = self.addTagButton.frame.origin.x;
     CGFloat buttonY = self.addTagButton.frame.origin.y;
     
     // 设置输入框位置 - 从添加按钮的位置开始，延伸到屏幕右侧
     CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
-    CGFloat rightMargin = 52; // 左右边距总和(16+16+20)
+    CGFloat rightMargin = 43;
     CGFloat inputWidth = screenWidth - buttonX - rightMargin; // 使用全部可用宽度
     
     [self.tagInputField mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagContainerView).offset(buttonX);
         make.top.equalTo(self.tagContainerView).offset(buttonY);
-        make.height.mas_equalTo(30);
+        make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
         make.width.mas_equalTo(inputWidth);
     }];
     
