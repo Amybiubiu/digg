@@ -53,10 +53,11 @@
 
 - (void)configureTabBarAppearance:(UITabBar *)tabBar {
     UITabBarAppearance *appearance = [[UITabBarAppearance alloc] init];
-    
+
+    appearance.backgroundColor = [SLColorManager tabbarBackgroundColor];
+
     UIColor *normalColor = [SLColorManager tabbarNormalTextColor];
     UIColor *selectedColor = [SLColorManager tabbarSelectedTextColor];
-    
     [appearance setStackedLayoutAppearance:[self itemAppearanceWithNormalColor:normalColor selectedColor:selectedColor]];
     
     tabBar.standardAppearance = appearance;
