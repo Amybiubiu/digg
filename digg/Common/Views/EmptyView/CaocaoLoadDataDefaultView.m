@@ -11,6 +11,7 @@
 #import "SLGeneralMacro.h"
 #import "UIImage+CommonKit.h"
 #import "NSString+UXing.h"
+#import "SLColorManager.h"
 
 #define ANIMA_VIEW_WIDTH        44.f
 #define ANIMA_VIEW_TOP          200.f
@@ -40,7 +41,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor whiteColor];
+        self.backgroundColor = [UIColor clearColor];
         self.largeMode = NO;
     }
     return self;
@@ -57,7 +58,7 @@
     if (!_textLabel) {
         _textLabel = [[UILabel alloc] init];
         _textLabel.textAlignment = NSTextAlignmentCenter;
-        _textLabel.textColor = Color16(0x696970);
+        _textLabel.textColor = [SLColorManager cellTitleColor];
         _textLabel.numberOfLines = 0;
     }
     return _textLabel;
@@ -67,7 +68,7 @@
     if (!_actionButton) {
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _actionButton.backgroundColor = [UIColor whiteColor];
-        [_actionButton setTitleColor:Color16(0x43434A) forState:UIControlStateNormal];
+        [_actionButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
         [_actionButton addTarget:self action:@selector(actionTouchUpInsideHandler:) forControlEvents:UIControlEventTouchUpInside];
         _actionButton.layer.cornerRadius = 8.f;
     }
@@ -79,7 +80,7 @@
     if (!_otherButton) {
         _otherButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _otherButton.backgroundColor = [UIColor whiteColor];
-        [_otherButton setTitleColor:Color16(0x43434A) forState:UIControlStateNormal];
+        [_otherButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
         [_otherButton addTarget:self action:@selector(otherTouchUpInsideHandler:) forControlEvents:UIControlEventTouchUpInside];
         _otherButton.layer.cornerRadius = 8.f;
         _otherButton.hidden = YES;
@@ -89,7 +90,7 @@
 
 - (UIImage *)backgroundImg {
     if (!_backgroundImg) {
-        _backgroundImg = [[UIImage imageWithColor:Color16(0xF7F7FA) size:CGSizeMake(ACTION_BUTTON_WIDTH, ACTION_BUTTON_LARGE_HEIGHT)] imageWithCornerRadius:8.f];
+        _backgroundImg = [[UIImage imageWithColor:[SLColorManager tagBackgroundTextColor] size:CGSizeMake(ACTION_BUTTON_WIDTH, ACTION_BUTTON_LARGE_HEIGHT)] imageWithCornerRadius:8.f];
     }
     return _backgroundImg;
 }
@@ -163,14 +164,14 @@
 - (void)resetActionButtonState {
     if (!self.largeMode) {
         //非大字体模式
-        self.actionButton.layer.borderColor = Color16(0xAAAAB3).CGColor;
+        self.actionButton.layer.borderColor = [SLColorManager cellDivideLineColor].CGColor;
         self.actionButton.layer.borderWidth = 1;
         self.actionButton.titleLabel.font = [UIFont systemFontOfSize:14];
         self.actionButton.frame = CGRectMake((self.width - ACTION_BUTTON_WIDTH) / 2.f, self.textLabel.bottom + ACTION_BUTTON_MIDDLE_MARGIN, ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT);
         return;
     };
     self.actionButton.titleLabel.font = [UIFont systemFontOfSize:20];
-    self.actionButton.layer.shadowColor = Color16(0x45454D).CGColor;
+    self.actionButton.layer.shadowColor = [SLColorManager cellDivideLineColor].CGColor;
     self.actionButton.layer.shadowOpacity = .2f;
     self.actionButton.layer.shadowOffset = CGSizeMake(0.f,2.f);
     self.actionButton.layer.shadowRadius = 12.f;
@@ -181,14 +182,14 @@
 - (void)resetOtherButtonState {
     if (!self.largeMode) {
         //非大字体模式
-        self.otherButton.layer.borderColor = Color16(0xAAAAB3).CGColor;
+        self.otherButton.layer.borderColor = [SLColorManager cellDivideLineColor].CGColor;
         self.otherButton.layer.borderWidth = 1;
         self.otherButton.titleLabel.font = [UIFont systemFontOfSize:14];
         self.otherButton.frame = CGRectMake((self.width - ACTION_BUTTON_WIDTH) / 2.f, self.actionButton.bottom + ACTION_BUTTON_MIDDLE_MARGIN, ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT);
         return;
     };
     self.otherButton.titleLabel.font = [UIFont systemFontOfSize:20];
-    self.otherButton.layer.shadowColor = Color16(0x45454D).CGColor;
+    self.otherButton.layer.shadowColor = [SLColorManager cellDivideLineColor].CGColor;
     self.otherButton.layer.shadowOpacity = .2f;
     self.otherButton.layer.shadowOffset = CGSizeMake(0.f,2.f);
     self.otherButton.layer.shadowRadius = 12.f;

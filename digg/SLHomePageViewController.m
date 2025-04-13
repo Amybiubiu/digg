@@ -17,7 +17,6 @@
 
 @interface SLHomePageViewController ()<JXCategoryViewDelegate,JXCategoryListContainerViewDelegate>
 @property (nonatomic, strong) NSArray *titles;
-@property (nonatomic, strong) UIButton *searchBtn;
 @property (nonatomic, strong) JXCategoryNumberView *categoryView;
 @property (nonatomic, strong) JXCategoryListContainerView *listContainerView;
 @property (nonatomic, assign) BOOL isNeedIndicatorPositionChangeItem;
@@ -35,14 +34,13 @@
     self.navigationController.navigationBar.hidden = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self.view addSubview:self.categoryView];
-    [self.view addSubview:self.searchBtn];
     [self.view addSubview:self.listContainerView];
     self.titles = @[@"今天", @"发现", @"为你"];
 
     CGFloat categoryViewHeight = 44;
+    CGFloat categoryViewSpacing = 8;
     self.categoryView.frame = CGRectMake(0, STATUSBAR_HEIGHT, self.view.bounds.size.width-categoryViewHeight, categoryViewHeight);
-    self.searchBtn.frame = CGRectMake(self.view.bounds.size.width - 24 - 16, STATUSBAR_HEIGHT+9, 24, 24);
-    self.listContainerView.frame = CGRectMake(0, categoryViewHeight+STATUSBAR_HEIGHT, self.view.bounds.size.width, self.view.bounds.size.height-(categoryViewHeight+STATUSBAR_HEIGHT)-self.tabBarController.tabBar.frame.size.height);
+    self.listContainerView.frame = CGRectMake(0, categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing, self.view.bounds.size.width, self.view.bounds.size.height-(categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing)-self.tabBarController.tabBar.frame.size.height);
     self.myCategoryView.titles = self.titles;
     self.myCategoryView.counts = @[@0, @0, @0];
     self.myCategoryView.numberLabelOffset = CGPointMake(-2, 5);
@@ -69,13 +67,6 @@
             [self.myCategoryView reloadDataWithoutListContainer];
         }
     }];
-}
-
-- (void)searchBtnAction:(id)sender{
-    SLWebViewController *web = [[SLWebViewController alloc] init];
-    [web startLoadRequestWithUrl:@"http://39.106.147.0/post/31516"];
-    web.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:web animated:YES];
 }
 
 - (JXCategoryNumberView *)myCategoryView {
@@ -178,17 +169,9 @@
 - (JXCategoryListContainerView *)listContainerView {
     if (!_listContainerView) {
         _listContainerView = [[JXCategoryListContainerView alloc] initWithType:JXCategoryListContainerType_ScrollView delegate:self];
+        _listContainerView.backgroundColor = [SLColorManager primaryBackgroundColor];
     }
     return _listContainerView;
-}
-
-- (UIButton *)searchBtn{
-    if (!_searchBtn) {
-        _searchBtn = [[UIButton alloc] init];
-        [_searchBtn setImage:[UIImage imageNamed:@"notice"] forState:UIControlStateNormal];
-        [_searchBtn addTarget:self action:@selector(searchBtnAction:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _searchBtn;
 }
 
 - (SLHomePageViewModel *)viewModel{
