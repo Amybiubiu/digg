@@ -37,7 +37,7 @@
     [self.view addSubview:self.listContainerView];
     self.titles = @[@"今天", @"发现", @"为你"];
 
-    CGFloat categoryViewHeight = 44;
+    CGFloat categoryViewHeight = 30;
     CGFloat categoryViewSpacing = 8;
     self.categoryView.frame = CGRectMake(0, STATUSBAR_HEIGHT, self.view.bounds.size.width-categoryViewHeight, categoryViewHeight);
     self.listContainerView.frame = CGRectMake(0, categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing, self.view.bounds.size.width, self.view.bounds.size.height-(categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing)-self.tabBarController.tabBar.frame.size.height);
@@ -152,7 +152,7 @@
         _categoryView.delegate = self;
         _categoryView.titleColorGradientEnabled = YES;
         _categoryView.titleLabelZoomEnabled = YES;
-        _categoryView.titleFont = [UIFont boldSystemFontOfSize:18];
+        _categoryView.titleFont = [UIFont boldSystemFontOfSize:16];
         _categoryView.titleLabelZoomScale = 1.125;
         _categoryView.titleSelectedColor = [SLColorManager categorySelectedTextColor];
         _categoryView.titleColor = [SLColorManager categoryNormalTextColor];
