@@ -61,7 +61,7 @@
     self.titleLabel.text = entiy.title;
     CGFloat lineSpacing = 6;
     
-    NSString *contentStr = entiy.content;
+    NSString *contentStr = [entiy.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.lineSpacing = lineSpacing;
     NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
