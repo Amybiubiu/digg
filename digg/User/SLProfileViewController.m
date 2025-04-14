@@ -232,7 +232,7 @@
 }
 
 - (void)showMenu {
-    KxMenu.titleFont = [UIFont systemFontOfSize:18];
+    KxMenu.titleFont = [UIFont pingFangRegularWithSize:18];
     [KxMenu showMenuInView:self.view
                   fromRect:_moreButton.frame
                  menuItems:@[
@@ -590,7 +590,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont boldSystemFontOfSize:16.0f],
+                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     
@@ -639,7 +639,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"";
         _nameLabel.textColor = UIColor.whiteColor;
-        _nameLabel.font = [UIFont boldSystemFontOfSize:18];
+        _nameLabel.font = [UIFont pingFangSemiboldWithSize:18];
         _nameLabel.alpha = 0;
     }
     return _nameLabel;
@@ -650,7 +650,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"";
         _briefLabel.textColor = UIColor.whiteColor;
-        _briefLabel.font = [UIFont systemFontOfSize:12];
+        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
         _briefLabel.alpha = 0;
     }
     return _briefLabel;

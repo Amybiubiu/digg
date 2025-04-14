@@ -236,7 +236,7 @@
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.text = @"";
         _titleLabel.textColor = UIColor.blackColor;
-        _titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        _titleLabel.font = [UIFont pingFangSemiboldWithSize:20];
     }
     return _titleLabel;
 }
@@ -246,7 +246,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"";
         _briefLabel.textColor = Color16(0x999999);
-        _briefLabel.font = [UIFont systemFontOfSize:12];
+        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
         _briefLabel.numberOfLines = 2;
     }
     return _briefLabel;
@@ -257,7 +257,7 @@
         _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_moreButton setTitle:@"更多" forState:UIControlStateNormal];
         [_moreButton setTitleColor:Color16(0x666666) forState:UIControlStateNormal];
-        _moreButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        _moreButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
         [_moreButton addTarget:self action:@selector(moreBrief) forControlEvents:UIControlEventTouchUpInside];
     }
     return _moreButton;
@@ -289,7 +289,7 @@
         _categoryView.delegate = self;
         _categoryView.titleColorGradientEnabled = YES;
         _categoryView.titleLabelZoomEnabled = YES;
-        _categoryView.titleFont = [UIFont boldSystemFontOfSize:18];
+        _categoryView.titleFont = [UIFont pingFangSemiboldWithSize:18];
         _categoryView.titleLabelZoomScale = 1.125;
         _categoryView.titleSelectedColor = [UIColor blackColor];
         _categoryView.titleColor = Color16(0x7B7B7B);

@@ -102,7 +102,7 @@
     [self addSubview:self.animationView];
     [self addSubview:self.textLabel];
     self.textLabel.text = text;
-    self.textLabel.font = [UIFont systemFontOfSize:13];
+    self.textLabel.font = [UIFont pingFangRegularWithSize:13];
     if (mode == CaocaoDataModeLoading) {
         [self.actionButton removeFromSuperview];
         [self.otherButton removeFromSuperview];
@@ -166,11 +166,11 @@
         //非大字体模式
         self.actionButton.layer.borderColor = [SLColorManager cellDivideLineColor].CGColor;
         self.actionButton.layer.borderWidth = 1;
-        self.actionButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        self.actionButton.titleLabel.font = [UIFont pingFangRegularWithSize:14];
         self.actionButton.frame = CGRectMake((self.width - ACTION_BUTTON_WIDTH) / 2.f, self.textLabel.bottom + ACTION_BUTTON_MIDDLE_MARGIN, ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT);
         return;
     };
-    self.actionButton.titleLabel.font = [UIFont systemFontOfSize:20];
+    self.actionButton.titleLabel.font = [UIFont pingFangRegularWithSize:20];
     self.actionButton.layer.shadowColor = [SLColorManager cellDivideLineColor].CGColor;
     self.actionButton.layer.shadowOpacity = .2f;
     self.actionButton.layer.shadowOffset = CGSizeMake(0.f,2.f);
@@ -184,11 +184,11 @@
         //非大字体模式
         self.otherButton.layer.borderColor = [SLColorManager cellDivideLineColor].CGColor;
         self.otherButton.layer.borderWidth = 1;
-        self.otherButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        self.otherButton.titleLabel.font = [UIFont pingFangRegularWithSize:14];
         self.otherButton.frame = CGRectMake((self.width - ACTION_BUTTON_WIDTH) / 2.f, self.actionButton.bottom + ACTION_BUTTON_MIDDLE_MARGIN, ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT);
         return;
     };
-    self.otherButton.titleLabel.font = [UIFont systemFontOfSize:20];
+    self.otherButton.titleLabel.font = [UIFont pingFangRegularWithSize:20];
     self.otherButton.layer.shadowColor = [SLColorManager cellDivideLineColor].CGColor;
     self.otherButton.layer.shadowOpacity = .2f;
     self.otherButton.layer.shadowOffset = CGSizeMake(0.f,2.f);

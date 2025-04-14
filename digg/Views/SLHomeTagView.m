@@ -47,7 +47,7 @@
         _tagLabel = [[UILabel alloc] init];
         _tagLabel.textColor = [SLColorManager tagTextColor];
         _tagLabel.textAlignment = NSTextAlignmentCenter;
-        _tagLabel.font = [UIFont boldSystemFontOfSize:12];
+        _tagLabel.font = [UIFont pingFangSemiboldWithSize:12];
     }
     return _tagLabel;
 }

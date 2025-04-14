@@ -21,7 +21,7 @@
     if (!_noMoreDataLabel) {
         _noMoreDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, 17)];
         _noMoreDataLabel.textColor = [UIColor colorWithRed:155.0 / 255 green:155.0 / 255 blue:165.0 / 255 alpha:1];
-        _noMoreDataLabel.font = [UIFont systemFontOfSize:12];
+        _noMoreDataLabel.font = [UIFont pingFangRegularWithSize:12];
         _noMoreDataLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _noMoreDataLabel;

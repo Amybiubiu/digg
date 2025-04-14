@@ -73,7 +73,7 @@
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:[UIFont systemFontOfSize:14] forKey:NSFontAttributeName];
+        [attributes setObject:[UIFont pingFangRegularWithSize:14] forKey:NSFontAttributeName];
         [attributes setObject:[SLColorManager cellContentColor] forKey:NSForegroundColorAttributeName];
         [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
@@ -241,7 +241,7 @@
 - (UILabel *)nickNameLabel {
     if(!_nickNameLabel) {
         _nickNameLabel = [[UILabel alloc] init];
-        _nickNameLabel.font = [UIFont systemFontOfSize:14];
+        _nickNameLabel.font = [UIFont pingFangRegularWithSize:14];
         _nickNameLabel.textColor = [SLColorManager cellNickNameColor];
     }
     return _nickNameLabel;
@@ -250,7 +250,7 @@
 - (UILabel *)timeLabel {
     if(!_timeLabel) {
         _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = [UIFont systemFontOfSize:12];
+        _timeLabel.font = [UIFont pingFangRegularWithSize:12];
         _timeLabel.textColor = Color16(0xB6B6B6);
         [_timeLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
         _timeLabel.textAlignment = NSTextAlignmentLeft;
@@ -261,7 +261,7 @@
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont boldSystemFontOfSize:16];
+        _titleLabel.font = [UIFont pingFangSemiboldWithSize:16];
         _titleLabel.textColor = [SLColorManager cellTitleColor];
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     }
@@ -271,7 +271,7 @@
 - (UILabel *)contentLabel {
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont systemFontOfSize:14];
+        _contentLabel.font = [UIFont pingFangRegularWithSize:14];
         _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }

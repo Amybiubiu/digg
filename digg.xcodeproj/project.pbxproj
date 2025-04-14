@@ -314,6 +314,7 @@
 		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
 		345C124B2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCellV2.h; sourceTree = "<group>"; };
 		345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV2.m; sourceTree = "<group>"; };
+		345C124E2DACB334005FCCDB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		346485FC2D4284960084A3BF /* SLConcernedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewController.h; sourceTree = "<group>"; };
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
@@ -1328,6 +1329,7 @@
 				E7769E6A2CA2E63B00AE84F4 /* Info.plist */,
 				E7769E6B2CA2E63B00AE84F4 /* main.m */,
 				E7769EA72CB1A10900AE84F4 /* Main.storyboard */,
+				345C124E2DACB334005FCCDB /* PrefixHeader.pch */,
 			);
 			path = digg;
 			sourceTree = "<group>";
@@ -2001,6 +2003,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";
@@ -2045,6 +2049,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";

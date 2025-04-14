@@ -204,7 +204,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (CGSize)sizeForFont:(UIFont *)font size:(CGSize)size mode:(NSLineBreakMode)lineBreakMode {
     CGSize result;
-    if (!font) font = [UIFont systemFontOfSize:12];
+    if (!font) font = [UIFont pingFangRegularWithSize:12];
     if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
         NSMutableDictionary *attr = [NSMutableDictionary new];
         attr[NSFontAttributeName] = font;
