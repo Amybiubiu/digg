@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 /// 工具栏视图
 open class RZInputAccessoryView: UIView {
     open var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: .init())

@@ -60,6 +60,7 @@
     self.entity = entiy;
     self.titleLabel.text = entiy.title;
     CGFloat lineSpacing = 4;
+    CGFloat offset = 16;
     
     NSString *contentStr = [entiy.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
@@ -70,8 +71,20 @@
     [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
     if (contentStr != nil) {
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
+        [self.likeBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(34);
+            make.top.equalTo(self.contentLabel.mas_bottom).offset(9);
+            make.left.equalTo(self.contentView).offset(offset);
+            make.bottom.equalTo(self.lineView).offset(-7);
+        }];
     } else {
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:@"" attributes:attributes];
+        [self.likeBtn mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(34);
+            make.top.equalTo(self.titleLabel.mas_bottom).offset(10);
+            make.left.equalTo(self.contentView).offset(offset);
+            make.bottom.equalTo(self.lineView).offset(-7);
+        }];
     }
     if (entiy.likeCnt > 0) {
         [self.likeBtn setTitle:[NSString stringWithFormat:@"%ld",entiy.likeCnt] forState:UIControlStateNormal];
@@ -94,7 +107,6 @@
         self.likeBtn.selected = false;
         self.dislikeBtn.selected = false;
     }
-    CGFloat offset = 16;
 
     if (stringIsEmpty(entiy.label)) {
         self.tagView.hidden = YES;

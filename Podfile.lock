@@ -22,8 +22,6 @@ PODS:
   - MJRefresh (3.7.5)
   - MPITextKit (0.2.4)
   - pop (1.0.12)
-  - QuicklySwift (1.0.0):
-    - SnapKit
   - RZColorfulSwift (0.4.1)
   - SDWebImage (5.18.2):
     - SDWebImage/Core (= 5.18.2)
@@ -47,9 +45,9 @@ DEPENDENCIES:
   - MJRefresh
   - MPITextKit
   - pop
-  - QuicklySwift (from `https://github.com/rztime/QuicklySwift`)
   - RZColorfulSwift
   - SDWebImage
+  - SnapKit
   - SVProgressHUD
   - WebViewJavascriptBridge
   - YYImage
@@ -76,15 +74,6 @@ SPEC REPOS:
     - YYModel
     - YYText
 
-EXTERNAL SOURCES:
-  QuicklySwift:
-    :git: https://github.com/rztime/QuicklySwift
-
-CHECKOUT OPTIONS:
-  QuicklySwift:
-    :commit: 86525ab65df775c0c375935305bcde38aa7739c0
-    :git: https://github.com/rztime/QuicklySwift
-
 SPEC CHECKSUMS:
   AFNetworking: 3bd23d814e976cd148d7d44c3ab78017b744cd58
   DZNEmptyDataSet: 9525833b9e68ac21c30253e1d3d7076cc828eaa7
@@ -95,7 +84,6 @@ SPEC CHECKSUMS:
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
   MPITextKit: e9b17481ce626c6298be148c4ccea2ee872bc9a5
   pop: d582054913807fd11fd50bfe6a539d91c7e1a55a
-  QuicklySwift: c9fd049ad6d0267e9aff0ccc886ab2f786b92595
   RZColorfulSwift: 72efdcef12d2e9791ef9b0823e8038b614551289
   SDWebImage: c0de394d7cf7f9838aed1fd6bb6037654a4572e4
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
@@ -105,6 +93,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 778a20ccf30e22bd8a933a3957575525a699cb09
+PODFILE CHECKSUM: 3f1d0fbc97a502d7d8b53717f1ed46b64f349e52
 
 COCOAPODS: 1.16.2

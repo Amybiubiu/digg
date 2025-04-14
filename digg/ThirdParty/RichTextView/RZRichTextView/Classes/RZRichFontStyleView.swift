@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 import RZColorfulSwift
 /// 字体样式view
 open class RZRichFontStyleView: UIView {

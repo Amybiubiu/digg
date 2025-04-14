@@ -11,6 +11,57 @@
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		344EFA042D2E5111001E5FAF /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 344EFA022D2E5111001E5FAF /* KxMenu.m */; };
 		345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C0AA12DAA287B005FCCDB /* UIView+Associated.m */; };
+		345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */; };
+		345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E32DABD7DF005FCCDB /* SLInteractionBar.m */; };
+		345C11E82DABD7DF005FCCDB /* SLNumberIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E52DABD7DF005FCCDB /* SLNumberIconView.m */; };
+		345C121B2DAC95AB005FCCDB /* QAlertViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11EA2DAC95AB005FCCDB /* QAlertViewController.swift */; };
+		345C121C2DAC95AB005FCCDB /* QTableViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F42DAC95AB005FCCDB /* QTableViewHelper.swift */; };
+		345C121D2DAC95AB005FCCDB /* QuicklyCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FB2DAC95AB005FCCDB /* QuicklyCollectionView.swift */; };
+		345C121E2DAC95AB005FCCDB /* QuicklyLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12052DAC95AB005FCCDB /* QuicklyLocationManager.swift */; };
+		345C121F2DAC95AB005FCCDB /* QuicklyConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FD2DAC95AB005FCCDB /* QuicklyConstant.swift */; };
+		345C12202DAC95AB005FCCDB /* QuicklyFileBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12002DAC95AB005FCCDB /* QuicklyFileBrowser.swift */; };
+		345C12212DAC95AB005FCCDB /* QuicklyPHAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120A2DAC95AB005FCCDB /* QuicklyPHAsset.swift */; };
+		345C12222DAC95AB005FCCDB /* QuicklyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12152DAC95AB005FCCDB /* QuicklyView.swift */; };
+		345C12232DAC95AB005FCCDB /* QuicklyHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12012DAC95AB005FCCDB /* QuicklyHelper.swift */; };
+		345C12242DAC95AB005FCCDB /* QDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11EC2DAC95AB005FCCDB /* QDatePicker.swift */; };
+		345C12252DAC95AB005FCCDB /* QPublish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F12DAC95AB005FCCDB /* QPublish.swift */; };
+		345C12262DAC95AB005FCCDB /* QGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11EE2DAC95AB005FCCDB /* QGestureRecognizer.swift */; };
+		345C12272DAC95AB005FCCDB /* QuicklyUIControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12142DAC95AB005FCCDB /* QuicklyUIControl.swift */; };
+		345C12282DAC95AB005FCCDB /* QuicklyNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12082DAC95AB005FCCDB /* QuicklyNumber.swift */; };
+		345C12292DAC95AB005FCCDB /* QuicklyScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120C2DAC95AB005FCCDB /* QuicklyScrollView.swift */; };
+		345C122A2DAC95AB005FCCDB /* QuicklyDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FE2DAC95AB005FCCDB /* QuicklyDate.swift */; };
+		345C122B2DAC95AB005FCCDB /* QuicklyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12122DAC95AB005FCCDB /* QuicklyTextView.swift */; };
+		345C122C2DAC95AB005FCCDB /* QuicklyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12172DAC95AB005FCCDB /* QuicklyViewController.swift */; };
+		345C122D2DAC95AB005FCCDB /* QuicklyImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12022DAC95AB005FCCDB /* QuicklyImage.swift */; };
+		345C122E2DAC95AB005FCCDB /* QuicklyAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F52DAC95AB005FCCDB /* QuicklyAlertController.swift */; };
+		345C122F2DAC95AB005FCCDB /* QGrayFloatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11EF2DAC95AB005FCCDB /* QGrayFloatManager.swift */; };
+		345C12302DAC95AB005FCCDB /* QuicklyAppFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F62DAC95AB005FCCDB /* QuicklyAppFrame.swift */; };
+		345C12312DAC95AB005FCCDB /* QuicklyObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12092DAC95AB005FCCDB /* QuicklyObject.swift */; };
+		345C12322DAC95AB005FCCDB /* QuicklyStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120D2DAC95AB005FCCDB /* QuicklyStackView.swift */; };
+		345C12332DAC95AB005FCCDB /* QuicklyCALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FA2DAC95AB005FCCDB /* QuicklyCALayer.swift */; };
+		345C12342DAC95AB005FCCDB /* QCollectionViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11EB2DAC95AB005FCCDB /* QCollectionViewHelper.swift */; };
+		345C12352DAC95AB005FCCDB /* QuicklyNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12062DAC95AB005FCCDB /* QuicklyNotification.swift */; };
+		345C12362DAC95AB005FCCDB /* QPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F02DAC95AB005FCCDB /* QPlayer.swift */; };
+		345C12372DAC95AB005FCCDB /* QuicklyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12042DAC95AB005FCCDB /* QuicklyLabel.swift */; };
+		345C12382DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */; };
+		345C12392DAC95AB005FCCDB /* QuicklyArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F72DAC95AB005FCCDB /* QuicklyArray.swift */; };
+		345C123A2DAC95AB005FCCDB /* QDispatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11ED2DAC95AB005FCCDB /* QDispatch.swift */; };
+		345C123B2DAC95AB005FCCDB /* QuicklyAuthorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F82DAC95AB005FCCDB /* QuicklyAuthorization.swift */; };
+		345C123C2DAC95AB005FCCDB /* QuicklyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F92DAC95AB005FCCDB /* QuicklyButton.swift */; };
+		345C123D2DAC95AB005FCCDB /* QuicklyString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120E2DAC95AB005FCCDB /* QuicklyString.swift */; };
+		345C123E2DAC95AB005FCCDB /* QSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F32DAC95AB005FCCDB /* QSwitch.swift */; };
+		345C123F2DAC95AB005FCCDB /* QuicklyTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12132DAC95AB005FCCDB /* QuicklyTimer.swift */; };
+		345C12402DAC95AB005FCCDB /* QActionSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E92DAC95AB005FCCDB /* QActionSheetController.swift */; };
+		345C12412DAC95AB005FCCDB /* QuicklyFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FF2DAC95AB005FCCDB /* QuicklyFile.swift */; };
+		345C12422DAC95AB005FCCDB /* QuicklyColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11FC2DAC95AB005FCCDB /* QuicklyColor.swift */; };
+		345C12432DAC95AB005FCCDB /* QuicklyPopmenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120B2DAC95AB005FCCDB /* QuicklyPopmenu.swift */; };
+		345C12442DAC95AB005FCCDB /* QuicklyNSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12072DAC95AB005FCCDB /* QuicklyNSAttributedString.swift */; };
+		345C12452DAC95AB005FCCDB /* QuicklyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12112DAC95AB005FCCDB /* QuicklyTextField.swift */; };
+		345C12462DAC95AB005FCCDB /* QuicklyImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12032DAC95AB005FCCDB /* QuicklyImageView.swift */; };
+		345C12472DAC95AB005FCCDB /* QuicklyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12102DAC95AB005FCCDB /* QuicklyTableView.swift */; };
+		345C12482DAC95AB005FCCDB /* QSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F22DAC95AB005FCCDB /* QSlider.swift */; };
+		345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120F2DAC95AB005FCCDB /* QuicklySwift.swift */; };
+		345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
@@ -207,6 +258,60 @@
 		344EFA022D2E5111001E5FAF /* KxMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KxMenu.m; sourceTree = "<group>"; };
 		345C0AA02DAA287B005FCCDB /* UIView+Associated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Associated.h"; sourceTree = "<group>"; };
 		345C0AA12DAA287B005FCCDB /* UIView+Associated.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Associated.m"; sourceTree = "<group>"; };
+		345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIFont+PingFang.h"; sourceTree = "<group>"; };
+		345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIFont+PingFang.m"; sourceTree = "<group>"; };
+		345C11E22DABD7DF005FCCDB /* SLInteractionBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLInteractionBar.h; sourceTree = "<group>"; };
+		345C11E32DABD7DF005FCCDB /* SLInteractionBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLInteractionBar.m; sourceTree = "<group>"; };
+		345C11E42DABD7DF005FCCDB /* SLNumberIconView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNumberIconView.h; sourceTree = "<group>"; };
+		345C11E52DABD7DF005FCCDB /* SLNumberIconView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNumberIconView.m; sourceTree = "<group>"; };
+		345C11E92DAC95AB005FCCDB /* QActionSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QActionSheetController.swift; sourceTree = "<group>"; };
+		345C11EA2DAC95AB005FCCDB /* QAlertViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QAlertViewController.swift; sourceTree = "<group>"; };
+		345C11EB2DAC95AB005FCCDB /* QCollectionViewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QCollectionViewHelper.swift; sourceTree = "<group>"; };
+		345C11EC2DAC95AB005FCCDB /* QDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QDatePicker.swift; sourceTree = "<group>"; };
+		345C11ED2DAC95AB005FCCDB /* QDispatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QDispatch.swift; sourceTree = "<group>"; };
+		345C11EE2DAC95AB005FCCDB /* QGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QGestureRecognizer.swift; sourceTree = "<group>"; };
+		345C11EF2DAC95AB005FCCDB /* QGrayFloatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QGrayFloatManager.swift; sourceTree = "<group>"; };
+		345C11F02DAC95AB005FCCDB /* QPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QPlayer.swift; sourceTree = "<group>"; };
+		345C11F12DAC95AB005FCCDB /* QPublish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QPublish.swift; sourceTree = "<group>"; };
+		345C11F22DAC95AB005FCCDB /* QSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSlider.swift; sourceTree = "<group>"; };
+		345C11F32DAC95AB005FCCDB /* QSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QSwitch.swift; sourceTree = "<group>"; };
+		345C11F42DAC95AB005FCCDB /* QTableViewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QTableViewHelper.swift; sourceTree = "<group>"; };
+		345C11F52DAC95AB005FCCDB /* QuicklyAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyAlertController.swift; sourceTree = "<group>"; };
+		345C11F62DAC95AB005FCCDB /* QuicklyAppFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyAppFrame.swift; sourceTree = "<group>"; };
+		345C11F72DAC95AB005FCCDB /* QuicklyArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyArray.swift; sourceTree = "<group>"; };
+		345C11F82DAC95AB005FCCDB /* QuicklyAuthorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyAuthorization.swift; sourceTree = "<group>"; };
+		345C11F92DAC95AB005FCCDB /* QuicklyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyButton.swift; sourceTree = "<group>"; };
+		345C11FA2DAC95AB005FCCDB /* QuicklyCALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyCALayer.swift; sourceTree = "<group>"; };
+		345C11FB2DAC95AB005FCCDB /* QuicklyCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyCollectionView.swift; sourceTree = "<group>"; };
+		345C11FC2DAC95AB005FCCDB /* QuicklyColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyColor.swift; sourceTree = "<group>"; };
+		345C11FD2DAC95AB005FCCDB /* QuicklyConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyConstant.swift; sourceTree = "<group>"; };
+		345C11FE2DAC95AB005FCCDB /* QuicklyDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyDate.swift; sourceTree = "<group>"; };
+		345C11FF2DAC95AB005FCCDB /* QuicklyFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyFile.swift; sourceTree = "<group>"; };
+		345C12002DAC95AB005FCCDB /* QuicklyFileBrowser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyFileBrowser.swift; sourceTree = "<group>"; };
+		345C12012DAC95AB005FCCDB /* QuicklyHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyHelper.swift; sourceTree = "<group>"; };
+		345C12022DAC95AB005FCCDB /* QuicklyImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyImage.swift; sourceTree = "<group>"; };
+		345C12032DAC95AB005FCCDB /* QuicklyImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyImageView.swift; sourceTree = "<group>"; };
+		345C12042DAC95AB005FCCDB /* QuicklyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyLabel.swift; sourceTree = "<group>"; };
+		345C12052DAC95AB005FCCDB /* QuicklyLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyLocationManager.swift; sourceTree = "<group>"; };
+		345C12062DAC95AB005FCCDB /* QuicklyNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyNotification.swift; sourceTree = "<group>"; };
+		345C12072DAC95AB005FCCDB /* QuicklyNSAttributedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyNSAttributedString.swift; sourceTree = "<group>"; };
+		345C12082DAC95AB005FCCDB /* QuicklyNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyNumber.swift; sourceTree = "<group>"; };
+		345C12092DAC95AB005FCCDB /* QuicklyObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyObject.swift; sourceTree = "<group>"; };
+		345C120A2DAC95AB005FCCDB /* QuicklyPHAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyPHAsset.swift; sourceTree = "<group>"; };
+		345C120B2DAC95AB005FCCDB /* QuicklyPopmenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyPopmenu.swift; sourceTree = "<group>"; };
+		345C120C2DAC95AB005FCCDB /* QuicklyScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyScrollView.swift; sourceTree = "<group>"; };
+		345C120D2DAC95AB005FCCDB /* QuicklyStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyStackView.swift; sourceTree = "<group>"; };
+		345C120E2DAC95AB005FCCDB /* QuicklyString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyString.swift; sourceTree = "<group>"; };
+		345C120F2DAC95AB005FCCDB /* QuicklySwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklySwift.swift; sourceTree = "<group>"; };
+		345C12102DAC95AB005FCCDB /* QuicklyTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyTableView.swift; sourceTree = "<group>"; };
+		345C12112DAC95AB005FCCDB /* QuicklyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyTextField.swift; sourceTree = "<group>"; };
+		345C12122DAC95AB005FCCDB /* QuicklyTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyTextView.swift; sourceTree = "<group>"; };
+		345C12132DAC95AB005FCCDB /* QuicklyTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyTimer.swift; sourceTree = "<group>"; };
+		345C12142DAC95AB005FCCDB /* QuicklyUIControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyUIControl.swift; sourceTree = "<group>"; };
+		345C12152DAC95AB005FCCDB /* QuicklyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyView.swift; sourceTree = "<group>"; };
+		345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewAnimation.swift; sourceTree = "<group>"; };
+		345C12172DAC95AB005FCCDB /* QuicklyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewController.swift; sourceTree = "<group>"; };
+		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
 		346485FC2D4284960084A3BF /* SLConcernedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewController.h; sourceTree = "<group>"; };
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
@@ -515,6 +620,80 @@
 			path = MenuPopup;
 			sourceTree = "<group>";
 		};
+		345C11E62DABD7DF005FCCDB /* ActionBar */ = {
+			isa = PBXGroup;
+			children = (
+				345C11E22DABD7DF005FCCDB /* SLInteractionBar.h */,
+				345C11E32DABD7DF005FCCDB /* SLInteractionBar.m */,
+				345C11E42DABD7DF005FCCDB /* SLNumberIconView.h */,
+				345C11E52DABD7DF005FCCDB /* SLNumberIconView.m */,
+			);
+			path = ActionBar;
+			sourceTree = "<group>";
+		};
+		345C12192DAC95AB005FCCDB /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				345C11E92DAC95AB005FCCDB /* QActionSheetController.swift */,
+				345C11EA2DAC95AB005FCCDB /* QAlertViewController.swift */,
+				345C11EB2DAC95AB005FCCDB /* QCollectionViewHelper.swift */,
+				345C11EC2DAC95AB005FCCDB /* QDatePicker.swift */,
+				345C11ED2DAC95AB005FCCDB /* QDispatch.swift */,
+				345C11EE2DAC95AB005FCCDB /* QGestureRecognizer.swift */,
+				345C11EF2DAC95AB005FCCDB /* QGrayFloatManager.swift */,
+				345C11F02DAC95AB005FCCDB /* QPlayer.swift */,
+				345C11F12DAC95AB005FCCDB /* QPublish.swift */,
+				345C11F22DAC95AB005FCCDB /* QSlider.swift */,
+				345C11F32DAC95AB005FCCDB /* QSwitch.swift */,
+				345C11F42DAC95AB005FCCDB /* QTableViewHelper.swift */,
+				345C11F52DAC95AB005FCCDB /* QuicklyAlertController.swift */,
+				345C11F62DAC95AB005FCCDB /* QuicklyAppFrame.swift */,
+				345C11F72DAC95AB005FCCDB /* QuicklyArray.swift */,
+				345C11F82DAC95AB005FCCDB /* QuicklyAuthorization.swift */,
+				345C11F92DAC95AB005FCCDB /* QuicklyButton.swift */,
+				345C11FA2DAC95AB005FCCDB /* QuicklyCALayer.swift */,
+				345C11FB2DAC95AB005FCCDB /* QuicklyCollectionView.swift */,
+				345C11FC2DAC95AB005FCCDB /* QuicklyColor.swift */,
+				345C11FD2DAC95AB005FCCDB /* QuicklyConstant.swift */,
+				345C11FE2DAC95AB005FCCDB /* QuicklyDate.swift */,
+				345C11FF2DAC95AB005FCCDB /* QuicklyFile.swift */,
+				345C12002DAC95AB005FCCDB /* QuicklyFileBrowser.swift */,
+				345C12012DAC95AB005FCCDB /* QuicklyHelper.swift */,
+				345C12022DAC95AB005FCCDB /* QuicklyImage.swift */,
+				345C12032DAC95AB005FCCDB /* QuicklyImageView.swift */,
+				345C12042DAC95AB005FCCDB /* QuicklyLabel.swift */,
+				345C12052DAC95AB005FCCDB /* QuicklyLocationManager.swift */,
+				345C12062DAC95AB005FCCDB /* QuicklyNotification.swift */,
+				345C12072DAC95AB005FCCDB /* QuicklyNSAttributedString.swift */,
+				345C12082DAC95AB005FCCDB /* QuicklyNumber.swift */,
+				345C12092DAC95AB005FCCDB /* QuicklyObject.swift */,
+				345C120A2DAC95AB005FCCDB /* QuicklyPHAsset.swift */,
+				345C120B2DAC95AB005FCCDB /* QuicklyPopmenu.swift */,
+				345C120C2DAC95AB005FCCDB /* QuicklyScrollView.swift */,
+				345C120D2DAC95AB005FCCDB /* QuicklyStackView.swift */,
+				345C120E2DAC95AB005FCCDB /* QuicklyString.swift */,
+				345C120F2DAC95AB005FCCDB /* QuicklySwift.swift */,
+				345C12102DAC95AB005FCCDB /* QuicklyTableView.swift */,
+				345C12112DAC95AB005FCCDB /* QuicklyTextField.swift */,
+				345C12122DAC95AB005FCCDB /* QuicklyTextView.swift */,
+				345C12132DAC95AB005FCCDB /* QuicklyTimer.swift */,
+				345C12142DAC95AB005FCCDB /* QuicklyUIControl.swift */,
+				345C12152DAC95AB005FCCDB /* QuicklyView.swift */,
+				345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */,
+				345C12172DAC95AB005FCCDB /* QuicklyViewController.swift */,
+				345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		345C121A2DAC95AB005FCCDB /* QuicklySwift */ = {
+			isa = PBXGroup;
+			children = (
+				345C12192DAC95AB005FCCDB /* Classes */,
+			);
+			path = QuicklySwift;
+			sourceTree = "<group>";
+		};
 		346485FB2D4283950084A3BF /* Concerned */ = {
 			isa = PBXGroup;
 			children = (
@@ -662,6 +841,7 @@
 		34D2E9AB2D393B1E0067CC05 /* RichTextView */ = {
 			isa = PBXGroup;
 			children = (
+				345C121A2DAC95AB005FCCDB /* QuicklySwift */,
 				34D2EBBF2D3942880067CC05 /* RZRichTextView */,
 				34D2EB982D3941DE0067CC05 /* TZImagePickerController */,
 			);
@@ -1045,6 +1225,8 @@
 		E76A45BD2CB8C090008B2746 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */,
+				345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */,
 				345C0AA02DAA287B005FCCDB /* UIView+Associated.h */,
 				345C0AA12DAA287B005FCCDB /* UIView+Associated.m */,
 				E76A45BA2CB8C08D008B2746 /* UIView+CommonKit.h */,
@@ -1187,6 +1369,7 @@
 		E7769E9E2CA4F9E800AE84F4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				345C11E62DABD7DF005FCCDB /* ActionBar */,
 				E7769E9F2CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.h */,
 				E7769EA02CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m */,
 				E7C1393A2CF33C8800C5053A /* SLHomeTagView.h */,
@@ -1379,12 +1562,8 @@
 			);
 			inputFileListPaths = (
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1468,6 +1647,8 @@
 				34D2EC582D3CB72D0067CC05 /* SkeletonType.swift in Sources */,
 				34D2EC592D3CB72D0067CC05 /* UIView+Transitions.swift in Sources */,
 				34D2EC5A2D3CB72D0067CC05 /* UIColor+Skeleton.swift in Sources */,
+				345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */,
+				345C11E82DABD7DF005FCCDB /* SLNumberIconView.m in Sources */,
 				34D2EC5B2D3CB72D0067CC05 /* UICollectionView+CollectionSkeleton.swift in Sources */,
 				34D2EC5C2D3CB72D0067CC05 /* UIView+SkeletonView.swift in Sources */,
 				34D2EC5D2D3CB72D0067CC05 /* SkeletonTextLineHeight.swift in Sources */,
@@ -1502,6 +1683,54 @@
 				34D2EC7A2D3CB72D0067CC05 /* UIView+Swizzling.swift in Sources */,
 				34D2EC7B2D3CB72D0067CC05 /* CALayer+Extensions.swift in Sources */,
 				34D2EC7C2D3CB72D0067CC05 /* SkeletonCollectionDelegate.swift in Sources */,
+				345C121B2DAC95AB005FCCDB /* QAlertViewController.swift in Sources */,
+				345C121C2DAC95AB005FCCDB /* QTableViewHelper.swift in Sources */,
+				345C121D2DAC95AB005FCCDB /* QuicklyCollectionView.swift in Sources */,
+				345C121E2DAC95AB005FCCDB /* QuicklyLocationManager.swift in Sources */,
+				345C121F2DAC95AB005FCCDB /* QuicklyConstant.swift in Sources */,
+				345C12202DAC95AB005FCCDB /* QuicklyFileBrowser.swift in Sources */,
+				345C12212DAC95AB005FCCDB /* QuicklyPHAsset.swift in Sources */,
+				345C12222DAC95AB005FCCDB /* QuicklyView.swift in Sources */,
+				345C12232DAC95AB005FCCDB /* QuicklyHelper.swift in Sources */,
+				345C12242DAC95AB005FCCDB /* QDatePicker.swift in Sources */,
+				345C12252DAC95AB005FCCDB /* QPublish.swift in Sources */,
+				345C12262DAC95AB005FCCDB /* QGestureRecognizer.swift in Sources */,
+				345C12272DAC95AB005FCCDB /* QuicklyUIControl.swift in Sources */,
+				345C12282DAC95AB005FCCDB /* QuicklyNumber.swift in Sources */,
+				345C12292DAC95AB005FCCDB /* QuicklyScrollView.swift in Sources */,
+				345C122A2DAC95AB005FCCDB /* QuicklyDate.swift in Sources */,
+				345C122B2DAC95AB005FCCDB /* QuicklyTextView.swift in Sources */,
+				345C122C2DAC95AB005FCCDB /* QuicklyViewController.swift in Sources */,
+				345C122D2DAC95AB005FCCDB /* QuicklyImage.swift in Sources */,
+				345C122E2DAC95AB005FCCDB /* QuicklyAlertController.swift in Sources */,
+				345C122F2DAC95AB005FCCDB /* QGrayFloatManager.swift in Sources */,
+				345C12302DAC95AB005FCCDB /* QuicklyAppFrame.swift in Sources */,
+				345C12312DAC95AB005FCCDB /* QuicklyObject.swift in Sources */,
+				345C12322DAC95AB005FCCDB /* QuicklyStackView.swift in Sources */,
+				345C12332DAC95AB005FCCDB /* QuicklyCALayer.swift in Sources */,
+				345C12342DAC95AB005FCCDB /* QCollectionViewHelper.swift in Sources */,
+				345C12352DAC95AB005FCCDB /* QuicklyNotification.swift in Sources */,
+				345C12362DAC95AB005FCCDB /* QPlayer.swift in Sources */,
+				345C12372DAC95AB005FCCDB /* QuicklyLabel.swift in Sources */,
+				345C12382DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift in Sources */,
+				345C12392DAC95AB005FCCDB /* QuicklyArray.swift in Sources */,
+				345C123A2DAC95AB005FCCDB /* QDispatch.swift in Sources */,
+				345C123B2DAC95AB005FCCDB /* QuicklyAuthorization.swift in Sources */,
+				345C123C2DAC95AB005FCCDB /* QuicklyButton.swift in Sources */,
+				345C123D2DAC95AB005FCCDB /* QuicklyString.swift in Sources */,
+				345C123E2DAC95AB005FCCDB /* QSwitch.swift in Sources */,
+				345C123F2DAC95AB005FCCDB /* QuicklyTimer.swift in Sources */,
+				345C12402DAC95AB005FCCDB /* QActionSheetController.swift in Sources */,
+				345C12412DAC95AB005FCCDB /* QuicklyFile.swift in Sources */,
+				345C12422DAC95AB005FCCDB /* QuicklyColor.swift in Sources */,
+				345C12432DAC95AB005FCCDB /* QuicklyPopmenu.swift in Sources */,
+				345C12442DAC95AB005FCCDB /* QuicklyNSAttributedString.swift in Sources */,
+				345C12452DAC95AB005FCCDB /* QuicklyTextField.swift in Sources */,
+				345C12462DAC95AB005FCCDB /* QuicklyImageView.swift in Sources */,
+				345C12472DAC95AB005FCCDB /* QuicklyTableView.swift in Sources */,
+				345C12482DAC95AB005FCCDB /* QSlider.swift in Sources */,
+				345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */,
+				345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */,
 				34D2EC7D2D3CB72D0067CC05 /* UILabel+Extensions.swift in Sources */,
 				34D2EC7E2D3CB72D0067CC05 /* UIView+Extensions.swift in Sources */,
 				34D2EC7F2D3CB72D0067CC05 /* Notification+SkeletonFlow.swift in Sources */,
@@ -1570,6 +1799,7 @@
 				E7769EA12CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m in Sources */,
 				344242782D55FE190081B948 /* SLColorManager.m in Sources */,
 				E7C139342CF325A600C5053A /* SLUser.m in Sources */,
+				345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */,
 				34D2EBD62D3943660067CC05 /* SLRecordViewController.m in Sources */,
 				E7769E6C2CA2E63B00AE84F4 /* main.m in Sources */,
 				3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */,

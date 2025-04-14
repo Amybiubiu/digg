@@ -8,7 +8,7 @@
 
 import UIKit
 //import RZRichTextView
-import QuicklySwift
+//import QuicklySwift
 //import TZImagePickerController
 import Kingfisher
 

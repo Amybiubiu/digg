@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 
 /// 初始化TextView时，一定要设置frame.size.width，内部附件以frame的宽度来做最宽显示处理
 /// 如何使用以及配置？ 请查看demo的HowToUseDemo，直接复制代码，填充选择资源、预览资源的方法就可以了

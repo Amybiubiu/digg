@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 import Photos
 import Kingfisher
 /// 操作
@@ -32,7 +32,7 @@ public protocol RZAttachmentInfoLayerProtocol: NSObjectProtocol {
     var showAudioName: Bool {get set}
 }
 open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
-    public var operation: QuicklySwift.QPublish<RZAttachmentOperation> = .init(value: .none)
+    public var operation: QPublish<RZAttachmentOperation> = .init(value: .none)
     
     public var info: RZAttachmentInfo? {
         didSet {

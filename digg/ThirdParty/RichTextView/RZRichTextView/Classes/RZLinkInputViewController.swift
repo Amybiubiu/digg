@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 /// 输入链接的弹窗视图
 open class RZLinkInputViewController: UIAlertController {
     private var text: String?

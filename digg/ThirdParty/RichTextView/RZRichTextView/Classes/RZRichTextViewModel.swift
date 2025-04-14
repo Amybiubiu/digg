@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 import RZColorfulSwift
 
 open class RZRichTextViewModel: NSObject {

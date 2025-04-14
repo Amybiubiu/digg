@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 
 public extension RZRichTextBase where T : NSAttributedString {
     ///  range所选区域的所在段落

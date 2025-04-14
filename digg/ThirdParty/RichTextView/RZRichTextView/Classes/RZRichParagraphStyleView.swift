@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import QuicklySwift
+//import QuicklySwift
 /// 用于修改段落样式的视图
 open class RZRichParagraphStyleView: UIView {
     let viewModel: RZRichTextViewModel

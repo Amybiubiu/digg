@@ -7,7 +7,7 @@
 
 import UIKit
 import Photos
-import QuicklySwift
+//import QuicklySwift
 
 public class RZAttachmentOption {
     static var share = RZAttachmentOption.init()

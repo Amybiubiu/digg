@@ -16,6 +16,7 @@
 #import "SLWebViewController.h"
 #import "SLColorManager.h"
 #import "UIView+Associated.h"
+//#import <IQKeyboardManager/IQKeyboardManager.h>
 #import "digg-Swift.h"
 
 #define FIELD_DEFAULT_HEIGHT 48
@@ -89,6 +90,16 @@
     [self updateTagsLayout];
 }
 
+//- (void)viewWillAppear:(BOOL)animated {
+//    [super viewWillAppear:animated];
+//    [IQKeyboardManager.sharedManager setEnable:FALSE];
+//}
+//
+//- (void)viewWillDisappear:(BOOL)animated {
+//    [super viewWillDisappear:animated];
+//    [IQKeyboardManager.sharedManager setEnable:YES];
+//}
+
 #pragma mark - Methods
 - (void)setupUI {
     [self.view addSubview:self.navigationView];
@@ -155,7 +166,7 @@
     [self.contentView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line2View.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(17);
+        make.left.equalTo(self.contentView).offset(22);
         make.right.equalTo(self.contentView).offset(-16);
         make.height.mas_equalTo(300);
     }];
@@ -408,11 +419,9 @@
     
     // 显示添加按钮
     self.addTagButton.hidden = NO;
-    
+    [self.tagInputField resignFirstResponder];
     // 更新布局
     [self updateTagsLayout];
-    
-    [self.tagInputField resignFirstResponder];
 }
 
 // 刷新标签显示
@@ -587,15 +596,17 @@
 // 更新标签布局
 - (void)updateTagsLayout {
     [self.tagContainerView layoutIfNeeded];
-    // 设置内容大小，确保可以正常滚动
-    CGSize contentSize = CGSizeMake(self.tagContainerView.bounds.size.width, self.tagContainerView.bounds.size.height);
-    [self.tagScrollView setContentSize:contentSize];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // 设置内容大小，确保可以正常滚动
+        CGSize contentSize = CGSizeMake(self.tagContainerView.bounds.size.width, self.tagContainerView.bounds.size.height);
+        [self.tagScrollView setContentSize:contentSize];
 
-    if (contentSize.height > self.tagScrollView.bounds.size.height) {
-        self.tagScrollView.scrollEnabled = YES;
-    } else {
-        self.tagScrollView.scrollEnabled = NO;
-    }
+        if (contentSize.height >= self.tagScrollView.bounds.size.height) {
+            self.tagScrollView.scrollEnabled = YES;
+        } else {
+            self.tagScrollView.scrollEnabled = NO;
+        }
+    });
 }
 
 // 实现 UITextViewDelegate 方法来处理占位文本的显示和隐藏
