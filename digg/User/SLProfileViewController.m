@@ -100,7 +100,6 @@
             @strongobj(self)
             if (isSuccess) {
                 if ([self.viewModel.entity.bgImage length] > 0) {
-//                    [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage] placeholderImage:[UIImage imageNamed:@"profile_header_bg"]];
                     [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage]];
                 }
 
@@ -604,12 +603,10 @@
 #pragma makr - UI Elements
 - (UIImageView *)headerImageView {
     if (!_headerImageView) {
-//        _headerImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile_header_bg"]];
         _headerImageView = [[UIImageView alloc] init];
         _headerImageView.backgroundColor = UIColor.clearColor;
         _headerImageView.contentMode = UIViewContentModeScaleAspectFill;
         [_headerImageView setUserInteractionEnabled:YES];
-//        _headerImageView.isSkeletonable = YES;
     }
     return _headerImageView;
 }
@@ -619,7 +616,6 @@
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setImage:[UIImage imageNamed:@"profile_left_btn"] forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
-//        _leftBackButton.isSkeletonable = YES;
     }
     return _leftBackButton;
 }
@@ -629,7 +625,6 @@
         _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_moreButton setImage:[UIImage imageNamed:@"profile_more_btn"] forState:UIControlStateNormal];
         [_moreButton addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
-//        _moreButton.isSkeletonable = YES;
     }
     return _moreButton;
 }
@@ -670,7 +665,6 @@
         _segmentControl = [[SLSegmentControl alloc] initWithFrame:CGRectZero];
         _segmentControl.titles = @[@"动态", @"赞同", @"收藏"];
         _segmentControl.delegate = self; // 设置代理为当前控制器
-//        _segmentControl.isSkeletonable = YES;
     }
     return _segmentControl;
 }
@@ -701,8 +695,6 @@
         
         _tableView.emptyDataSetSource = self;
         _tableView.emptyDataSetDelegate = self;
-
-//        _tableView.isSkeletonable = YES;
     }
     return _tableView;
 }

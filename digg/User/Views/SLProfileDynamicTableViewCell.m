@@ -80,7 +80,7 @@
 
         [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(offset);
-            make.top.equalTo(self.titleLabel.mas_bottom).offset(offset);
+            make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
             make.right.equalTo(self.contentView).offset(-offset);
         }];
         
@@ -133,7 +133,7 @@
 
     [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.contentView).offset(offset);
+        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
         make.size.mas_equalTo(CGSizeMake(26, 26));
     }];
     
@@ -149,14 +149,14 @@
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.avatarImageView.mas_bottom).offset(12);
+        make.top.equalTo(self.avatarImageView.mas_bottom).offset(CELL_CONTENT_V_SPACE);
         make.left.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
 
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(8);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
@@ -284,7 +284,8 @@
                                             interactionTypes:@[
                                                 @(SLInteractionTypeLike),
                                                 @(SLInteractionTypeDislike),
-                                                @(SLInteractionTypeComment)
+                                                @(SLInteractionTypeComment),
+                                                @(SLInteractionTypeCustom)
                                             ]];
         _interactionBar.delegate = self;
     }

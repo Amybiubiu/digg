@@ -162,8 +162,7 @@
 - (void)setEntity:(SLProfileEntity *)entity {
     _entity = entity;
 
-    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entity.avatar]
-                 placeholderImage:[UIImage imageNamed:@"profile_header_bg"]];
+    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entity.avatar]];
     
     self.nameLabel.text = entity.userName;
     self.briefLabel.text = entity.desc;
@@ -236,10 +235,9 @@
 #pragma mark - UI Elements
 - (UIImageView *)avatarImageView {
     if (!_avatarImageView) {
-        _avatarImageView = [[UIImageView alloc] init]; //WithImage:[UIImage imageNamed:@"avatar_default_img"]
+        _avatarImageView = [[UIImageView alloc] init];
         _avatarImageView.backgroundColor = [SLColorManager headerBorderColor];
         _avatarImageView.layer.cornerRadius = 30;
-        // _avatarImageView.layer.masksToBounds = YES;
         _avatarImageView.layer.borderColor = [SLColorManager headerBorderColor].CGColor;
         _avatarImageView.layer.borderWidth = 1;
 

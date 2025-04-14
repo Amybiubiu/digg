@@ -8,6 +8,8 @@
 #import "SLNumberIconView.h"
 #import "SLColorManager.h"
 
+#define DOT_WIDTH 1
+
 @implementation SLNumberIconItem
 
 + (instancetype)itemWithNumber:(NSInteger)number normalImage:(UIImage *)normalImage selectedImage:(nullable UIImage *)selectedImage {
@@ -309,7 +311,7 @@
             
             if (nextItemVisible) {
                 // 添加分隔点
-                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - 1, height/2 - 1, 2, 2)];
+                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - DOT_WIDTH/2, height/2 - DOT_WIDTH/2, DOT_WIDTH, DOT_WIDTH)];
                 separatorDot.backgroundColor = [SLColorManager categorySelectedTextColor];
                 separatorDot.layer.cornerRadius = 1;
                 separatorDot.tag = 1000 + i; // 使用tag标识分隔点

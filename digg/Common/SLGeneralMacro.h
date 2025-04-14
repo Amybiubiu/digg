@@ -87,6 +87,7 @@ typedef NS_ENUM(NSInteger, CaocaoCarMessageListRefreshType) {
     #endif
 #endif
 
+#define CELL_CONTENT_V_SPACE 10
 
 static inline BOOL phoneIsX(void) {
     if (@available(iOS 11.0, *)) {
