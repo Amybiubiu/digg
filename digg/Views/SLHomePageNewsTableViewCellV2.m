@@ -1,34 +1,29 @@
 //
-//  SLProfileDynamicTableViewCell.m
+//  SLHomePageNewsTableViewCellV2.m
 //  digg
 //
-//  Created by Tim Bao on 2025/1/8.
+//  Created by Tim Bao on 2025/4/14.
 //
 
-#import "SLProfileDynamicTableViewCell.h"
+#import "SLHomePageNewsTableViewCellV2.h"
 #import <Masonry/Masonry.h>
 #import "SLGeneralMacro.h"
 #import "SLHomeTagView.h"
-#import "SDWebImage.h"
 #import "SLColorManager.h"
 #import "SLInteractionBar.h"
 
-@interface SLProfileDynamicTableViewCell () <SLInteractionBarDelegate>
-
-@property (nonatomic, strong) UIImageView* avatarImageView;
-@property (nonatomic, strong) UILabel *nickNameLabel;
-@property (nonatomic, strong) UILabel *timeLabel;
+@interface SLHomePageNewsTableViewCellV2 () <SLInteractionBarDelegate>
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *contentLabel;
 @property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UIView *lineView;
+@property (nonatomic, strong) SLHomeTagView *tagView;
 @property (nonatomic, strong) SLArticleTodayEntity *entity;
-@property (nonatomic, assign) BOOL isSelected;
 
 @end
 
-@implementation SLProfileDynamicTableViewCell
+@implementation SLHomePageNewsTableViewCellV2
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -43,21 +38,6 @@
 
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy{
     self.entity = entiy;
-    if (entiy.avatar) {
-        [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entiy.avatar]];
-    } else if (entiy.userAvatar) {
-        [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entiy.userAvatar]];
-    }
-    self.nickNameLabel.text = entiy.username;
-    if ([entiy.actionName length] > 0) {
-        //格式化时间
-        NSDate *detailDate = [NSDate dateWithTimeIntervalSince1970:entiy.gmtCreate/1000];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-        NSString *dateStr = [dateFormatter stringFromDate: detailDate];
-        self.timeLabel.text = [NSString stringWithFormat:@"%@ · %@", dateStr, entiy.actionName];
-    }
-
     self.titleLabel.text = entiy.title;
     CGFloat lineSpacing = 3;
     CGFloat offset = 16;
@@ -109,6 +89,24 @@
             make.bottom.equalTo(self.contentView);
         }];
     }
+
+    if (stringIsEmpty(entiy.label)) {
+        self.tagView.hidden = YES;
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.contentView).offset(offset);
+            make.top.equalTo(self.contentView).offset(offset);
+            make.right.equalTo(self.contentView).offset(-offset);
+        }];
+    } else {
+        self.tagView.hidden = NO;
+        [self.tagView updateWithLabel:entiy.label];
+
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.tagView.mas_right).offset(8);
+            make.top.equalTo(self.contentView).offset(offset);
+            make.right.equalTo(self.contentView).offset(-offset);
+        }];
+    }
     
     // 根据数据更新交互栏
     [self.interactionBar updateNumber:entiy.likeCnt forType:SLInteractionTypeLike];
@@ -120,43 +118,33 @@
     [self.interactionBar setSelected:entiy.disliked forType:SLInteractionTypeDislike];
 }
 
-- (void)createViews {
-    [self.contentView addSubview:self.avatarImageView];
-    [self.contentView addSubview:self.nickNameLabel];
-    [self.contentView addSubview:self.timeLabel];
+- (void)createViews{
     [self.contentView addSubview:self.titleLabel];
     [self.contentView addSubview:self.contentLabel];
     [self.contentView addSubview:self.interactionBar];
     [self.contentView addSubview:self.lineView];
+    [self.contentView addSubview:self.tagView];
     
     CGFloat offset = 16;
-
-    [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+    
+    [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
         make.top.equalTo(self.contentView).offset(offset);
-        make.size.mas_equalTo(CGSizeMake(26, 26));
-    }];
-    
-    [self.nickNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
-        make.centerY.equalTo(self.avatarImageView);
-    }];
-    
-    [self.timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.nickNameLabel.mas_right).offset(8);
-        make.centerY.equalTo(self.avatarImageView);
-        make.right.lessThanOrEqualTo(self.contentView).offset(-offset);
+        make.height.equalTo(@20);
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.avatarImageView.mas_bottom).offset(12);
-        make.left.equalTo(self.contentView).offset(offset);
+        make.left.equalTo(self.tagView.mas_right).offset(5);
+        make.top.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
+    
+    [self.tagView setContentCompressionResistancePriority:UILayoutPriorityRequired
+                                            forAxis:UILayoutConstraintAxisHorizontal];
 
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(8);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
@@ -174,6 +162,12 @@
         make.bottom.equalTo(self.contentView);
         make.height.mas_equalTo(0.5);
     }];
+}
+
+- (void)tagClick {
+    if (self.labelClick) {
+        self.labelClick(self.entity);
+    }
 }
 
 #pragma mark - SLInteractionBarDelegate
@@ -228,36 +222,6 @@
 }
 
 #pragma mark - Property
-- (UIImageView *)avatarImageView {
-    if (!_avatarImageView) {
-        _avatarImageView = [[UIImageView alloc] init];
-        _avatarImageView.backgroundColor = UIColor.lightGrayColor;
-        _avatarImageView.layer.cornerRadius = 13;
-        _avatarImageView.layer.masksToBounds = YES;
-    }
-    return _avatarImageView;
-}
-
-- (UILabel *)nickNameLabel {
-    if(!_nickNameLabel) {
-        _nickNameLabel = [[UILabel alloc] init];
-        _nickNameLabel.font = [UIFont systemFontOfSize:14];
-        _nickNameLabel.textColor = [SLColorManager cellNickNameColor];
-    }
-    return _nickNameLabel;
-}
-
-- (UILabel *)timeLabel {
-    if(!_timeLabel) {
-        _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = [UIFont systemFontOfSize:12];
-        _timeLabel.textColor = Color16(0xB6B6B6);
-        [_timeLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
-        _timeLabel.textAlignment = NSTextAlignmentLeft;
-    }
-    return _timeLabel;
-}
-
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
@@ -272,7 +236,7 @@
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
         _contentLabel.font = [UIFont systemFontOfSize:14];
-        _contentLabel.numberOfLines = 2;
+        _contentLabel.numberOfLines = 3;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
     return _contentLabel;
@@ -297,6 +261,15 @@
         _lineView.backgroundColor = [SLColorManager cellDivideLineColor];
     }
     return _lineView;
+}
+
+- (SLHomeTagView *)tagView {
+    if (!_tagView) {
+        _tagView = [[SLHomeTagView alloc] init];
+        UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tagClick)];
+        [_tagView addGestureRecognizer:tap];
+    }
+    return _tagView;
 }
 
 @end

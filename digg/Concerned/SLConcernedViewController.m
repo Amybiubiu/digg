@@ -220,6 +220,10 @@
                 
             }];
         };
+        cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+            NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+            [self jumpToH5WithUrl:url andShowProgress:NO];
+        };
     }
     return cell;
 }

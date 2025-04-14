@@ -1,14 +1,17 @@
 //
-//  SLHomePageNewsTableViewCell.h
+//  SLHomePageNewsTableViewCellV2.h
 //  digg
 //
-//  Created by hey on 2024/9/26.
+//  Created by Tim Bao on 2025/4/14.
 //
 
 #import <UIKit/UIKit.h>
+#import <UIKit/UIKit.h>
 #import "SLArticleTodayEntity.h"
 
-@interface SLHomePageNewsTableViewCell : UITableViewCell
+NS_ASSUME_NONNULL_BEGIN
+
+@interface SLHomePageNewsTableViewCellV2 : UITableViewCell
 
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy;
 
@@ -22,6 +25,10 @@
 
 @property (nonatomic, copy) void(^checkDetailClick)(SLArticleTodayEntity *entity);
 
+@property (nonatomic, copy) void(^showDetailClick)(SLArticleTodayEntity *entity);
+
 @property (nonatomic, copy) void(^labelClick)(SLArticleTodayEntity *entity);
 
 @end
+
+NS_ASSUME_NONNULL_END

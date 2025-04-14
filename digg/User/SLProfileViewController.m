@@ -10,7 +10,7 @@
 #import "Masonry.h"
 #import "SLSegmentControl.h"
 #import "SLGeneralMacro.h"
-#import "SLHomePageNewsTableViewCell.h"
+#import "SLHomePageNewsTableViewCellV2.h"
 #import "SLEmptyWithLoginButtonView.h"
 #import "SLWebViewController.h"
 #import "EnvConfigHeader.h"
@@ -474,10 +474,14 @@
                     
                 }];
             };
+            cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+                NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+                [self jumpToH5WithUrl:url andShowProgress:NO];
+            };
         }
         return cell;
     } else {
-        SLHomePageNewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLHomePageNewsTableViewCell" forIndexPath:indexPath];
+        SLHomePageNewsTableViewCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLHomePageNewsTableViewCellV2" forIndexPath:indexPath];
         if (cell) {
             SLArticleTodayEntity *entity;
             if (self.segmentControl.selectedIndex == 1) {
@@ -565,6 +569,10 @@
                     vc.label = entity.label;
                     [self.navigationController pushViewController:vc animated:YES];
                 }
+            };
+            cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+                NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+                [self jumpToH5WithUrl:url andShowProgress:NO];
             };
         }
         return cell;
@@ -682,7 +690,7 @@
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tableView registerClass:[SLHomePageNewsTableViewCell class] forCellReuseIdentifier:@"SLHomePageNewsTableViewCell"];
+        [_tableView registerClass:[SLHomePageNewsTableViewCellV2 class] forCellReuseIdentifier:@"SLHomePageNewsTableViewCellV2"];
         [_tableView registerClass:[SLProfileDynamicTableViewCell class] forCellReuseIdentifier:@"SLProfileDynamicTableViewCell"];
         _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         if (@available(iOS 15.0, *)) {

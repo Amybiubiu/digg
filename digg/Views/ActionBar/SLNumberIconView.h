@@ -28,9 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 数字图标项配置
 @interface SLNumberIconItem : NSObject
 
-@property (nonatomic, assign) NSInteger number;                  // 显示的数字，为0则不显示
+@property (nonatomic, assign) NSInteger number;                 // 显示的数字，为0则不显示
 @property (nonatomic, strong) UIImage *normalImage;              // 正常状态图标
-@property (nonatomic, strong, nullable) UIImage *selectedImage;  // 选中状态图标
+@property (nonatomic, strong, nullable) UIImage *selectedImage;    // 选中状态图标
 @property (nonatomic, strong) UIColor *numberColor;              // 数字颜色
 @property (nonatomic, strong) UIColor *iconColor;                // 图标颜色
 @property (nonatomic, assign) BOOL isSelected;                   // 是否选中状态
