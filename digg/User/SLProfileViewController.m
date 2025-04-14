@@ -231,15 +231,23 @@
 }
 
 - (void)showMenu {
-    KxMenu.titleFont = [UIFont pingFangRegularWithSize:18];
-    [KxMenu showMenuInView:self.view
-                  fromRect:_moreButton.frame
-                 menuItems:@[
-                    [KxMenuItem menuItem:@"退出登录"
-                        image:[UIImage imageNamed:@"logout_icon"]
-                       target:self
-                       action:@selector(logoutAction)],
-                ]];
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium];
+    UIImage *powerImage = [UIImage systemImageNamed:@"power" withConfiguration:config];
+
+    UIAction *logoutAction = [UIAction actionWithTitle:@"退出登录"
+                                                    image:powerImage
+                                            identifier:nil
+                                                handler:^(__kindof UIAction * _Nonnull action) {
+        [self logoutAction];
+    }];
+    
+    // 创建菜单
+    UIMenu *menu = [UIMenu menuWithTitle:@""
+                                    children:@[logoutAction]];
+    
+    // 设置按钮的菜单
+    self.moreButton.showsMenuAsPrimaryAction = YES;
+    self.moreButton.menu = menu;
 }
 
 - (void)logoutAction {
@@ -320,14 +328,47 @@
 
 #pragma mark - SLProfileHeaderViewDelegate
 - (void)gotoEditPersonalInfo {
-    SLEditProfileViewController* vc = [SLEditProfileViewController new];
-    vc.entity = self.viewModel.entity;
-    @weakobj(self)
-    vc.updateSucessCallback = ^{
-        @strongobj(self)
-        [self updateUI];
-    };
-    [self presentViewController:vc animated:YES completion:nil];
+   UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"输入网址"
+                                                                            message:@"请输入您想要访问的网址"
+                                                                     preferredStyle:UIAlertControllerStyleAlert];
+   [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+       textField.placeholder = @"https://";
+       textField.keyboardType = UIKeyboardTypeURL;
+       textField.autocorrectionType = UITextAutocorrectionTypeNo;
+       textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+   }];
+   
+   UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确认"
+                                                           style:UIAlertActionStyleDefault
+                                                         handler:^(UIAlertAction * _Nonnull action) {
+       NSString *url = alertController.textFields.firstObject.text;
+       
+       if (![url hasPrefix:@"http://"] && ![url hasPrefix:@"https://"]) {
+           url = [NSString stringWithFormat:@"https://%@", url];
+       }
+       SLWebViewController *webVC = [[SLWebViewController alloc] init];
+       webVC.isShowProgress = YES;
+       [webVC startLoadRequestWithUrl:url];
+       webVC.hidesBottomBarWhenPushed = YES;
+       [self.navigationController pushViewController:webVC animated:YES];
+   }];
+   
+   UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消"
+                                                          style:UIAlertActionStyleCancel
+                                                        handler:nil];
+   [alertController addAction:confirmAction];
+   [alertController addAction:cancelAction];
+   
+   [self presentViewController:alertController animated:YES completion:nil];
+    
+//    SLEditProfileViewController* vc = [SLEditProfileViewController new];
+//    vc.entity = self.viewModel.entity;
+//    @weakobj(self)
+//    vc.updateSucessCallback = ^{
+//        @strongobj(self)
+//        [self updateUI];
+//    };
+//    [self presentViewController:vc animated:YES completion:nil];
 }
 
 - (void)follow:(BOOL)cancel {
