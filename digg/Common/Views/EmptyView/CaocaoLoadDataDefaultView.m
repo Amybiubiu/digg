@@ -67,7 +67,7 @@
 - (UIButton *)actionButton {
     if (!_actionButton) {
         _actionButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _actionButton.backgroundColor = [UIColor whiteColor];
+        _actionButton.backgroundColor = [SLColorManager primaryBackgroundColor];
         [_actionButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
         [_actionButton addTarget:self action:@selector(actionTouchUpInsideHandler:) forControlEvents:UIControlEventTouchUpInside];
         _actionButton.layer.cornerRadius = 8.f;

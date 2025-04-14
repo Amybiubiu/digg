@@ -60,7 +60,7 @@
 
         [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(offset);
-            make.top.equalTo(self.titleLabel.mas_bottom).offset(offset);
+            make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
             make.right.equalTo(self.contentView).offset(-offset);
         }];
         
@@ -94,7 +94,7 @@
         self.tagView.hidden = YES;
         [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(offset);
-            make.top.equalTo(self.contentView).offset(offset);
+            make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
             make.right.equalTo(self.contentView).offset(-offset);
         }];
     } else {
@@ -103,7 +103,7 @@
 
         [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.tagView.mas_right).offset(8);
-            make.top.equalTo(self.contentView).offset(offset);
+            make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
             make.right.equalTo(self.contentView).offset(-offset);
         }];
     }
@@ -129,13 +129,13 @@
     
     [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.contentView).offset(offset);
+        make.centerY.equalTo(self.titleLabel);
         make.height.equalTo(@20);
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagView.mas_right).offset(5);
-        make.top.equalTo(self.contentView).offset(offset);
+        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
@@ -144,7 +144,7 @@
 
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(offset);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
@@ -248,7 +248,8 @@
                                             interactionTypes:@[
                                                 @(SLInteractionTypeLike),
                                                 @(SLInteractionTypeDislike),
-                                                @(SLInteractionTypeComment)
+                                                @(SLInteractionTypeComment),
+                                                @(SLInteractionTypeCustom)
                                             ]];
         _interactionBar.delegate = self;
     }

@@ -68,17 +68,21 @@
 
 - (UITabBarItemAppearance *)itemAppearanceWithNormalColor:(UIColor *)normalColor selectedColor:(UIColor *)selectedColor {
     UITabBarItemAppearance *itemAppearance = [[UITabBarItemAppearance alloc] init];
-    
-    [itemAppearance.normal setTitleTextAttributes:@{NSForegroundColorAttributeName: normalColor}];
-    [itemAppearance.selected setTitleTextAttributes:@{NSForegroundColorAttributeName: selectedColor}];
-    
+    UIFont *tabBarFont = [UIFont pingFangRegularWithSize:10.0];
+    [itemAppearance.normal setTitleTextAttributes:@{
+        NSForegroundColorAttributeName: normalColor,
+        NSFontAttributeName: tabBarFont
+    }];
+    [itemAppearance.selected setTitleTextAttributes:@{
+        NSForegroundColorAttributeName: selectedColor,
+        NSFontAttributeName: tabBarFont
+    }];
     return itemAppearance;
 }
 
 - (void)setDefaultUA {
     self.wkWebView = [[WKWebView alloc] initWithFrame:CGRectZero];
     [self.wkWebView evaluateJavaScript:@"navigator.userAgent" completionHandler:^(id _Nullable defaultUserAgent, NSError * _Nullable error) {
-        NSLog(@"defaultUserAgent = %@",defaultUserAgent);
         if (stringIsEmpty(defaultUserAgent)) {
             [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"digg_default_userAgent"];
         } else {
