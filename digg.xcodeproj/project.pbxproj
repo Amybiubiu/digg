@@ -62,6 +62,7 @@
 		345C12482DAC95AB005FCCDB /* QSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C11F22DAC95AB005FCCDB /* QSlider.swift */; };
 		345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120F2DAC95AB005FCCDB /* QuicklySwift.swift */; };
 		345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */; };
+		345C124D2DAC9984005FCCDB /* SLHomePageNewsTableViewCellV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
@@ -214,7 +215,6 @@
 		E7769E822CA2E63C00AE84F4 /* diggUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769E812CA2E63C00AE84F4 /* diggUITestsLaunchTests.m */; };
 		E7769E902CA2E9A000AE84F4 /* SLHomePageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769E8F2CA2E9A000AE84F4 /* SLHomePageViewController.m */; };
 		E7769E9B2CA4F9BC00AE84F4 /* SLHomePageNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769E9A2CA4F9BC00AE84F4 /* SLHomePageNewsViewController.m */; };
-		E7769EA12CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769EA02CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m */; };
 		E7769EA62CB181A800AE84F4 /* SLTabbarController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769EA52CB181A800AE84F4 /* SLTabbarController.m */; };
 		E7769EA92CB1A10900AE84F4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7769EA72CB1A10900AE84F4 /* Main.storyboard */; };
 		E7769EC02CB798F800AE84F4 /* SLWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7769EBF2CB798F800AE84F4 /* SLWebViewController.m */; };
@@ -312,6 +312,9 @@
 		345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewAnimation.swift; sourceTree = "<group>"; };
 		345C12172DAC95AB005FCCDB /* QuicklyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewController.swift; sourceTree = "<group>"; };
 		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
+		345C124B2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCellV2.h; sourceTree = "<group>"; };
+		345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV2.m; sourceTree = "<group>"; };
+		345C124E2DACB334005FCCDB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		346485FC2D4284960084A3BF /* SLConcernedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewController.h; sourceTree = "<group>"; };
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
@@ -540,8 +543,6 @@
 		E7769E8F2CA2E9A000AE84F4 /* SLHomePageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageViewController.m; sourceTree = "<group>"; };
 		E7769E992CA4F9BC00AE84F4 /* SLHomePageNewsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SLHomePageNewsViewController.h; path = Home/SLHomePageNewsViewController.h; sourceTree = "<group>"; };
 		E7769E9A2CA4F9BC00AE84F4 /* SLHomePageNewsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SLHomePageNewsViewController.m; path = Home/SLHomePageNewsViewController.m; sourceTree = "<group>"; };
-		E7769E9F2CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCell.h; sourceTree = "<group>"; };
-		E7769EA02CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCell.m; sourceTree = "<group>"; };
 		E7769EA22CA503C300AE84F4 /* SLGeneralMacro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLGeneralMacro.h; sourceTree = "<group>"; };
 		E7769EA42CB181A800AE84F4 /* SLTabbarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTabbarController.h; sourceTree = "<group>"; };
 		E7769EA52CB181A800AE84F4 /* SLTabbarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTabbarController.m; sourceTree = "<group>"; };
@@ -1328,6 +1329,7 @@
 				E7769E6A2CA2E63B00AE84F4 /* Info.plist */,
 				E7769E6B2CA2E63B00AE84F4 /* main.m */,
 				E7769EA72CB1A10900AE84F4 /* Main.storyboard */,
+				345C124E2DACB334005FCCDB /* PrefixHeader.pch */,
 			);
 			path = digg;
 			sourceTree = "<group>";
@@ -1370,10 +1372,10 @@
 			isa = PBXGroup;
 			children = (
 				345C11E62DABD7DF005FCCDB /* ActionBar */,
-				E7769E9F2CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.h */,
-				E7769EA02CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m */,
 				E7C1393A2CF33C8800C5053A /* SLHomeTagView.h */,
 				E7C1393B2CF33C8800C5053A /* SLHomeTagView.m */,
+				345C124B2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.h */,
+				345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1562,8 +1564,12 @@
 			);
 			inputFileListPaths = (
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1732,6 +1738,7 @@
 				345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */,
 				345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */,
 				34D2EC7D2D3CB72D0067CC05 /* UILabel+Extensions.swift in Sources */,
+				345C124D2DAC9984005FCCDB /* SLHomePageNewsTableViewCellV2.m in Sources */,
 				34D2EC7E2D3CB72D0067CC05 /* UIView+Extensions.swift in Sources */,
 				34D2EC7F2D3CB72D0067CC05 /* Notification+SkeletonFlow.swift in Sources */,
 				34D2EC802D3CB72D0067CC05 /* SkeletonTextNode.swift in Sources */,
@@ -1796,7 +1803,6 @@
 				E7769E5B2CA2E63A00AE84F4 /* AppDelegate.m in Sources */,
 				340F64022D2D55130046FC97 /* SLEditProfileViewController.m in Sources */,
 				E76A45E42CBCA955008B2746 /* SLArticleNewsEntity.m in Sources */,
-				E7769EA12CA4F9F700AE84F4 /* SLHomePageNewsTableViewCell.m in Sources */,
 				344242782D55FE190081B948 /* SLColorManager.m in Sources */,
 				E7C139342CF325A600C5053A /* SLUser.m in Sources */,
 				345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */,
@@ -1997,6 +2003,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";
@@ -2041,6 +2049,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";

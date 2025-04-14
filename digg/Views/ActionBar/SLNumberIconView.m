@@ -6,6 +6,7 @@
 //
 
 #import "SLNumberIconView.h"
+#import "SLColorManager.h"
 
 @implementation SLNumberIconItem
 
@@ -50,7 +51,7 @@
         // 创建数字标签
         _numberLabel = [[UILabel alloc] init];
         _numberLabel.textAlignment = NSTextAlignmentRight;
-        _numberLabel.font = [UIFont systemFontOfSize:14];
+        _numberLabel.font = [UIFont pingFangRegularWithSize:12];
         [self addSubview:_numberLabel];
         
         // 创建图标视图
@@ -60,7 +61,7 @@
         
         // 创建自定义文本标签
         _customTextLabel = [[UILabel alloc] init];
-        _customTextLabel.font = [UIFont systemFontOfSize:12];
+        _customTextLabel.font = [UIFont pingFangRegularWithSize:12];
         _customTextLabel.hidden = YES;
         [self addSubview:_customTextLabel];
         
@@ -138,7 +139,7 @@
     } else {
         _customTextLabel.hidden = YES;
         
-        // 更新图标
+        // 更新图标 - 即使数字为0，也显示图标
         UIImage *image = item.isSelected && item.selectedImage ? item.selectedImage : item.normalImage;
         if (image) {
             _iconImageView.image = image;
@@ -203,7 +204,7 @@
     if (self) {
         _spacing = 15.0;
         _itemSpacing = 4.0;
-        _fontSize = 14.0;
+        _fontSize = 12.0;
         _iconSize = 16.0;
         _touchAreaExtension = 10.0;
         _itemViews = [NSMutableArray array];
@@ -223,6 +224,13 @@
         [view removeFromSuperview];
     }
     [self.itemViews removeAllObjects];
+
+    // 清除分隔点
+    for (UIView *subview in [self.subviews copy]) {
+        if (subview.tag >= 1000) {
+            [subview removeFromSuperview];
+        }
+    }
     
     // 创建新的项视图
     for (NSInteger i = 0; i < items.count; i++) {
@@ -247,6 +255,13 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+
+    // 先清除所有现有的分隔点
+    for (UIView *subview in [self.subviews copy]) {
+        if (subview.tag >= 1000) {
+            [subview removeFromSuperview];
+        }
+    }
     
     CGFloat x = 0;
     CGFloat height = self.bounds.size.height;
@@ -255,8 +270,12 @@
         SLNumberIconItemView *itemView = self.itemViews[i];
         SLNumberIconItem *item = self.items[i];
         
-        // 如果数字为0且没有选中图标，则不显示
-        if (item.number == 0 && !item.isSelected) {
+        // 修改显示逻辑：只有当没有图标、没有自定义文本且未选中时才隐藏整个项
+        NSString *customText = [item valueForKey:@"customText"];
+        BOOL hasIcon = item.normalImage != nil;
+        BOOL hasCustomText = customText.length > 0;
+        
+        if (!hasIcon && !hasCustomText && !item.isSelected) {
             itemView.hidden = YES;
             continue;
         }
@@ -270,7 +289,46 @@
         itemView.frame = CGRectMake(x, 0, itemSize.width, height);
         
         // 更新下一个项的起始位置
-        x += itemSize.width + self.spacing;
+        x += itemSize.width;
+        
+        // 如果不是最后一个可见项，添加分隔点
+        if (i < self.itemViews.count - 1) {
+            // 检查下一个项是否可见
+            BOOL nextItemVisible = NO;
+            for (NSInteger j = i + 1; j < self.itemViews.count; j++) {
+                SLNumberIconItem *nextItem = self.items[j];
+                NSString *nextCustomText = [nextItem valueForKey:@"customText"];
+                BOOL nextHasIcon = nextItem.normalImage != nil;
+                BOOL nextHasCustomText = nextCustomText.length > 0;
+                
+                if (nextHasIcon || nextHasCustomText || nextItem.isSelected) {
+                    nextItemVisible = YES;
+                    break;
+                }
+            }
+            
+            if (nextItemVisible) {
+                // 添加分隔点
+                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - 1, height/2 - 1, 2, 2)];
+                separatorDot.backgroundColor = [SLColorManager categorySelectedTextColor];
+                separatorDot.layer.cornerRadius = 1;
+                separatorDot.tag = 1000 + i; // 使用tag标识分隔点
+                [self addSubview:separatorDot];
+                
+                // 更新位置，考虑分隔点和间距
+                x += _spacing * 2;
+            }
+        }
+    }
+    
+    // 移除多余的分隔点
+    for (UIView *subview in self.subviews) {
+        if (subview.tag >= 1000 && subview.tag < 1000 + self.itemViews.count) {
+            NSInteger dotIndex = subview.tag - 1000;
+            if (dotIndex >= self.itemViews.count - 1 || self.itemViews[dotIndex].hidden || self.itemViews[dotIndex+1].hidden) {
+                [subview removeFromSuperview];
+            }
+        }
     }
 }
 

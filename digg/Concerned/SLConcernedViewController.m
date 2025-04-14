@@ -220,6 +220,10 @@
                 
             }];
         };
+        cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+            NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+            [self jumpToH5WithUrl:url andShowProgress:NO];
+        };
     }
     return cell;
 }
@@ -234,7 +238,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont boldSystemFontOfSize:16.0f],
+                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     

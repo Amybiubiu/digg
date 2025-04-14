@@ -152,7 +152,7 @@
         _categoryView.delegate = self;
         _categoryView.titleColorGradientEnabled = YES;
         _categoryView.titleLabelZoomEnabled = YES;
-        _categoryView.titleFont = [UIFont boldSystemFontOfSize:16];
+        _categoryView.titleFont = [UIFont pingFangSemiboldWithSize:16];
         _categoryView.titleLabelZoomScale = 1.125;
         _categoryView.titleSelectedColor = [SLColorManager categorySelectedTextColor];
         _categoryView.titleColor = [SLColorManager categoryNormalTextColor];

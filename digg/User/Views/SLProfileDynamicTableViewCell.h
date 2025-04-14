@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) void(^checkDetailClick)(SLArticleTodayEntity *entity);
 
+@property (nonatomic, copy) void(^showDetailClick)(SLArticleTodayEntity *entity);
+
 @end
 
 NS_ASSUME_NONNULL_END

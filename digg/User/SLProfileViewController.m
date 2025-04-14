@@ -10,7 +10,7 @@
 #import "Masonry.h"
 #import "SLSegmentControl.h"
 #import "SLGeneralMacro.h"
-#import "SLHomePageNewsTableViewCell.h"
+#import "SLHomePageNewsTableViewCellV2.h"
 #import "SLEmptyWithLoginButtonView.h"
 #import "SLWebViewController.h"
 #import "EnvConfigHeader.h"
@@ -232,7 +232,7 @@
 }
 
 - (void)showMenu {
-    KxMenu.titleFont = [UIFont systemFontOfSize:18];
+    KxMenu.titleFont = [UIFont pingFangRegularWithSize:18];
     [KxMenu showMenuInView:self.view
                   fromRect:_moreButton.frame
                  menuItems:@[
@@ -474,10 +474,14 @@
                     
                 }];
             };
+            cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+                NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+                [self jumpToH5WithUrl:url andShowProgress:NO];
+            };
         }
         return cell;
     } else {
-        SLHomePageNewsTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLHomePageNewsTableViewCell" forIndexPath:indexPath];
+        SLHomePageNewsTableViewCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLHomePageNewsTableViewCellV2" forIndexPath:indexPath];
         if (cell) {
             SLArticleTodayEntity *entity;
             if (self.segmentControl.selectedIndex == 1) {
@@ -566,6 +570,10 @@
                     [self.navigationController pushViewController:vc animated:YES];
                 }
             };
+            cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
+                NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+                [self jumpToH5WithUrl:url andShowProgress:NO];
+            };
         }
         return cell;
     }
@@ -582,7 +590,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont boldSystemFontOfSize:16.0f],
+                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     
@@ -631,7 +639,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"";
         _nameLabel.textColor = UIColor.whiteColor;
-        _nameLabel.font = [UIFont boldSystemFontOfSize:18];
+        _nameLabel.font = [UIFont pingFangSemiboldWithSize:18];
         _nameLabel.alpha = 0;
     }
     return _nameLabel;
@@ -642,7 +650,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"";
         _briefLabel.textColor = UIColor.whiteColor;
-        _briefLabel.font = [UIFont systemFontOfSize:12];
+        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
         _briefLabel.alpha = 0;
     }
     return _briefLabel;
@@ -682,7 +690,7 @@
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tableView registerClass:[SLHomePageNewsTableViewCell class] forCellReuseIdentifier:@"SLHomePageNewsTableViewCell"];
+        [_tableView registerClass:[SLHomePageNewsTableViewCellV2 class] forCellReuseIdentifier:@"SLHomePageNewsTableViewCellV2"];
         [_tableView registerClass:[SLProfileDynamicTableViewCell class] forCellReuseIdentifier:@"SLProfileDynamicTableViewCell"];
         _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         if (@available(iOS 15.0, *)) {
