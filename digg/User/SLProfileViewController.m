@@ -27,6 +27,10 @@
 #import "SLTagListContainerViewController.h"
 #import "digg-Swift.h"
 #import "SLColorManager.h"
+#import "SLAlertManager.h"
+#import "SLTrackingManager.h"
+#import "TMViewTrackerSDK.h"
+#import "UIView+TMViewTracker.h"
 
 
 @interface SLProfileViewController () <SLSegmentControlDelegate, UITableViewDelegate, UITableViewDataSource, SLEmptyWithLoginButtonViewDelegate, UIScrollViewDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, SLEmptyWithLoginButtonViewDelegate, SLProfileHeaderViewDelegate>
@@ -62,6 +66,8 @@
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self setupUI];
     [self.hideView setHidden:NO];
+    
+    [TMViewTrackerManager setCurrentPageName:@"Profile"];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -397,6 +403,12 @@
         if (cell) {
             SLArticleTodayEntity *entity = [self.viewModel.entity.feedList objectAtIndex:indexPath.row];
             [cell updateWithEntity:entity];
+            cell.controlName = @"Profile_LIST";
+            cell.args = @{
+                @"url": entity.url,
+                @"title": entity.title,
+                @"index": @(self.segmentControl.selectedIndex)
+            };
             @weakobj(self);
             cell.likeClick = ^(SLArticleTodayEntity *entity) {
                 @strongobj(self);
@@ -422,7 +434,24 @@
             
             cell.checkDetailClick = ^(SLArticleTodayEntity *entity) {
                 @strongobj(self);
-                [self jumpToH5WithUrl:entity.url andShowProgress:YES];
+                [SLAlertManager showAlertWithTitle:@"提示"
+                                           message:@"您确定要打开此链接吗？"
+                                               url:[NSURL URLWithString:entity.url]
+                                           urlText:entity.url
+                                      confirmTitle:@"是"
+                                       cancelTitle:@"否"
+                                    confirmHandler:^{
+                    NSDictionary* param = @{
+                        @"url": entity.url,
+                        @"index": @(self.segmentControl.selectedIndex)
+                    };
+                    [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_PROFILE" parameters:param];
+                                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
+                                    }
+                                     cancelHandler:^{
+                                    }
+                                 fromViewController:self];
+//                [self jumpToH5WithUrl:entity.url andShowProgress:YES];
             };
             
             cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {
@@ -457,6 +486,12 @@
                 entity = [self.viewModel.entity.submitList objectAtIndex:indexPath.row];
             }
             [cell updateWithEntity:entity];
+            cell.controlName = @"Profile_LIST";
+            cell.args = @{
+                @"url": entity.url,
+                @"title": entity.title,
+                @"index": @(self.segmentControl.selectedIndex)
+            };
             @weakobj(self);
             cell.likeClick = ^(SLArticleTodayEntity *entity) {
                 @strongobj(self);
@@ -482,7 +517,24 @@
             
             cell.checkDetailClick = ^(SLArticleTodayEntity *entity) {
                 @strongobj(self);
-                [self jumpToH5WithUrl:entity.url andShowProgress:YES];
+                [SLAlertManager showAlertWithTitle:@"提示"
+                                           message:@"您确定要打开此链接吗？"
+                                               url:[NSURL URLWithString:entity.url]
+                                           urlText:entity.url
+                                      confirmTitle:@"是"
+                                       cancelTitle:@"否"
+                                    confirmHandler:^{
+                    NSDictionary* param = @{
+                        @"url": entity.url,
+                        @"index": @(self.segmentControl.selectedIndex)
+                    };
+                    [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_PROFILE" parameters:param];
+                                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
+                                    }
+                                     cancelHandler:^{
+                                    }
+                                 fromViewController:self];
+//                [self jumpToH5WithUrl:entity.url andShowProgress:YES];
             };
             
             cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {

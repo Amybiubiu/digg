@@ -36,7 +36,8 @@ target 'digg' do
    pod 'IQKeyboardManager'
    pod 'Kingfisher'
    pod 'RZColorfulSwift'
-   pod 'QuicklySwift', :git => "https://github.com/rztime/QuicklySwift"
+   pod 'SnapKit'
+#   pod 'QuicklySwift', :git => "https://github.com/rztime/QuicklySwift"
 
    post_install do |installer|
       # Get main project development team id

@@ -11,14 +11,16 @@
 #import "SLTagListContainerViewModel.h"
 #import <JXCategoryView/JXCategoryView.h>
 #import <JXCategoryView/JXCategoryListContainerView.h>
-#import "SLTagListViewController.h"
-
 #import "SLTagListContainerViewModel.h"
 #import "SLProfileDynamicTableViewCell.h"
 #import "CaocaoRefresh.h"
 #import "SLHomePageViewModel.h"
 #import "SLUser.h"
 #import "SLWebViewController.h"
+#import "SLAlertManager.h"
+#import "SLTrackingManager.h"
+#import "TMViewTrackerSDK.h"
+#import "UIView+TMViewTracker.h"
 
 @interface UILabel (LineCheck)
 
@@ -83,6 +85,8 @@
     [self setupUI];
     [self addRefresh];
     [self requestData];
+    
+    [TMViewTrackerManager setCurrentPageName:@"TagList"];
 }
 
 #pragma mark - Methods
@@ -121,29 +125,8 @@
         make.bottom.equalTo(self.headerView).offset(-25);
     }];
     
-//    [self.view addSubview:self.contentView];
-//    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self.headerView.mas_bottom).offset(23);
-//        make.left.right.bottom.equalTo(self.view);
-//    }];
-    
     self.titles = @[@"编辑精选", @"最新", @"最热"];
     self.myCategoryView.titles = self.titles;
-//    CGFloat categoryViewHeight = 44;
-//    [self.contentView addSubview:self.categoryView];
-//    [self.categoryView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.equalTo(self.contentView);
-//        make.right.equalTo(self.contentView);
-//        make.top.equalTo(self.contentView).offset(12);
-//        make.height.mas_equalTo(categoryViewHeight);
-//    }];
-//    [self.contentView addSubview:self.listContainerView];
-//    [self.listContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.equalTo(self.contentView);
-//        make.right.equalTo(self.contentView);
-//        make.top.equalTo(self.categoryView.mas_bottom).offset(10);
-//        make.bottom.equalTo(self.contentView);
-//    }];
 
     JXCategoryIndicatorLineView *lineView = [[JXCategoryIndicatorLineView alloc] init];
     lineView.indicatorColor = Color16(0xFF1852);
@@ -216,21 +199,6 @@
 - (void)categoryView:(JXCategoryBaseView *)categoryView didScrollSelectedItemAtIndex:(NSInteger)index {
     [self loadMessagesList:CaocaoCarMessageListRefreshTypeRefresh];
 }
-
-//#pragma mark - JXCategoryListContainerViewDelegate
-//// 返回列表的数量
-//- (NSInteger)numberOfListsInlistContainerView:(JXCategoryListContainerView *)listContainerView {
-//    return self.titles.count;
-//}
-//
-//// 返回各个列表菜单下的实例，该实例需要遵守并实现 <JXCategoryListContentViewDelegate> 协议
-//- (id<JXCategoryListContentViewDelegate>)listContainerView:(JXCategoryListContainerView *)listContainerView initListForIndex:(NSInteger)index {
-//    
-//    SLTagListViewController *vc = [[SLTagListViewController alloc] init];
-//    vc.index = index;
-//    vc.label = self.label;
-//    return vc;
-//}
 
 #pragma mark - Actions
 - (void)backPage {
@@ -325,28 +293,11 @@
         _categoryView.titleLabelZoomScale = 1.125;
         _categoryView.titleSelectedColor = [UIColor blackColor];
         _categoryView.titleColor = Color16(0x7B7B7B);
-        // !!!: 将列表容器视图关联到 categoryView
-//        _categoryView.listContainer = self.listContainerView;
         _categoryView.cellSpacing = 24;
         _categoryView.averageCellSpacingEnabled = NO;
     }
     return _categoryView;
 }
-
-//// 列表容器视图
-//- (JXCategoryListContainerView *)listContainerView {
-//    if (!_listContainerView) {
-//        _listContainerView = [[JXCategoryListContainerView alloc] initWithType:JXCategoryListContainerType_ScrollView delegate:self];
-//    }
-//    return _listContainerView;
-//}
-//
-//- (SLTagListContainerViewModel *)viewModel {
-//    if (!_viewModel) {
-//        _viewModel = [[SLTagListContainerViewModel alloc] init];
-//    }
-//    return _viewModel;
-//}
 
 // ---- 
 
@@ -402,10 +353,6 @@
     [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
     dvc.hidesBottomBarWhenPushed = YES;
     dvc.isLoginPage = YES;
-//    @weakobj(self)
-//    dvc.loginSucessCallback = ^{
-//        @strongobj(self)
-//    };
     [self presentViewController:dvc animated:YES completion:nil];
 }
 
@@ -436,6 +383,12 @@
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
+        cell.controlName = @"TAG_LIST";
+        cell.args = @{
+            @"url": entity.url,
+            @"title": entity.title,
+            @"index": @(self.myCategoryView.selectedIndex)
+        };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
@@ -461,7 +414,25 @@
         
         cell.checkDetailClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
-            [self jumpToH5WithUrl:entity.url andShowProgress:YES];
+            [SLAlertManager showAlertWithTitle:@"提示"
+                                       message:@"您确定要打开此链接吗？"
+                                           url:[NSURL URLWithString:entity.url]
+                                       urlText:entity.url
+                                  confirmTitle:@"是"
+                                   cancelTitle:@"否"
+                                confirmHandler:^{
+                NSDictionary* param = @{
+                    @"url": entity.url,
+                    @"label": self.label,
+                    @"index": @(self.myCategoryView.selectedIndex)
+                };
+                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_TAGLIST" parameters:param];
+                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
+                                }
+                                 cancelHandler:^{
+                                }
+                             fromViewController:self];
+//            [self jumpToH5WithUrl:entity.url andShowProgress:YES];
         };
         
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {

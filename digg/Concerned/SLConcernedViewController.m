@@ -16,6 +16,10 @@
 #import "SLUser.h"
 #import <DZNEmptyDataSet/UIScrollView+EmptyDataSet.h>
 #import "SLColorManager.h"
+#import "SLAlertManager.h"
+#import "SLTrackingManager.h"
+#import "TMViewTrackerSDK.h"
+#import "UIView+TMViewTracker.h"
 
 
 @interface SLConcernedViewController () <UITableViewDelegate, UITableViewDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate>
@@ -38,6 +42,8 @@
     [self setupUI];
     [self addRefresh];
     [self requestData];
+    
+    [TMViewTrackerManager setCurrentPageName:@"Concern"];
 }
 
 #pragma mark - Methods
@@ -148,6 +154,11 @@
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
+        cell.controlName = @"CONCERN_LIST";
+        cell.args = @{
+            @"url": entity.url,
+            @"title": entity.title,
+        };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
@@ -173,7 +184,20 @@
         
         cell.checkDetailClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
-            [self jumpToH5WithUrl:entity.url andShowProgress:YES];
+            [SLAlertManager showAlertWithTitle:@"提示"
+                                       message:@"您确定要打开此链接吗？"
+                                           url:[NSURL URLWithString:entity.url]
+                                       urlText:entity.url
+                                  confirmTitle:@"是"
+                                   cancelTitle:@"否"
+                                confirmHandler:^{
+                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_CONCERN" parameters:@{@"url": entity.url}];
+                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
+                                }
+                                 cancelHandler:^{
+                                }
+                             fromViewController:self];
+//            [self jumpToH5WithUrl:entity.url andShowProgress:YES];
         };
         
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {

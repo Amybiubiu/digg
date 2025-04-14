@@ -28,76 +28,57 @@
 
 #pragma mark - UICollectionViewLayout
 
-- (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
+- (NSArray<UICollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(CGRect)rect {
     NSArray *originalAttributes = [super layoutAttributesForElementsInRect:rect];
     NSMutableArray *updatedAttributes = [NSMutableArray arrayWithArray:originalAttributes];
-    for (UICollectionViewLayoutAttributes *attributes in originalAttributes) {
-        if (!attributes.representedElementKind) {
-            NSUInteger index = [updatedAttributes indexOfObject:attributes];
-            updatedAttributes[index] = [self layoutAttributesForItemAtIndexPath:attributes.indexPath];
+    
+    for (UICollectionViewLayoutAttributes *attributes in updatedAttributes) {
+        if (attributes.representedElementKind == nil) {
+            NSIndexPath *indexPath = attributes.indexPath;
+            attributes.frame = [self layoutAttributesForItemAtIndexPath:indexPath].frame;
         }
     }
-
+    
     return updatedAttributes;
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewLayoutAttributes* currentItemAttributes = [[super layoutAttributesForItemAtIndexPath:indexPath] copy];
-    UIEdgeInsets sectionInset = [self evaluatedSectionInsetForItemAtIndex:indexPath.section];
-
-    BOOL isFirstItemInSection = indexPath.item == 0;
-    CGFloat layoutWidth = CGRectGetWidth(self.collectionView.frame) - sectionInset.left - sectionInset.right;
-
-    if (isFirstItemInSection) {
-        [currentItemAttributes leftAlignFrameWithSectionInset:sectionInset];
+    UICollectionViewLayoutAttributes *currentItemAttributes = [super layoutAttributesForItemAtIndexPath:indexPath];
+    
+    if (indexPath.item == 0) {
+        // 第一个元素直接放在左上角
+        CGRect frame = currentItemAttributes.frame;
+        frame.origin.x = self.sectionInset.left;
+        frame.origin.y = self.sectionInset.top;
+        currentItemAttributes.frame = frame;
         return currentItemAttributes;
     }
-
-    NSIndexPath* previousIndexPath = [NSIndexPath indexPathForItem:indexPath.item-1 inSection:indexPath.section];
-    CGRect previousFrame = [self layoutAttributesForItemAtIndexPath:previousIndexPath].frame;
-    CGFloat previousFrameRightPoint = previousFrame.origin.x + previousFrame.size.width;
-    CGRect currentFrame = currentItemAttributes.frame;
-    CGRect strecthedCurrentFrame = CGRectMake(sectionInset.left,
-                                              currentFrame.origin.y,
-                                              layoutWidth,
-                                              currentFrame.size.height);
-    // if the current frame, once left aligned to the left and stretched to the full collection view
-    // width intersects the previous frame then they are on the same line
-    BOOL isFirstItemInRow = !CGRectIntersectsRect(previousFrame, strecthedCurrentFrame);
-
-    if (isFirstItemInRow) {
-        // make sure the first item on a line is left aligned
-        [currentItemAttributes leftAlignFrameWithSectionInset:sectionInset];
-        return currentItemAttributes;
-    }
-
+    
+    // 获取前一个元素的布局属性
+    NSIndexPath *previousIndexPath = [NSIndexPath indexPathForItem:indexPath.item - 1 inSection:indexPath.section];
+    UICollectionViewLayoutAttributes *previousItemAttributes = [super layoutAttributesForItemAtIndexPath:previousIndexPath];
+    
+    // 计算当前元素的frame
     CGRect frame = currentItemAttributes.frame;
-    frame.origin.x = previousFrameRightPoint + [self evaluatedMinimumInteritemSpacingForSectionAtIndex:indexPath.section];
+    CGFloat previousItemMaxX = CGRectGetMaxX(previousItemAttributes.frame);
+    
+    // 检查是否需要换行
+    if (previousItemMaxX + self.minimumInteritemSpacing + frame.size.width <= self.collectionViewContentSize.width - self.sectionInset.right) {
+        // 不需要换行，放在前一个元素的右侧
+        frame.origin.x = previousItemMaxX + self.minimumInteritemSpacing;
+        frame.origin.y = previousItemAttributes.frame.origin.y;
+    } else {
+        // 需要换行，放在下一行的左侧
+        frame.origin.x = self.sectionInset.left;
+        frame.origin.y = CGRectGetMaxY(previousItemAttributes.frame) + self.minimumLineSpacing;
+    }
+    
     currentItemAttributes.frame = frame;
     return currentItemAttributes;
 }
 
-- (CGFloat)evaluatedMinimumInteritemSpacingForSectionAtIndex:(NSInteger)sectionIndex
-{
-    if ([self.collectionView.delegate respondsToSelector:@selector(collectionView:layout:minimumInteritemSpacingForSectionAtIndex:)]) {
-        id<UICollectionViewDelegateLeftAlignedLayout> delegate = (id<UICollectionViewDelegateLeftAlignedLayout>)self.collectionView.delegate;
-
-        return [delegate collectionView:self.collectionView layout:self minimumInteritemSpacingForSectionAtIndex:sectionIndex];
-    } else {
-        return self.minimumInteritemSpacing;
-    }
+- (BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds {
+    return YES;
 }
-
-- (UIEdgeInsets)evaluatedSectionInsetForItemAtIndex:(NSInteger)index
-{
-    if ([self.collectionView.delegate respondsToSelector:@selector(collectionView:layout:insetForSectionAtIndex:)]) {
-        id<UICollectionViewDelegateLeftAlignedLayout> delegate = (id<UICollectionViewDelegateLeftAlignedLayout>)self.collectionView.delegate;
-
-        return [delegate collectionView:self.collectionView layout:self insetForSectionAtIndex:index];
-    } else {
-        return self.sectionInset;
-    }
-}
-
 
 @end

@@ -50,6 +50,13 @@ NS_ASSUME_NONNULL_BEGIN
 //header border
 + (UIColor *)headerBorderColor;
 
+//recorder
++ (UIColor *)recorderTextColor;
++ (UIColor *)recorderTextPlaceholderColor;
++ (UIColor *)recorderTagBgColor;
++ (UIColor *)recorderTagTextColor;
++ (UIColor *)recorderTagBorderColor;
+
 @end
 
 NS_ASSUME_NONNULL_END
