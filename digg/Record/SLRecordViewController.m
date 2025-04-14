@@ -241,6 +241,7 @@
     linkPlaceholder.hidden = NO;
     UIButton *clearButton2 = [self.linkField associatedObjectForKey:@"clearButton"];
     clearButton2.hidden = YES;
+    [self updateLinkFieldHeight];
 
     [self.textView clearContent];
 
