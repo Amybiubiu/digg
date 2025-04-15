@@ -184,20 +184,20 @@
         
         cell.checkDetailClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
-            [SLAlertManager showAlertWithTitle:@"提示"
-                                       message:@"您确定要打开此链接吗？"
-                                           url:[NSURL URLWithString:entity.url]
-                                       urlText:entity.url
-                                  confirmTitle:@"是"
-                                   cancelTitle:@"否"
-                                confirmHandler:^{
-                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_CONCERN" parameters:@{@"url": entity.url}];
-                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
-                                }
-                                 cancelHandler:^{
-                                }
-                             fromViewController:self];
-//            [self jumpToH5WithUrl:entity.url andShowProgress:YES];
+            SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                               message:nil
+                                                                   url:[NSURL URLWithString:entity.url]
+                                                               urlText:entity.url
+                                                          confirmTitle:@"是"
+                                                           cancelTitle:@"否"
+                                                        confirmHandler:^{
+                                                            [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_CONCERN" parameters:@{@"url": entity.url}];
+                                                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
+                                                        }
+                                                         cancelHandler:^{
+                                                        }
+                                                     fromViewController:nil];
+            [alertView show];
         };
         
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {

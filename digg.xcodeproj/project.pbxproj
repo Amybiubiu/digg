@@ -124,6 +124,7 @@
 		345C12DC2DACB84D005FCCDB /* SubviewsSkeletonables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12882DACB84D005FCCDB /* SubviewsSkeletonables.swift */; };
 		345C12DD2DACB84D005FCCDB /* UICollectionView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12622DACB84D005FCCDB /* UICollectionView+Extensions.swift */; };
 		345C12DE2DACB84D005FCCDB /* SkeletonTextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12872DACB84D005FCCDB /* SkeletonTextNode.swift */; };
+		345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
@@ -376,6 +377,8 @@
 		345C129B2DACB84D005FCCDB /* UIView+Swizzling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Swizzling.swift"; sourceTree = "<group>"; };
 		345C129C2DACB84D005FCCDB /* UIView+Transitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Transitions.swift"; sourceTree = "<group>"; };
 		345C129E2DACB84D005FCCDB /* SkeletonFlowHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonFlowHandler.swift; sourceTree = "<group>"; };
+		345C18A72DADEF36005FCCDB /* SLCustomAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCustomAlertView.h; sourceTree = "<group>"; };
+		345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCustomAlertView.m; sourceTree = "<group>"; };
 		346485FC2D4284960084A3BF /* SLConcernedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewController.h; sourceTree = "<group>"; };
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
@@ -1058,6 +1061,8 @@
 		34A071192D732F9E006BC583 /* Alert */ = {
 			isa = PBXGroup;
 			children = (
+				345C18A72DADEF36005FCCDB /* SLCustomAlertView.h */,
+				345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */,
 				34A0711A2D732FBC006BC583 /* SLAlertManager.h */,
 				34A0711B2D732FBC006BC583 /* SLAlertManager.m */,
 			);
@@ -1806,6 +1811,7 @@
 				344242782D55FE190081B948 /* SLColorManager.m in Sources */,
 				E7C139342CF325A600C5053A /* SLUser.m in Sources */,
 				345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */,
+				345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */,
 				34D2EBD62D3943660067CC05 /* SLRecordViewController.m in Sources */,
 				E7769E6C2CA2E63B00AE84F4 /* main.m in Sources */,
 				3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */,
