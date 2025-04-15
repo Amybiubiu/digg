@@ -107,7 +107,7 @@
     self.titleLabel.text = title;
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
     self.titleLabel.font = [UIFont pingFangBoldWithSize:15];
-    self.titleLabel.textColor = [SLColorManager primaryTextColor];
+    self.titleLabel.textColor = [UIColor labelColor];
     self.titleLabel.numberOfLines = 0;
     [self.containerView addSubview:self.titleLabel];
     
@@ -146,7 +146,7 @@
 - (void)setupButtonsWithConfirmTitle:(NSString *)confirmTitle cancelTitle:(NSString *)cancelTitle {
     // 水平分隔线
     self.horizontalSeparator = [[UIView alloc] init];
-    self.horizontalSeparator.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+    self.horizontalSeparator.backgroundColor = [UIColor separatorColor];
     [self.containerView addSubview:self.horizontalSeparator];
     
     self.horizontalSeparator.translatesAutoresizingMaskIntoConstraints = NO;
@@ -176,7 +176,7 @@
         
         // 按钮分隔线
         self.buttonSeparator = [[UIView alloc] init];
-        self.buttonSeparator.backgroundColor = [UIColor colorWithWhite:0.9 alpha:1.0];
+        self.buttonSeparator.backgroundColor = [UIColor separatorColor];
         [self.containerView addSubview:self.buttonSeparator];
         
         self.buttonSeparator.translatesAutoresizingMaskIntoConstraints = NO;
