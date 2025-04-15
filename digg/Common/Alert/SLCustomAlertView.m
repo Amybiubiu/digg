@@ -324,18 +324,24 @@
     
     // 添加动画效果
     self.alpha = 0;
-    self.containerView.transform = CGAffineTransformMakeScale(1.2, 1.2);
+    self.containerView.transform = CGAffineTransformMakeScale(0.9, 0.9);
     
-    [UIView animateWithDuration:0.25 animations:^{
+    [UIView animateWithDuration:0.2 
+                          delay:0 
+         usingSpringWithDamping:0.8 
+          initialSpringVelocity:0.5 
+                        options:UIViewAnimationOptionCurveEaseOut 
+                     animations:^{
         self.alpha = 1;
         self.containerView.transform = CGAffineTransformIdentity;
-    }];
+    } completion:nil];
 }
 
 - (void)dismiss {
-    [UIView animateWithDuration:0.25 animations:^{
+    [UIView animateWithDuration:0.15 
+                     animations:^{
         self.alpha = 0;
-        self.containerView.transform = CGAffineTransformMakeScale(0.8, 0.8);
+        self.containerView.transform = CGAffineTransformMakeScale(0.95, 0.95);
     } completion:^(BOOL finished) {
         [self removeFromSuperview];
     }];
