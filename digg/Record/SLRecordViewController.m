@@ -16,7 +16,6 @@
 #import "SLWebViewController.h"
 #import "SLColorManager.h"
 #import "UIView+Associated.h"
-//#import <IQKeyboardManager/IQKeyboardManager.h>
 #import "digg-Swift.h"
 
 #define FIELD_DEFAULT_HEIGHT 48
@@ -89,16 +88,6 @@
     [self refreshTagsDisplay];
     [self updateTagsLayout];
 }
-
-//- (void)viewWillAppear:(BOOL)animated {
-//    [super viewWillAppear:animated];
-//    [IQKeyboardManager.sharedManager setEnable:FALSE];
-//}
-//
-//- (void)viewWillDisappear:(BOOL)animated {
-//    [super viewWillDisappear:animated];
-//    [IQKeyboardManager.sharedManager setEnable:YES];
-//}
 
 #pragma mark - Methods
 - (void)setupUI {
@@ -241,6 +230,7 @@
     linkPlaceholder.hidden = NO;
     UIButton *clearButton2 = [self.linkField associatedObjectForKey:@"clearButton"];
     clearButton2.hidden = YES;
+    [self updateLinkFieldHeight];
 
     [self.textView clearContent];
 
@@ -360,6 +350,8 @@
             if (isSuccess) {
                 [self gotoH5Page:articleId];
                 [self clearAll];
+            } else {
+                [SVProgressHUD showErrorWithStatus:@"提交失败"];
             }
         }];
     } else {

@@ -64,10 +64,10 @@
     parameters[@"labels"] = labels;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            
             NSData* data = (NSData*)responseObject;
-            NSString *articleId = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            handler(YES, articleId);
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, articleId);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {

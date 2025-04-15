@@ -115,4 +115,36 @@
     }
 }
 
++ (SLCustomAlertView *)showCustomAlertWithTitle:(NSString *)title
+                                        message:(NSString *)message
+                                            url:(NSURL *)url
+                                        urlText:(NSString *)urlText
+                                   confirmTitle:(NSString *)confirmTitle
+                                    cancelTitle:(NSString *)cancelTitle
+                                 confirmHandler:(SLAlertActionHandler)confirmHandler
+                                  cancelHandler:(SLAlertActionHandler)cancelHandler
+                              fromViewController:(UIViewController *)viewController {
+    
+    SLCustomAlertView *alertView = [SLCustomAlertView showAlertWithTitle:title
+                                                                 message:message
+                                                            confirmTitle:confirmTitle
+                                                             cancelTitle:cancelTitle
+                                                          confirmHandler:confirmHandler
+                                                           cancelHandler:cancelHandler];
+    
+    if (url && urlText) {
+        [alertView setURL:url withText:urlText];
+    }
+    
+//    // 默认设置
+//    [alertView setTitleFont:[UIFont boldSystemFontOfSize:17] color:[UIColor blackColor]];
+//    [alertView setMessageFont:[UIFont systemFontOfSize:14] color:[UIColor darkGrayColor]];
+//    [alertView setConfirmButtonFont:[UIFont boldSystemFontOfSize:17] color:[UIColor systemBlueColor]];
+//    [alertView setCancelButtonFont:[UIFont systemFontOfSize:17] color:[UIColor systemBlueColor]];
+//    [alertView setConfirmButtonOnRight:YES];
+//    [alertView setBackgroundBlurWithStyle:UIBlurEffectStyleDark];
+    
+    return alertView;
+}
+
 @end

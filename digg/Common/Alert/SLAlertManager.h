@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "SLCustomAlertView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,6 +54,17 @@ typedef void (^SLAlertActionHandler)(void);
                   confirmHandler:(nullable SLAlertActionHandler)confirmHandler
                    cancelHandler:(nullable SLAlertActionHandler)cancelHandler
                fromViewController:(nullable UIViewController *)viewController;
+
+
++ (SLCustomAlertView *)showCustomAlertWithTitle:(nullable NSString *)title
+                                        message:(nullable NSString *)message
+                                            url:(nullable NSURL *)url
+                                        urlText:(nullable NSString *)urlText
+                                   confirmTitle:(nullable NSString *)confirmTitle
+                                    cancelTitle:(nullable NSString *)cancelTitle
+                                 confirmHandler:(nullable SLAlertActionHandler)confirmHandler
+                                  cancelHandler:(nullable SLAlertActionHandler)cancelHandler
+                              fromViewController:(nullable UIViewController *)viewController;
 
 @end
 
