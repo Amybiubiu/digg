@@ -173,20 +173,20 @@
                 BOOL isOuterUrl = [type isEqualToString:@"outer"];
                 
                 if (isOuterUrl) {
-                    [SLAlertManager showAlertWithTitle:@"提示"
-                                               message:@"您确定要打开此链接吗？"
-                                                   url:[NSURL URLWithString:url]
-                                               urlText:url
-                                          confirmTitle:@"是"
-                                           cancelTitle:@"否"
-                                        confirmHandler:^{
-                        [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_WEB" parameters:@{@"url": url}];
-                                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
-                                        }
-                                         cancelHandler:^{
-                                        }
-                                     fromViewController:self];
-//                    dvc.isShowProgress = YES;
+                    SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                   message:nil
+                                                       url:[NSURL URLWithString:url]
+                                                   urlText:url
+                                              confirmTitle:@"是"
+                                               cancelTitle:@"否"
+                                            confirmHandler:^{
+                                                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_WEB" parameters:@{@"url": url}];
+                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
+                                            }
+                                             cancelHandler:^{
+                                            }
+                                         fromViewController:nil];
+                    [alertView show];
                 } else {
                     SLWebViewController *dvc = [[SLWebViewController alloc] init];
                     [dvc startLoadRequestWithUrl:url];
