@@ -145,6 +145,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+//    [self.textView setHidden:NO];
     [self.textView becomeFirstResponder];
 }
 
@@ -170,6 +171,7 @@
     if (self.submitHandler) {
         self.submitHandler(self.textView.text);
     }
+    self.textView.text = @"";
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -178,9 +180,7 @@
     if (self.cancelHandler) {
         self.cancelHandler();
     }
-    [self dismissViewControllerAnimated:YES completion:^{
-        [self.textView setHidden:YES];
-    }];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - Keyboard Notifications
@@ -226,7 +226,7 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if ([text isEqualToString:@"\n"]) {
-        [self submitButtonTapped];
+        [self dismissKeyboard];
         return NO;
     }
     return YES;

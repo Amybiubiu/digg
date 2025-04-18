@@ -28,6 +28,7 @@
 @property (nonatomic, assign) BOOL isSetUA;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) UIProgressView* progressView;
+@property (nonatomic, strong) SLCommentInputViewController *commentVC;
 
 @end
 
@@ -66,6 +67,8 @@
     if (self.navigationController.interactivePopGestureRecognizer != nil) {
         [self.wkwebView.scrollView.panGestureRecognizer shouldRequireFailureOfGestureRecognizer:self.navigationController.interactivePopGestureRecognizer];
     }
+    
+    self.commentVC = [[SLCommentInputViewController alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -257,9 +260,8 @@
                 }
                 
                 // 创建评论输入控制器
-                SLCommentInputViewController *commentVC = [[SLCommentInputViewController alloc] init];
-                commentVC.placeholder = placeholder;
-                commentVC.submitHandler = ^(NSString *comment) {
+                self.commentVC.placeholder = placeholder;
+                self.commentVC.submitHandler = ^(NSString *comment) {
                     // 调用前端onCommentInputClose方法，传递评论内容和动作类型
                     NSString *action = comment.length > 0 ? @"send" : @"close";
                     NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: '%@'})", 
@@ -274,7 +276,7 @@
                 };
                 
                 // 添加取消回调
-                commentVC.cancelHandler = ^{
+                self.commentVC.cancelHandler = ^{
                     NSString *jsCode = @"window.onCommentInputClose({content: '', action: 'close'})";
                     [self.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
                         if (error) {
@@ -283,7 +285,7 @@
                     }];
                 };
                 
-                [commentVC showInViewController:self];
+                [self.commentVC showInViewController:self];
             });
         }
         responseCallback(data);
