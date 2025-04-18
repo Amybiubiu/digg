@@ -155,6 +155,7 @@
 		34A071152D72D999006BC583 /* UIViewController+TMViewExposure.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070ED2D72D999006BC583 /* UIViewController+TMViewExposure.m */; };
 		34A0711C2D732FBC006BC583 /* SLAlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A0711B2D732FBC006BC583 /* SLAlertManager.m */; };
 		34A0711F2D733882006BC583 /* SLTrackingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A0711E2D733882006BC583 /* SLTrackingManager.m */; };
+		34A951522DB121B500579CC6 /* SLCommentInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A951512DB121B500579CC6 /* SLCommentInputViewController.m */; };
 		34D2E97F2D33C4A90067CC05 /* SLTagListContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2E97E2D33C4A90067CC05 /* SLTagListContainerViewController.m */; };
 		34D2E9822D33C8370067CC05 /* SLTagListContainerViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2E9812D33C8370067CC05 /* SLTagListContainerViewModel.m */; };
 		34D2EB992D3941DE0067CC05 /* TZImagePickerController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 34D2EB832D3941DE0067CC05 /* TZImagePickerController.bundle */; };
@@ -443,6 +444,8 @@
 		34A0711B2D732FBC006BC583 /* SLAlertManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLAlertManager.m; sourceTree = "<group>"; };
 		34A0711D2D733882006BC583 /* SLTrackingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTrackingManager.h; sourceTree = "<group>"; };
 		34A0711E2D733882006BC583 /* SLTrackingManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTrackingManager.m; sourceTree = "<group>"; };
+		34A951502DB121B500579CC6 /* SLCommentInputViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCommentInputViewController.h; sourceTree = "<group>"; };
+		34A951512DB121B500579CC6 /* SLCommentInputViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentInputViewController.m; sourceTree = "<group>"; };
 		34D2E97D2D33C4A90067CC05 /* SLTagListContainerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagListContainerViewController.h; sourceTree = "<group>"; };
 		34D2E97E2D33C4A90067CC05 /* SLTagListContainerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagListContainerViewController.m; sourceTree = "<group>"; };
 		34D2E9802D33C8370067CC05 /* SLTagListContainerViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagListContainerViewModel.h; sourceTree = "<group>"; };
@@ -1388,6 +1391,8 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
+				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
 				E7769EA22CA503C300AE84F4 /* SLGeneralMacro.h */,
 				E7C137E42CF3239700C5053A /* EnvConfigHeader.h */,
@@ -1804,6 +1809,7 @@
 				345C12D82DACB84D005FCCDB /* SkeletonView.swift in Sources */,
 				345C12D92DACB84D005FCCDB /* UIView+Extensions.swift in Sources */,
 				345C12DA2DACB84D005FCCDB /* UIView+SkeletonView.swift in Sources */,
+				34A951522DB121B500579CC6 /* SLCommentInputViewController.m in Sources */,
 				345C12DB2DACB84D005FCCDB /* UITableView+Extensions.swift in Sources */,
 				345C12DC2DACB84D005FCCDB /* SubviewsSkeletonables.swift in Sources */,
 				345C12DD2DACB84D005FCCDB /* UICollectionView+Extensions.swift in Sources */,

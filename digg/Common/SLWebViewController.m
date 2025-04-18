@@ -20,6 +20,7 @@
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
 #import "SLTrackingManager.h"
+#import "SLCommentInputViewController.h"
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
 @property (nonatomic, strong) WebViewJavascriptBridge* bridge;
@@ -121,7 +122,6 @@
     [self.bridge registerHandler:@"backToHomePage" handler:^(id data, WVJBResponseCallback responseCallback) {
         NSLog(@"backToHomePage: %@", data);
         [self backTo:YES];
-//        [self.navigationController popToRootViewControllerAnimated:YES];
         self.tabBarController.selectedIndex = 0;
         responseCallback(data);
     }];
@@ -154,7 +154,6 @@
         NSLog(@"page_back = %@",data);
         @strongobj(self);
         [self backTo:NO];
-//        [self.navigationController popViewControllerAnimated:YES];
     }];
     
     [self.bridge registerHandler:@"jumpToH5" handler:^(id data, WVJBResponseCallback responseCallback) {
@@ -206,7 +205,6 @@
         NSLog(@"closeH5 called with: %@", data);
         @strongobj(self);
         [self backTo:YES];
-//        [self.navigationController popViewControllerAnimated:YES];
     }];
     
     [self.bridge registerHandler:@"openUserPage" handler:^(id data, WVJBResponseCallback responseCallback) {
@@ -248,6 +246,64 @@
         }
         responseCallback(data);
     }];
+    [self.bridge registerHandler:@"openCommentInput" handler:^(id data, WVJBResponseCallback responseCallback) {
+        if ([data isKindOfClass:[NSDictionary class]]) {
+            @strongobj(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary *dic = (NSDictionary *)data;
+                NSString *placeholder = [[dic objectForKey:@"placeholder"] stringValue];
+                if (!placeholder) {
+                    placeholder = @"写评论";
+                }
+                
+                // 创建评论输入控制器
+                SLCommentInputViewController *commentVC = [[SLCommentInputViewController alloc] init];
+                commentVC.placeholder = placeholder;
+                commentVC.submitHandler = ^(NSString *comment) {
+                    // 调用前端onCommentInputClose方法，传递评论内容和动作类型
+                    NSString *action = comment.length > 0 ? @"send" : @"close";
+                    NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: '%@'})", 
+                                       [comment stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"], 
+                                       action];
+                    
+                    [self.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+                        if (error) {
+                            NSLog(@"评论关闭回调JS错误: %@", error);
+                        }
+                    }];
+                    
+                    // 同时通过Bridge回调
+                    responseCallback(@{
+                        @"success": @YES, 
+                        @"comment": comment,
+                        @"action": action
+                    });
+                };
+                
+                // 添加取消回调
+                commentVC.cancelHandler = ^{
+                    NSString *jsCode = @"window.onCommentInputClose({content: '', action: 'close'})";
+                    [self.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+                        if (error) {
+                            NSLog(@"评论取消回调JS错误: %@", error);
+                        }
+                    }];
+                    
+                    // 通过Bridge回调取消事件
+                    responseCallback(@{
+                        @"success": @YES, 
+                        @"comment": @"",
+                        @"action": @"close"
+                    });
+                };
+                
+                [commentVC showInViewController:self];
+            });
+        } else {
+            responseCallback(data);
+        }
+    }];
+    
 }
 - (void)setupDefailUA{
     if (self.isSetUA) {
