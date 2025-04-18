@@ -61,7 +61,7 @@
         self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
         self.confirmHandler = confirmHandler;
         self.cancelHandler = cancelHandler;
-        self.confirmOnRight = NO; // 默认确认按钮在右侧
+        self.confirmOnRight = YES; // 默认确认按钮在右侧
         
         // 设置容器视图
         [self setupContainerView];
@@ -160,7 +160,7 @@
     // 确认按钮
     self.confirmButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.confirmButton setTitle:confirmTitle forState:UIControlStateNormal];
-    [self.confirmButton setTitleColor:[UIColor systemRedColor] forState:UIControlStateNormal];
+    [self.confirmButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
     self.confirmButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
     [self.confirmButton addTarget:self action:@selector(confirmButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:self.confirmButton];
@@ -169,7 +169,7 @@
     if (cancelTitle) {
         self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
         [self.cancelButton setTitle:cancelTitle forState:UIControlStateNormal];
-        [self.cancelButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
+        [self.cancelButton setTitleColor:[UIColor systemRedColor] forState:UIControlStateNormal];
         self.cancelButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
         [self.cancelButton addTarget:self action:@selector(cancelButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.containerView addSubview:self.cancelButton];

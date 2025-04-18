@@ -37,7 +37,8 @@ target 'digg' do
    pod 'Kingfisher'
    pod 'RZColorfulSwift'
    pod 'SnapKit'
-#   pod 'QuicklySwift', :git => "https://github.com/rztime/QuicklySwift"
+
+   pod 'UMCommon'
 
    post_install do |installer|
       # Get main project development team id
