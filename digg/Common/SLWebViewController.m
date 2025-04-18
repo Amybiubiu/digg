@@ -258,17 +258,22 @@
                 if (!placeholder) {
                     placeholder = @"写评论";
                 }
+                NSString *lastInput = [[dic objectForKey:@"lastInput"] stringValue];
+                if (!lastInput) {
+                    lastInput = @"";
+                }
                 
                 // 创建评论输入控制器
                 self.commentVC.placeholder = placeholder;
+                self.commentVC.textView.text = lastInput;
+                __weak typeof(self) weakSelf = self;
                 self.commentVC.submitHandler = ^(NSString *comment) {
                     // 调用前端onCommentInputClose方法，传递评论内容和动作类型
                     NSString *action = comment.length > 0 ? @"send" : @"close";
                     NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: '%@'})", 
                                        [comment stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"], 
                                        action];
-                    
-                    [self.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+                    [weakSelf.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
                         if (error) {
                             NSLog(@"评论关闭回调JS错误: %@", error);
                         }
@@ -276,9 +281,10 @@
                 };
                 
                 // 添加取消回调
-                self.commentVC.cancelHandler = ^{
-                    NSString *jsCode = @"window.onCommentInputClose({content: '', action: 'close'})";
-                    [self.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+                self.commentVC.cancelHandler = ^(NSString *comment) {
+                    NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: 'close'})",
+                                       [comment stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
+                    [weakSelf.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
                         if (error) {
                             NSLog(@"评论取消回调JS错误: %@", error);
                         }

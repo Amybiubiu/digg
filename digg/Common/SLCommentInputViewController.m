@@ -14,7 +14,6 @@
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIView *separatorLine;
 @property (nonatomic, strong) UIView *inputContainerView;
-@property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *submitButton;
 @property (nonatomic, strong) UILabel *placeholderLabel;
 
@@ -171,14 +170,13 @@
     if (self.submitHandler) {
         self.submitHandler(self.textView.text);
     }
-    self.textView.text = @"";
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)dismissKeyboard {
     [self.textView resignFirstResponder];
     if (self.cancelHandler) {
-        self.cancelHandler();
+        self.cancelHandler(self.textView.text);
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }

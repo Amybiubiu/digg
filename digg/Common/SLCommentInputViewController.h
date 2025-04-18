@@ -10,13 +10,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^SLCommentSubmitHandler)(NSString *comment);
-typedef void(^SLCommentCancelHandler)(void);
 
 @interface SLCommentInputViewController : UIViewController
 
 @property (nonatomic, copy) NSString *placeholder;
 @property (nonatomic, copy) SLCommentSubmitHandler submitHandler;
-@property (nonatomic, copy) SLCommentCancelHandler cancelHandler;
+@property (nonatomic, copy) SLCommentSubmitHandler cancelHandler;
+@property (nonatomic, strong) UITextView *textView;
 
 - (void)showInViewController:(UIViewController *)viewController;
 
