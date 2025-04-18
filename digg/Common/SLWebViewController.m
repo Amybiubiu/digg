@@ -271,13 +271,6 @@
                             NSLog(@"评论关闭回调JS错误: %@", error);
                         }
                     }];
-                    
-                    // 同时通过Bridge回调
-                    responseCallback(@{
-                        @"success": @YES, 
-                        @"comment": comment,
-                        @"action": action
-                    });
                 };
                 
                 // 添加取消回调
@@ -288,20 +281,12 @@
                             NSLog(@"评论取消回调JS错误: %@", error);
                         }
                     }];
-                    
-                    // 通过Bridge回调取消事件
-                    responseCallback(@{
-                        @"success": @YES, 
-                        @"comment": @"",
-                        @"action": @"close"
-                    });
                 };
                 
                 [commentVC showInViewController:self];
             });
-        } else {
-            responseCallback(data);
         }
+        responseCallback(data);
     }];
     
 }

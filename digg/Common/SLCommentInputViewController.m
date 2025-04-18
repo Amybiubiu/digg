@@ -51,6 +51,10 @@
     self.textView.delegate = self;
     self.textView.returnKeyType = UIReturnKeyDone;
     self.textView.scrollEnabled = YES;
+    // 确保可以选择和编辑文本
+    self.textView.selectable = YES;
+    self.textView.editable = YES;
+
     self.textView.textContainerInset = UIEdgeInsetsMake(0, 0, 0, 0);
     self.textView.textContainer.lineFragmentPadding = 0;
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
