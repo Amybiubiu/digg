@@ -39,6 +39,8 @@ target 'digg' do
    pod 'SnapKit'
 
    pod 'UMCommon'
+   pod 'UMAPM'
+   pod 'UMDevice'
 
    post_install do |installer|
       # Get main project development team id

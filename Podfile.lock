@@ -28,6 +28,8 @@ PODS:
   - SDWebImage/Core (5.18.2)
   - SnapKit (5.6.0)
   - SVProgressHUD (2.2.5)
+  - UMAPM (2.0.4):
+    - UMCommon
   - UMCommon (7.5.2):
     - UMDevice
   - UMDevice (3.4.0)
@@ -52,7 +54,9 @@ DEPENDENCIES:
   - SDWebImage
   - SnapKit
   - SVProgressHUD
+  - UMAPM
   - UMCommon
+  - UMDevice
   - WebViewJavascriptBridge
   - YYImage
   - YYModel
@@ -73,6 +77,7 @@ SPEC REPOS:
     - SDWebImage
     - SnapKit
     - SVProgressHUD
+    - UMAPM
     - UMCommon
     - UMDevice
     - WebViewJavascriptBridge
@@ -94,6 +99,7 @@ SPEC CHECKSUMS:
   SDWebImage: c0de394d7cf7f9838aed1fd6bb6037654a4572e4
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
+  UMAPM: f038b65a3df4fe8e2df3245642d84cff7f5f63c8
   UMCommon: 72513a01ebca2dead52f2112b4d7c6196dbbe412
   UMDevice: dcdf7ec167387837559d149fbc7d793d984faf82
   WebViewJavascriptBridge: 7f5bc4d3581e672e8f32bd0f812d54bc69bb8e29
@@ -101,6 +107,6 @@ SPEC CHECKSUMS:
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 60b5d24ef19f5b01e7e093def94ae2397f1b53b6
+PODFILE CHECKSUM: 4ce2212287d85869dc71cc8dd7075cec991c8c35
 
 COCOAPODS: 1.16.2
