@@ -254,11 +254,11 @@
             @strongobj(self);
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
-                NSString *placeholder = [[dic objectForKey:@"placeholder"] stringValue];
+                NSString *placeholder = [NSString stringWithFormat:@"%@", [dic objectForKey:@"placeholder"]];
                 if (!placeholder) {
                     placeholder = @"写评论";
                 }
-                NSString *lastInput = [[dic objectForKey:@"lastInput"] stringValue];
+                NSString *lastInput = [NSString stringWithFormat:@"%@", [dic objectForKey:@"lastInput"]];
                 if (!lastInput) {
                     lastInput = @"";
                 }
@@ -270,24 +270,27 @@
                 self.commentVC.submitHandler = ^(NSString *comment) {
                     // 调用前端onCommentInputClose方法，传递评论内容和动作类型
                     NSString *action = comment.length > 0 ? @"send" : @"close";
-                    NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: '%@'})", 
-                                       [comment stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"], 
-                                       action];
-                    [weakSelf.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
-                        if (error) {
-                            NSLog(@"评论关闭回调JS错误: %@", error);
-                        }
+                    
+                    // 使用WebViewJavascriptBridge调用注册的处理程序，而不是直接调用window上的方法
+                    NSDictionary *params = @{
+                        @"content": comment ?: @"",
+                        @"action": action
+                    };
+                    
+                    [weakSelf.bridge callHandler:@"onCommentInputClose" data:params responseCallback:^(id responseData) {
+                        NSLog(@"onCommentInputClose 回调结果: %@", responseData);
                     }];
                 };
                 
                 // 添加取消回调
                 self.commentVC.cancelHandler = ^(NSString *comment) {
-                    NSString *jsCode = [NSString stringWithFormat:@"window.onCommentInputClose({content: '%@', action: 'close'})",
-                                       [comment stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"]];
-                    [weakSelf.wkwebView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
-                        if (error) {
-                            NSLog(@"评论取消回调JS错误: %@", error);
-                        }
+                    NSDictionary *params = @{
+                        @"content": comment ?: @"",
+                        @"action": @"close"
+                    };
+                    
+                    [weakSelf.bridge callHandler:@"onCommentInputClose" data:params responseCallback:^(id responseData) {
+                        NSLog(@"onCommentInputClose 取消回调结果: %@", responseData);
                     }];
                 };
                 
