@@ -37,14 +37,14 @@
     
     // 创建灰色输入容器视图
     self.inputContainerView = [[UIView alloc] init];
-    self.inputContainerView.backgroundColor = [UIColor systemGray6Color];
+    self.inputContainerView.backgroundColor = [SLColorManager textViewBgColor];
     self.inputContainerView.layer.cornerRadius = 8.0;
     [self.backgroundView addSubview:self.inputContainerView];
     
     // 创建文本输入框
     self.textView = [[UITextView alloc] init];
     self.textView.font = [UIFont pingFangRegularWithSize:12.0];
-    self.textView.textColor = [UIColor labelColor];
+    self.textView.textColor = [SLColorManager textViewTextColor];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.delegate = self;
     self.textView.returnKeyType = UIReturnKeyDone;
@@ -57,7 +57,7 @@
     self.textView.textContainer.lineFragmentPadding = 0;
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 2.0; // 设置行间距
-    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: [UIFont pingFangRegularWithSize:12.0], NSForegroundColorAttributeName: [SLColorManager textViewTextColor]};
     // 添加键盘工具栏
     UIToolbar *toolbar = [[UIToolbar alloc] init];
     toolbar.barStyle = UIBarStyleDefault;
@@ -78,7 +78,7 @@
     // 创建占位符标签
     self.placeholderLabel = [[UILabel alloc] init];
     self.placeholderLabel.font = [UIFont pingFangRegularWithSize:12.0];
-    self.placeholderLabel.textColor = [UIColor placeholderTextColor];
+    self.placeholderLabel.textColor = [SLColorManager textViewPlaceholderColor];
     self.placeholderLabel.text = self.placeholder ?: @"写回复";
     [self.inputContainerView addSubview:self.placeholderLabel];
     

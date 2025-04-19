@@ -162,4 +162,23 @@
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
+//textview输入框相关颜色
++ (UIColor *)textViewBgColor {
+    UIColor *lightColor = Color16(0xF4F4F6);
+    UIColor *darkColor = Color16(0x232228);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)textViewPlaceholderColor {
+    UIColor *lightColor = Color16(0xC3C3C3);
+    UIColor *darkColor = Color16(0x5d5e66);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)textViewTextColor {
+    UIColor *lightColor = Color16(0x333333);
+    UIColor *darkColor = Color16(0xd5d7dc);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
 @end
