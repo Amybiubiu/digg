@@ -607,6 +607,7 @@
                     SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                     vc.hidesBottomBarWhenPushed = YES;
                     vc.label = entity.label;
+                    vc.entity = entity;
                     [self.navigationController pushViewController:vc animated:YES];
                 }
             };

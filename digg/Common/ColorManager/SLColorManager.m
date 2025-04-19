@@ -73,13 +73,13 @@
 }
 
 + (UIColor *)tagBackgroundTextColor {
-    UIColor *lightColor = Color16A(0xEA2A2A, 0.1);
+    UIColor *lightColor = Color16A(0xFF1852, 0.1);
     UIColor *darkColor = Color16A(0xFF3468, 0.1);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
 + (UIColor *)tagTextColor {
-    UIColor *lightColor = Color16(0xEA2A2A);
+    UIColor *lightColor = Color16(0xFF1852);
     UIColor *darkColor = Color16(0xFF3468);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }

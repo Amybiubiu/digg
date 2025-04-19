@@ -128,6 +128,7 @@
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
 		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
+		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
 		3486EFD82D2A634200A55258 /* SLProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFD72D2A634200A55258 /* SLProfileViewController.m */; };
 		3486EFDC2D2A6A4100A55258 /* SLProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFDB2D2A6A4100A55258 /* SLProfileHeaderView.m */; };
@@ -387,6 +388,8 @@
 		346486002D4286050084A3BF /* SLConcernedViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewModel.m; sourceTree = "<group>"; };
 		348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLEmpty.h"; sourceTree = "<group>"; };
 		348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLEmpty.m"; sourceTree = "<group>"; };
+		348628F52DB3CCB600CB341C /* UIView+SLToast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SLToast.h"; sourceTree = "<group>"; };
+		348628F62DB3CCB600CB341C /* UIView+SLToast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+SLToast.m"; sourceTree = "<group>"; };
 		3486EBC02D1D3C2700A55258 /* SLNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNavigationController.h; sourceTree = "<group>"; };
 		3486EBC12D1D3C2700A55258 /* SLNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNavigationController.m; sourceTree = "<group>"; };
 		3486EFD62D2A634200A55258 /* SLProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileViewController.h; sourceTree = "<group>"; };
@@ -1237,6 +1240,8 @@
 		E76A45BD2CB8C090008B2746 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				348628F52DB3CCB600CB341C /* UIView+SLToast.h */,
+				348628F62DB3CCB600CB341C /* UIView+SLToast.m */,
 				348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */,
 				348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */,
 				345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */,
@@ -1655,6 +1660,7 @@
 				34D2EBC82D3942880067CC05 /* RZCss.swift in Sources */,
 				345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */,
 				345C11E82DABD7DF005FCCDB /* SLNumberIconView.m in Sources */,
+				348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */,
 				345C121B2DAC95AB005FCCDB /* QAlertViewController.swift in Sources */,
 				345C121C2DAC95AB005FCCDB /* QTableViewHelper.swift in Sources */,
 				345C121D2DAC95AB005FCCDB /* QuicklyCollectionView.swift in Sources */,

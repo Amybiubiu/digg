@@ -219,6 +219,7 @@
                 @strongobj(self);
                 SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                 vc.label = entity.label;
+                vc.entity = entity;
                 vc.hidesBottomBarWhenPushed = YES;
                 [self.navigationController pushViewController:vc animated:YES];
             }
