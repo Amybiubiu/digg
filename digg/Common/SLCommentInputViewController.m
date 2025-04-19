@@ -15,7 +15,6 @@
 @property (nonatomic, strong) UIView *separatorLine;
 @property (nonatomic, strong) UIView *inputContainerView;
 @property (nonatomic, strong) UIButton *submitButton;
-@property (nonatomic, strong) UILabel *placeholderLabel;
 
 @end
 

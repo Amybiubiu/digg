@@ -21,6 +21,7 @@
 #import "SLAlertManager.h"
 #import "SLTrackingManager.h"
 #import "SLCommentInputViewController.h"
+#import "NSObject+SLEmpty.h"
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
 @property (nonatomic, strong) WebViewJavascriptBridge* bridge;
@@ -254,18 +255,26 @@
             @strongobj(self);
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
-                NSString *placeholder = [NSString stringWithFormat:@"%@", [dic objectForKey:@"placeholder"]];
-                if (!placeholder) {
-                    placeholder = @"写评论";
+                if (!dic || [dic sl_isEmpty]) {
+                    return;
                 }
-                NSString *lastInput = [NSString stringWithFormat:@"%@", [dic objectForKey:@"lastInput"]];
-                if (!lastInput) {
-                    lastInput = @"";
+
+                NSString *placeholder = @"写评论";
+                NSObject* placeholderObj = [dic objectForKey:@"placeholder"];
+                if (placeholderObj && ![placeholderObj sl_isEmpty]) {
+                    placeholder = [NSString stringWithFormat:@"%@", placeholderObj];
+                }
+
+                NSString *lastInput = @"";
+                NSObject* placeholderObj2 = [dic objectForKey:@"lastInput"];
+                if (placeholderObj2 && ![placeholderObj2 sl_isEmpty]) {
+                    lastInput = [NSString stringWithFormat:@"%@", placeholderObj2];
                 }
                 
                 // 创建评论输入控制器
                 self.commentVC.placeholder = placeholder;
                 self.commentVC.textView.text = lastInput;
+                self.commentVC.placeholderLabel.hidden = lastInput.length > 0;
                 __weak typeof(self) weakSelf = self;
                 self.commentVC.submitHandler = ^(NSString *comment) {
                     // 调用前端onCommentInputClose方法，传递评论内容和动作类型

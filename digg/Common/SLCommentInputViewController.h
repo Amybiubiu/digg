@@ -17,6 +17,7 @@ typedef void(^SLCommentSubmitHandler)(NSString *comment);
 @property (nonatomic, copy) SLCommentSubmitHandler submitHandler;
 @property (nonatomic, copy) SLCommentSubmitHandler cancelHandler;
 @property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) UILabel *placeholderLabel;
 
 - (void)showInViewController:(UIViewController *)viewController;
 
