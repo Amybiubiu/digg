@@ -100,7 +100,7 @@ public extension RZRichTextViewModel {
 //                    let allattachments = viewModel?.textView?.attachments
 //                    let index = allattachments?.firstIndex(where: {$0 == info})
                     if let asset = info.asset {
-                        // 预览播放
+                        // 对于视频和音频仍然使用原始资源
                         let vc = TZPhotoPreviewController.init()
                         var i: UInt = 2
                         switch info.type {

@@ -65,13 +65,13 @@
     [self.view addSubview:self.navigationView];
     [self.navigationView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.equalTo(self.view);
-        make.height.mas_equalTo(NAVBAR_HEIGHT + 5);
+        make.height.mas_equalTo(NAVBAR_HEIGHT);
     }];
     
     [self.navigationView addSubview:self.leftBackButton];
     [self.leftBackButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.navigationView).offset(16);
-        make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
+        make.top.equalTo(self.navigationView).offset((44-32)/2 + STATUSBAR_HEIGHT);
         make.size.mas_equalTo(CGSizeMake(32, 32));
     }];
     
@@ -158,9 +158,9 @@
     if (!_contentView) {
         _contentView = [UIView new];
         _contentView.backgroundColor = [SLColorManager primaryBackgroundColor];
-        _contentView.clipsToBounds = NO;
-        _contentView.layer.cornerRadius = 16.0;
-        _contentView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
+//        _contentView.clipsToBounds = NO;
+//        _contentView.layer.cornerRadius = 16.0;
+//        _contentView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
     }
     return _contentView;
 }
