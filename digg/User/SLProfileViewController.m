@@ -143,16 +143,41 @@
     
     // 只有当高度发生变化时才更新frame
     if (self.headerView.frame.size.height != height) {
+        CGFloat oldHeight = self.headerView.frame.size.height;
+
         CGRect frame = self.headerView.frame;
         frame.size.height = height;
-        self.headerView.frame = frame;
-        self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
-        self.blurEffectView.frame = self.headerImageView.bounds;
+        // self.headerView.frame = frame;
+        // self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
+        // self.blurEffectView.frame = self.headerImageView.bounds;
         
-        // 只有当headerView不是当前tableHeaderView时才设置
-        if (currentHeaderView != self.headerView) {
-            self.tableView.tableHeaderView = self.headerView;
-        }
+        // // 只有当headerView不是当前tableHeaderView时才设置
+        // if (currentHeaderView != self.headerView) {
+        //     self.tableView.tableHeaderView = self.headerView;
+        // }
+        [UIView animateWithDuration:0.3 animations:^{
+            self.headerView.frame = frame;
+            self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
+            self.blurEffectView.frame = self.headerImageView.bounds;
+            
+            // 调整tableView的contentOffset以保持视觉连续性
+            if (oldHeight > 0) {
+                CGFloat offsetDiff = height - oldHeight;
+                CGPoint contentOffset = self.tableView.contentOffset;
+                if (contentOffset.y <= 0) { // 只在顶部时调整
+                    contentOffset.y -= offsetDiff;
+                    self.tableView.contentOffset = contentOffset;
+                }
+            }
+        } completion:^(BOOL finished) {
+            // 只有当headerView不是当前tableHeaderView时才设置
+            if (currentHeaderView != self.headerView) {
+                self.tableView.tableHeaderView = self.headerView;
+            } else {
+                // 即使是同一个headerView，也需要重新设置以更新布局
+                self.tableView.tableHeaderView = self.headerView;
+            }
+        }];
     }
 }
 
