@@ -158,7 +158,7 @@ public extension RZRichTextViewModel {
 //                    vc?.allowPickingVideo = index == 1
                     vc?.allowTakeVideo = false
                     vc?.allowTakePicture = false
-                    vc?.allowCrop = true
+                    vc?.allowCrop = false
                     vc?.didFinishPickingPhotosHandle = { [weak viewModel] (photos, assets, _) in
                         if let image = photos?.first, let asset = assets?.first as? PHAsset, let viewModel = viewModel {
                             let info = RZAttachmentInfo.init(type: .image, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)

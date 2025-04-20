@@ -43,10 +43,7 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
             audioContent.isHidden = info.type != .audio
             switch info.type {
             case .image, .video:
-                if let image = info.image {
-                    self.imageView.image = image
-                    self.updateImageViewSize()
-                } else if let asset = info.asset {
+                if let asset = info.asset {
                     let option = PHImageRequestOptions.init()
                     option.isNetworkAccessAllowed = true
                     option.resizeMode = .fast
@@ -61,7 +58,10 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
                             }
                         }
                     }
-                } else if let url = (info.poster ?? info.src) {
+                } else if let image = info.image {
+                     self.imageView.image = image
+                     self.updateImageViewSize()
+                 } else if let url = (info.poster ?? info.src) {
                     if let c = RZRichTextViewConfigure.shared.async_imageBy {
                         let complete: ((String?, UIImage?) -> Void)? = { [weak self] source, image in
                             self?.imageView.image = image

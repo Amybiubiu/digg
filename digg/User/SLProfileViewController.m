@@ -147,14 +147,7 @@
 
         CGRect frame = self.headerView.frame;
         frame.size.height = height;
-        // self.headerView.frame = frame;
-        // self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
-        // self.blurEffectView.frame = self.headerImageView.bounds;
-        
-        // // 只有当headerView不是当前tableHeaderView时才设置
-        // if (currentHeaderView != self.headerView) {
-        //     self.tableView.tableHeaderView = self.headerView;
-        // }
+
         [UIView animateWithDuration:0.3 animations:^{
             self.headerView.frame = frame;
             self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
@@ -183,7 +176,7 @@
 
 #pragma mark - Setup UI
 - (void)setupUI {
-    self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 300);
+    self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 180);
     [self.view addSubview:self.headerImageView];
     
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
@@ -681,7 +674,16 @@
 - (UIButton *)leftBackButton {
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_leftBackButton setImage:[UIImage imageNamed:@"profile_left_btn"] forState:UIControlStateNormal];
+        // 创建配置
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium];
+        // 创建图标并设置颜色
+        UIImage *backImage = [[UIImage systemImageNamed:@"chevron.backward" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        // 设置按钮背景为黑色圆形
+        _leftBackButton.backgroundColor =  [UIColor colorWithWhite:0 alpha:0.4];
+        _leftBackButton.layer.cornerRadius = 16; // 圆形效果
+        _leftBackButton.clipsToBounds = YES;
+        
+        [_leftBackButton setImage:backImage forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
@@ -690,7 +692,18 @@
 - (UIButton *)moreButton {
     if (!_moreButton) {
         _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_moreButton setImage:[UIImage imageNamed:@"profile_more_btn"] forState:UIControlStateNormal];
+        // 创建配置 - 调整大小使图标更大
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:22 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium];
+        
+        // 使用普通的ellipsis图标而不是circle.fill版本
+        UIImage *moreImage = [[UIImage systemImageNamed:@"ellipsis" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        
+        // 设置按钮背景为黑色圆形
+        _moreButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
+        _moreButton.layer.cornerRadius = 16; // 圆形效果
+        _moreButton.clipsToBounds = YES;
+        
+        [_moreButton setImage:moreImage forState:UIControlStateNormal];
         [_moreButton addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
     }
     return _moreButton;

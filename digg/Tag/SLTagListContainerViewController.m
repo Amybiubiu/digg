@@ -130,7 +130,9 @@
 - (UIButton *)leftBackButton {
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_leftBackButton setImage:[UIImage imageNamed:@"tag_left_icon"] forState:UIControlStateNormal];
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular];
+        UIImage *backImage = [[UIImage systemImageNamed:@"chevron.backward" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [_leftBackButton setImage:backImage forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
@@ -139,7 +141,9 @@
 - (UIButton *)shareButton {
     if (!_shareButton) {
         _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_shareButton setImage:[UIImage imageNamed:@"tag_share_icon"] forState:UIControlStateNormal];
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular];
+        UIImage *shareImage = [[UIImage systemImageNamed:@"square.and.arrow.up" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [_shareButton setImage:shareImage forState:UIControlStateNormal];
         [_shareButton addTarget:self action:@selector(shareBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _shareButton;
