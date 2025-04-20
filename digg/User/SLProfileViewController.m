@@ -73,28 +73,69 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     self.tableView.backgroundColor = UIColor.clearColor;
-    @weakobj(self)
-    [self.viewModel isUserLogin:^(BOOL isLogin, NSError * _Nonnull error) {
-        @strongobj(self)
-        if (isLogin) {
-            if ([self.userId length] == 0) {
-                self.userId = [SLUser defaultUser].userEntity.userId;
+    if (!_fromWeb) {
+        @weakobj(self)
+        [self.viewModel isUserLogin:^(BOOL isLogin, NSError * _Nonnull error) {
+            @strongobj(self)
+            if (isLogin) {
+                if ([self.userId length] == 0) {
+                    self.userId = [SLUser defaultUser].userEntity.userId;
+                }
+                [self updateUI];
+            } else {
+                [self.hideView setHidden:YES];
+                [self.emptyView setHidden:NO];
             }
-            [self updateUI];
-        } else {
-            [self.hideView setHidden:YES];
-            [self.emptyView setHidden:NO];
-        }
-    }];
+        }];
+    } else {
+        [self updateUI];
+    }
 }
 
 - (void)updateUI {
-    [self.hideView setHidden:YES];
-    if (self.userId.length == 0) {
-        [self.emptyView setHidden:NO];
+    if (!_fromWeb) {
+        [self.hideView setHidden:YES];
+        if (self.userId.length == 0) {
+            [self.emptyView setHidden:NO];
+        } else {
+            [self.emptyView setHidden:YES];
+            
+            @weakobj(self);
+            [self.viewModel loadUserProfileWithProfileID:self.userId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
+                @strongobj(self)
+                if (isSuccess) {
+                    if ([self.viewModel.entity.bgImage length] > 0) {
+                        [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage]];
+                    }
+                    
+                    self.nameLabel.text = self.viewModel.entity.userName;
+                    self.briefLabel.text = self.viewModel.entity.desc;
+                    if (self.viewModel.entity.isSelf && !self.fromWeb) {
+                        [self.leftBackButton setHidden:YES];
+                        [self.moreButton setHidden:NO];
+                        [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                            make.left.equalTo(self.headerImageView).offset(16);
+                            make.top.equalTo(self.headerImageView).offset(52);
+                            make.right.equalTo(self.moreButton.mas_left).offset(-12);
+                        }];
+                    } else {
+                        [self.leftBackButton setHidden:NO];
+                        [self.moreButton setHidden:YES];
+                        [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                            make.left.equalTo(self.leftBackButton.mas_right).offset(12);
+                            make.bottom.equalTo(self.leftBackButton.mas_centerY);
+                            make.right.equalTo(self.moreButton.mas_left).offset(-12);
+                        }];
+                    }
+                    self.headerView.entity = self.viewModel.entity;
+                    [self updateTableHeaderViewHeight];
+                    [self.tableView reloadData];
+                }
+            }];
+        }
     } else {
+        [self.hideView setHidden:YES];
         [self.emptyView setHidden:YES];
-        
         @weakobj(self);
         [self.viewModel loadUserProfileWithProfileID:self.userId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
             @strongobj(self)
@@ -102,7 +143,7 @@
                 if ([self.viewModel.entity.bgImage length] > 0) {
                     [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage]];
                 }
-
+                
                 self.nameLabel.text = self.viewModel.entity.userName;
                 self.briefLabel.text = self.viewModel.entity.desc;
                 if (self.viewModel.entity.isSelf && !self.fromWeb) {

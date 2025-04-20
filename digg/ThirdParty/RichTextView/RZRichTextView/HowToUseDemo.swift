@@ -144,39 +144,38 @@ public extension RZRichTextViewModel {
                     return true
                 }
                 // FIXME: 此处自行实现选择音视频、图片的功能，将数据写入到RZAttachmentInfo，并调用viewModel.textView?.insetAttachment(info)即可
-                QActionSheetController.show(options: .init(options: [.action("图片"), .cancel("取消")])) { [weak viewModel] index in
-                    if index < 0 { return }
+                let vc = TZImagePickerController.init(maxImagesCount: 1, delegate: nil)
+                vc?.allowPickingImage = true
+                vc?.allowTakeVideo = false
+                vc?.allowTakePicture = false
+                vc?.allowCrop = false
+                vc?.didFinishPickingPhotosHandle = { [weak viewModel] (photos, assets, _) in
+                    if let image = photos?.first, let asset = assets?.first as? PHAsset, let viewModel = viewModel {
+                        let info = RZAttachmentInfo.init(type: .image, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
+                        /// 插入图片
+                        viewModel.textView?.insetAttachment(info)
+                    }
+                }
+                vc?.didFinishPickingVideoHandle = { [weak viewModel] (image, asset) in
+                    if let image = image, let asset = asset, let viewModel = viewModel {
+                        let info = RZAttachmentInfo.init(type: .video, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
+                        /// 插入视频
+                        viewModel.textView?.insetAttachment(info)
+                    }
+                }
+                if let vc = vc {
+                    qAppFrame.present(vc, animated: true, completion: nil)
+                }
+//                QActionSheetController.show(options: .init(options: [.action("图片"), .cancel("取消")])) { [weak viewModel] index in
+//                    if index < 0 { return }
 //                    if index == 2, let viewModel = viewModel {
 //                        let info = RZAttachmentInfo.init(type: .audio, image: nil, asset: nil, filePath: "file:///Users/rztime/Downloads/123.m4a", maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
 //                        /// 插入音频
 //                        viewModel.textView?.insetAttachment(info)
 //                        return
 //                    }
-                    let vc = TZImagePickerController.init(maxImagesCount: 1, delegate: nil)
-                    vc?.allowPickingImage = true
-//                    vc?.allowPickingImage = index == 0
-//                    vc?.allowPickingVideo = index == 1
-                    vc?.allowTakeVideo = false
-                    vc?.allowTakePicture = false
-                    vc?.allowCrop = false
-                    vc?.didFinishPickingPhotosHandle = { [weak viewModel] (photos, assets, _) in
-                        if let image = photos?.first, let asset = assets?.first as? PHAsset, let viewModel = viewModel {
-                            let info = RZAttachmentInfo.init(type: .image, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
-                            /// 插入图片
-                            viewModel.textView?.insetAttachment(info)
-                        }
-                    }
-                    vc?.didFinishPickingVideoHandle = { [weak viewModel] (image, asset) in
-                        if let image = image, let asset = asset, let viewModel = viewModel {
-                            let info = RZAttachmentInfo.init(type: .video, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
-                            /// 插入视频
-                            viewModel.textView?.insetAttachment(info)
-                        }
-                    }
-                    if let vc = vc {
-                        qAppFrame.present(vc, animated: true, completion: nil)
-                    }
-                }
+//                    
+//                }
                 return true
             case.image:
                 break
@@ -192,12 +191,57 @@ public extension RZRichTextViewModel {
                     print("自定义功能1")
                 }
                 return true
+            case .bold:
+                if let vm = viewModel, let item = viewModel?.inputItems.first(where: {$0.type == .bold}) {
+                    item.selected = !item.selected
+                    RZRichTextViewModel.shared().changeStyle(vm, bold: item.selected)
+                }
+                break
+            case .t_ol:
+                if let vm = viewModel, let item = viewModel?.inputItems.first(where: {$0.type == .t_ol}) {
+                    item.selected = !item.selected
+                    RZRichTextViewModel.shared().changedTableStyle(vm, type: .t_ol, selected: item.selected)
+                }
+                break
+            case .t_ul:
+                if let vm = viewModel, let item = viewModel?.inputItems.first(where: {$0.type == .t_ul}) {
+                    item.selected = !item.selected
+                    RZRichTextViewModel.shared().changedTableStyle(vm, type: .t_ul, selected: item.selected)
+                }
+                break
             default:
                 break
             }
             return false
         }
         return viewModel
+    }
+    
+    @nonobjc
+    private func changeStyle(_ viewModel: RZRichTextViewModel, bold: Bool) {
+        guard var typingAttributes = viewModel.textView?.getRealTypingAttributes() else { return }
+        guard let font = typingAttributes[.font] as? UIFont else { return }
+        let newfont: UIFont = bold ? UIFont.rzboldFont.withSize(font.pointSize) : UIFont.rznormalFont.withSize(font.pointSize)
+        typingAttributes[.font] = newfont
+        viewModel.textView?.typingAttributes = typingAttributes
+        viewModel.textView?.reloadText()
+    }
+    
+    @nonobjc
+    private func changedTableStyle(_ viewModel: RZRichTextViewModel, type: RZInputAccessoryType, selected: Bool) {
+        guard let p = viewModel.textView?.getRealTypingAttributes()[.paragraphStyle] as? NSParagraphStyle else { return }
+        let mutablePara = NSMutableParagraphStyle.init()
+        mutablePara.setParagraphStyle(p)
+        switch type {
+        case .t_ol:
+            mutablePara.setTextListType(selected ? .ol : .none)
+        case .t_ul:
+            mutablePara.setTextListType(selected ? .ul : .none)
+        default: break
+        }
+        viewModel.textView?.typingAttributes[.paragraphStyle] = mutablePara
+        viewModel.textView?.reloadTextByUpdateTableStyle()
+        viewModel.reloadDataWithAccessoryView?()
     }
 }
 /// 模拟上传
@@ -222,14 +266,5 @@ class UploadTaskTest {
                 }
             }
         }
-//        
-//        var p: CGFloat = 0
-//        Timer.qtimer(interval: 0.5, target: testVM, repeats: true, mode: RunLoop.Mode.common) { timer in
-//            p += 0.1
-//            progress?(p)
-//            if p >= 1 {
-//                timer.invalidate()
-//            }
-//        }
     }
 }

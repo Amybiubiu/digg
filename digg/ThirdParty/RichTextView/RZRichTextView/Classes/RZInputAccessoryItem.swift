@@ -32,6 +32,9 @@ public enum RZInputAccessoryType: Int {
     case t_ol       /// 有序
     case t_ul       /// 无序
     
+    /// 粗体
+    case bold       ///粗体字体，原fontStyle中的二级菜单
+    
     /// 以下是预留，自定义实现
     case custom1
     case custom2
