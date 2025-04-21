@@ -20,6 +20,8 @@
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
 #import "SLTrackingManager.h"
+#import "SLCommentInputViewController.h"
+#import "NSObject+SLEmpty.h"
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
 @property (nonatomic, strong) WebViewJavascriptBridge* bridge;
@@ -27,6 +29,7 @@
 @property (nonatomic, assign) BOOL isSetUA;
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) UIProgressView* progressView;
+@property (nonatomic, strong) SLCommentInputViewController *commentVC;
 
 @end
 
@@ -65,6 +68,8 @@
     if (self.navigationController.interactivePopGestureRecognizer != nil) {
         [self.wkwebView.scrollView.panGestureRecognizer shouldRequireFailureOfGestureRecognizer:self.navigationController.interactivePopGestureRecognizer];
     }
+    
+    self.commentVC = [[SLCommentInputViewController alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -121,7 +126,6 @@
     [self.bridge registerHandler:@"backToHomePage" handler:^(id data, WVJBResponseCallback responseCallback) {
         NSLog(@"backToHomePage: %@", data);
         [self backTo:YES];
-//        [self.navigationController popToRootViewControllerAnimated:YES];
         self.tabBarController.selectedIndex = 0;
         responseCallback(data);
     }];
@@ -154,7 +158,6 @@
         NSLog(@"page_back = %@",data);
         @strongobj(self);
         [self backTo:NO];
-//        [self.navigationController popViewControllerAnimated:YES];
     }];
     
     [self.bridge registerHandler:@"jumpToH5" handler:^(id data, WVJBResponseCallback responseCallback) {
@@ -173,20 +176,20 @@
                 BOOL isOuterUrl = [type isEqualToString:@"outer"];
                 
                 if (isOuterUrl) {
-                    [SLAlertManager showAlertWithTitle:@"提示"
-                                               message:@"您确定要打开此链接吗？"
-                                                   url:[NSURL URLWithString:url]
-                                               urlText:url
-                                          confirmTitle:@"是"
-                                           cancelTitle:@"否"
-                                        confirmHandler:^{
-                        [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_WEB" parameters:@{@"url": url}];
-                                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
-                                        }
-                                         cancelHandler:^{
-                                        }
-                                     fromViewController:self];
-//                    dvc.isShowProgress = YES;
+                    SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                   message:nil
+                                                       url:[NSURL URLWithString:url]
+                                                   urlText:url
+                                              confirmTitle:@"是"
+                                               cancelTitle:@"否"
+                                            confirmHandler:^{
+                                                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_WEB" parameters:@{@"url": url}];
+                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
+                                            }
+                                             cancelHandler:^{
+                                            }
+                                         fromViewController:nil];
+                    [alertView show];
                 } else {
                     SLWebViewController *dvc = [[SLWebViewController alloc] init];
                     [dvc startLoadRequestWithUrl:url];
@@ -206,7 +209,6 @@
         NSLog(@"closeH5 called with: %@", data);
         @strongobj(self);
         [self backTo:YES];
-//        [self.navigationController popViewControllerAnimated:YES];
     }];
     
     [self.bridge registerHandler:@"openUserPage" handler:^(id data, WVJBResponseCallback responseCallback) {
@@ -248,6 +250,65 @@
         }
         responseCallback(data);
     }];
+    [self.bridge registerHandler:@"openCommentInput" handler:^(id data, WVJBResponseCallback responseCallback) {
+        if ([data isKindOfClass:[NSDictionary class]]) {
+            @strongobj(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary *dic = (NSDictionary *)data;
+                if (!dic || [dic sl_isEmpty]) {
+                    return;
+                }
+
+                NSString *placeholder = @"写评论";
+                NSObject* placeholderObj = [dic objectForKey:@"placeholder"];
+                if (placeholderObj && ![placeholderObj sl_isEmpty]) {
+                    placeholder = [NSString stringWithFormat:@"%@", placeholderObj];
+                }
+
+                NSString *lastInput = @"";
+                NSObject* placeholderObj2 = [dic objectForKey:@"lastInput"];
+                if (placeholderObj2 && ![placeholderObj2 sl_isEmpty]) {
+                    lastInput = [NSString stringWithFormat:@"%@", placeholderObj2];
+                }
+                
+                // 创建评论输入控制器
+                self.commentVC.placeholder = placeholder;
+                self.commentVC.textView.text = lastInput;
+                self.commentVC.placeholderLabel.hidden = lastInput.length > 0;
+                __weak typeof(self) weakSelf = self;
+                self.commentVC.submitHandler = ^(NSString *comment) {
+                    // 调用前端onCommentInputClose方法，传递评论内容和动作类型
+                    NSString *action = comment.length > 0 ? @"send" : @"close";
+                    
+                    // 使用WebViewJavascriptBridge调用注册的处理程序，而不是直接调用window上的方法
+                    NSDictionary *params = @{
+                        @"content": comment ?: @"",
+                        @"action": action
+                    };
+                    
+                    [weakSelf.bridge callHandler:@"onCommentInputClose" data:params responseCallback:^(id responseData) {
+                        NSLog(@"onCommentInputClose 回调结果: %@", responseData);
+                    }];
+                };
+                
+                // 添加取消回调
+                self.commentVC.cancelHandler = ^(NSString *comment) {
+                    NSDictionary *params = @{
+                        @"content": comment ?: @"",
+                        @"action": @"close"
+                    };
+                    
+                    [weakSelf.bridge callHandler:@"onCommentInputClose" data:params responseCallback:^(id responseData) {
+                        NSLog(@"onCommentInputClose 取消回调结果: %@", responseData);
+                    }];
+                };
+                
+                [self.commentVC showInViewController:self];
+            });
+        }
+        responseCallback(data);
+    }];
+    
 }
 - (void)setupDefailUA{
     if (self.isSetUA) {

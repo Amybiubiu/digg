@@ -57,6 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)recorderTagTextColor;
 + (UIColor *)recorderTagBorderColor;
 
+//textview输入框相关颜色
++ (UIColor *)textViewBgColor;
++ (UIColor *)textViewPlaceholderColor;
++ (UIColor *)textViewTextColor;
+
 @end
 
 NS_ASSUME_NONNULL_END

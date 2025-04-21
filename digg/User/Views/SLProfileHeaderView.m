@@ -162,7 +162,7 @@
 - (void)setEntity:(SLProfileEntity *)entity {
     _entity = entity;
 
-    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entity.avatar]];
+    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:entity.avatar] placeholderImage:[UIImage imageNamed:@"avatar_default_icon"]];
     
     self.nameLabel.text = entity.userName;
     self.briefLabel.text = entity.desc;
@@ -236,7 +236,8 @@
 - (UIImageView *)avatarImageView {
     if (!_avatarImageView) {
         _avatarImageView = [[UIImageView alloc] init];
-        _avatarImageView.backgroundColor = [SLColorManager headerBorderColor];
+//        _avatarImageView.backgroundColor = [SLColorManager headerBorderColor];
+        _avatarImageView.image = [UIImage imageNamed:@"avatar_default_icon"];
         _avatarImageView.layer.cornerRadius = 30;
         _avatarImageView.layer.borderColor = [SLColorManager headerBorderColor].CGColor;
         _avatarImageView.layer.borderWidth = 1;

@@ -17,10 +17,16 @@ open class RZRichTextViewModel: NSObject {
 //        .init(type: .video, image: RZRichImage.imageWith("video"), highlight: RZRichImage.imageWith("video")),
 //        .init(type: .audio, image: RZRichImage.imageWith("audio"), highlight: RZRichImage.imageWith("audio")),
         
+//        .init(type: .media, image: RZRichImage.imageWith("media"), highlight: RZRichImage.imageWith("media")),
+//        .init(type: .fontStyle, image: RZRichImage.imageWith("f_default"), highlight: RZRichImage.imageWith("f_hight")),
+//        .init(type: .tableStyle, image: RZRichImage.imageWith("ol"), highlight: RZRichImage.imageWith("ul")),
+//        .init(type: .paragraph, image: RZRichImage.imageWith("p_left"), highlight: RZRichImage.imageWith("p_left")),
+//        .init(type: .link, image: RZRichImage.imageWith("link"), highlight: RZRichImage.imageWith("link"))
+        
         .init(type: .media, image: RZRichImage.imageWith("media"), highlight: RZRichImage.imageWith("media")),
-        .init(type: .fontStyle, image: RZRichImage.imageWith("f_default"), highlight: RZRichImage.imageWith("f_hight")),
-        .init(type: .tableStyle, image: RZRichImage.imageWith("ol"), highlight: RZRichImage.imageWith("ul")),
-        .init(type: .paragraph, image: RZRichImage.imageWith("p_left"), highlight: RZRichImage.imageWith("p_left")),
+        .init(type: .bold, image: RZRichImage.systemImageWith("bold"), highlight: RZRichImage.systemImageWith("bold")),
+        .init(type: .t_ol, image: RZRichImage.imageWith("ol"), highlight: RZRichImage.imageWith("ol")),
+        .init(type: .t_ul, image: RZRichImage.imageWith("ul"), highlight: RZRichImage.imageWith("ul")),
         .init(type: .link, image: RZRichImage.imageWith("link"), highlight: RZRichImage.imageWith("link"))
     ]
     /// 固定到工具栏的操作
@@ -209,5 +215,10 @@ public class RZRichImage: NSObject {
             return imgPath.qtoURL
         }
         return nil
+    }
+    public class func systemImageWith(_ name: String, pointSize: CGFloat = 24, weight: UIImage.SymbolWeight = .regular, scale: UIImage.SymbolScale = .medium, color: UIColor = .black) -> UIImage? {
+        let config = UIImage.SymbolConfiguration(pointSize: pointSize, weight: weight, scale: scale)
+        let image = UIImage(systemName: name, withConfiguration: config)?.withTintColor(color, renderingMode: .alwaysOriginal)
+        return image
     }
 }

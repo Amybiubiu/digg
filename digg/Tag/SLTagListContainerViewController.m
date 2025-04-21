@@ -9,8 +9,6 @@
 #import "SLGeneralMacro.h"
 #import "Masonry.h"
 #import "SLTagListContainerViewModel.h"
-#import <JXCategoryView/JXCategoryView.h>
-#import <JXCategoryView/JXCategoryListContainerView.h>
 #import "SLTagListContainerViewModel.h"
 #import "SLProfileDynamicTableViewCell.h"
 #import "CaocaoRefresh.h"
@@ -21,55 +19,23 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
+#import "SLArticleTodayEntity.h"
+#import "UIView+SLToast.h"
+#import "SLColorManager.h"
 
-@interface UILabel (LineCheck)
 
-- (BOOL)isTextExceedingLines:(NSInteger)maxLines;
+@interface SLTagListContainerViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@end
-
-@implementation UILabel (LineCheck)
-
-- (BOOL)isTextExceedingLines:(NSInteger)maxLines {
-    if (!self.text || !self.font) return NO;
-    
-    // 获取单行高度
-    CGFloat singleLineHeight = [@"Single Line" sizeWithAttributes:@{NSFontAttributeName: self.font}].height;
-    
-    // 获取文本的实际高度
-    CGFloat maxWidth = self.frame.size.width - 32;
-    CGRect textRect = [self.text boundingRectWithSize:CGSizeMake(maxWidth, CGFLOAT_MAX)
-                                              options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                           attributes:@{NSFontAttributeName: self.font}
-                                              context:nil];
-    CGFloat textHeight = textRect.size.height;
-    
-    // 比较实际高度与允许的最大高度
-    return textHeight > singleLineHeight * maxLines;
-}
-
-@end
-
-@interface SLTagListContainerViewController () <JXCategoryViewDelegate, JXCategoryListContainerViewDelegate, UITableViewDelegate, UITableViewDataSource>
-
+@property (nonatomic, strong) UIImageView* imageBgView;
 @property (nonatomic, strong) UIView* navigationView;
 @property (nonatomic, strong) UIButton *leftBackButton;
-@property (nonatomic, strong) UIButton *moreButton;
+@property (nonatomic, strong) UIButton *shareButton;
 @property (nonatomic, strong) UILabel* titleLabel;
-@property (nonatomic, strong) UILabel* briefLabel;
 @property (nonatomic, strong) UIView* contentView;
-
-@property (nonatomic, strong) NSArray *titles;
-@property (nonatomic, strong) JXCategoryTitleView *categoryView;
-//@property (nonatomic, strong) JXCategoryListContainerView *listContainerView;
-@property (nonatomic, strong) JXCategoryTitleView *myCategoryView;
+@property (nonatomic, strong) UITableView *tableView;
 
 @property (nonatomic, strong) SLTagListContainerViewModel *viewModel;
-
-@property (nonatomic, strong) UIView *headerView;
 @property (nonatomic, strong) SLHomePageViewModel *homeViewModel;
-
-@property (nonatomic, strong) UITableView *tableView;
 
 @end
 
@@ -91,112 +57,52 @@
 
 #pragma mark - Methods
 - (void)setupUI {
+    [self.view addSubview:self.imageBgView];
+    [self.imageBgView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(self.view);
+    }];
+
     [self.view addSubview:self.navigationView];
     [self.navigationView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.equalTo(self.view);
-        make.height.mas_equalTo(NAVBAR_HEIGHT + 5);
+        make.height.mas_equalTo(NAVBAR_HEIGHT);
     }];
     
     [self.navigationView addSubview:self.leftBackButton];
     [self.leftBackButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.navigationView).offset(16);
-        make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
+        make.top.equalTo(self.navigationView).offset((44-32)/2 + STATUSBAR_HEIGHT);
         make.size.mas_equalTo(CGSizeMake(32, 32));
     }];
     
-    self.headerView.frame = CGRectMake(0, NAVBAR_HEIGHT, self.view.bounds.size.width, 130);
-    [self.headerView addSubview:self.titleLabel];
+    [self.navigationView addSubview:self.titleLabel];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.headerView).offset(15);
-        make.left.equalTo(self.headerView).offset(16);
-        make.right.equalTo(self.headerView).offset(-16);
+        make.left.equalTo(self.leftBackButton.mas_right).offset(16);
+        make.centerY.equalTo(self.leftBackButton);
     }];
     
-    [self.headerView addSubview:self.briefLabel];
-    [self.briefLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(8);
-        make.left.right.equalTo(self.titleLabel);
+    [self.navigationView addSubview:self.shareButton];
+    [self.shareButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.navigationView).offset(-16);
+        make.centerY.equalTo(self.leftBackButton);
+        make.size.mas_equalTo(CGSizeMake(32, 32));
     }];
     
-    [self.headerView addSubview:self.moreButton];
-    [self.moreButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.briefLabel.mas_bottom).offset(8);
-        make.left.equalTo(self.titleLabel);
-        make.bottom.equalTo(self.headerView).offset(-25);
-    }];
-    
-    self.titles = @[@"编辑精选", @"最新", @"最热"];
-    self.myCategoryView.titles = self.titles;
-
-    JXCategoryIndicatorLineView *lineView = [[JXCategoryIndicatorLineView alloc] init];
-    lineView.indicatorColor = Color16(0xFF1852);
-    lineView.indicatorWidth = 28;
-    self.myCategoryView.indicators = @[lineView];
-    
-    [self.view addSubview:self.tableView];
-    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.view addSubview:self.contentView];
+    [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
         make.top.equalTo(self.navigationView.mas_bottom);
         make.bottom.equalTo(self.view);
     }];
-    
-    [self updateTableHeaderViewHeight];
-}
 
-- (void)updateTableHeaderViewHeight {
-    [self.headerView updateConstraintsIfNeeded];
-    [self.headerView setNeedsLayout];
-    [self.headerView layoutIfNeeded];
-    
-    CGFloat height = [self.headerView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-    CGRect frame = self.headerView.frame;
-    frame.size.height = height;
-    self.headerView.frame = frame;
-    self.tableView.tableHeaderView = self.headerView;
-}
-
-- (void)requestData {
-    [self requestLabelInfo];
-    [self requestTabList];
-}
-
-- (void)requestLabelInfo {
-    @weakobj(self)
-    [self.viewModel loadLabelInfoWithLabelId:self.label resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
-        @strongobj(self)
-        if (isSuccess) {
-            self.briefLabel.text = self.viewModel.content;
-            [self updateTableHeaderViewHeight];
-            if ([self.briefLabel isTextExceedingLines: 2]) {
-                [self.moreButton setHidden:NO];
-            } else {
-                [self.moreButton setHidden:YES];
-            }
-        }
+    [self.contentView addSubview:self.tableView];
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.contentView);
     }];
 }
 
-- (void)requestTabList {
-    [self loadMessagesList:CaocaoCarMessageListRefreshTypeRefresh];
-}
-
-- (JXCategoryTitleView *)myCategoryView {
-    return (JXCategoryTitleView *)self.categoryView;
-}
-
-- (JXCategoryTitleView *)preferredCategoryView {
-    return [[JXCategoryTitleView alloc] init];
-}
-
-#pragma mark - JXCategoryViewDelegate
-// 点击选中或者滚动选中都会调用该方法。适用于只关心选中事件，不关心具体是点击还是滚动选中的。
-- (void)categoryView:(JXCategoryBaseView *)categoryView didSelectedItemAtIndex:(NSInteger)index {
-    [self loadMessagesList:CaocaoCarMessageListRefreshTypeRefresh];
-}
-
-// 滚动选中的情况才会调用该方法
-- (void)categoryView:(JXCategoryBaseView *)categoryView didScrollSelectedItemAtIndex:(NSInteger)index {
+- (void)requestData {
     [self loadMessagesList:CaocaoCarMessageListRefreshTypeRefresh];
 }
 
@@ -205,71 +111,60 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)moreBrief {
-    self.briefLabel.numberOfLines = 0;
-    [self.moreButton setHidden:YES];
+- (void)shareBtnClick {
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = _entity.url;
+    
+    [self.view sl_showToast:@"链接已复制到粘贴板"];
 }
 
 #pragma mark - UI Elements
-- (UIView *)headerView {
-    if (!_headerView) {
-        _headerView = [UIView new];
-        _headerView.backgroundColor = UIColor.clearColor;
-        _headerView.clipsToBounds = NO;
-        _headerView.layer.cornerRadius = 16.0;
-        _headerView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
+- (UIImageView *)imageBgView {
+    if (!_imageBgView) {
+        _imageBgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tag_header_bg"]];
+        _imageBgView.contentMode = UIViewContentModeScaleToFill;
     }
-    return _headerView;
+    return _imageBgView;
 }
 
 - (UIButton *)leftBackButton {
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_leftBackButton setImage:[UIImage imageNamed:@"tag_left_icon"] forState:UIControlStateNormal];
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular];
+        UIImage *backImage = [[UIImage systemImageNamed:@"chevron.backward" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [_leftBackButton setImage:backImage forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
 }
 
+- (UIButton *)shareButton {
+    if (!_shareButton) {
+        _shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular];
+        UIImage *shareImage = [[UIImage systemImageNamed:@"square.and.arrow.up" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        [_shareButton setImage:shareImage forState:UIControlStateNormal];
+        [_shareButton addTarget:self action:@selector(shareBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _shareButton;
+}
+
 - (UILabel *)titleLabel {
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.text = @"";
-        _titleLabel.textColor = UIColor.blackColor;
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:20];
+        _titleLabel.textColor = UIColor.whiteColor;
+        _titleLabel.font = [UIFont pingFangMediumWithSize:16];
     }
     return _titleLabel;
-}
-
-- (UILabel *)briefLabel {
-    if (!_briefLabel) {
-        _briefLabel = [[UILabel alloc] init];
-        _briefLabel.text = @"";
-        _briefLabel.textColor = Color16(0x999999);
-        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
-        _briefLabel.numberOfLines = 2;
-    }
-    return _briefLabel;
-}
-
-- (UIButton *)moreButton {
-    if (!_moreButton) {
-        _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_moreButton setTitle:@"更多" forState:UIControlStateNormal];
-        [_moreButton setTitleColor:Color16(0x666666) forState:UIControlStateNormal];
-        _moreButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
-        [_moreButton addTarget:self action:@selector(moreBrief) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _moreButton;
 }
 
 - (UIView *)contentView {
     if (!_contentView) {
         _contentView = [UIView new];
-        _contentView.backgroundColor = UIColor.whiteColor;
-        _contentView.clipsToBounds = NO;
-        _contentView.layer.cornerRadius = 16.0;
-        _contentView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
+        _contentView.backgroundColor = [SLColorManager primaryBackgroundColor];
+//        _contentView.clipsToBounds = NO;
+//        _contentView.layer.cornerRadius = 16.0;
+//        _contentView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
     }
     return _contentView;
 }
@@ -277,29 +172,10 @@
 - (UIView *)navigationView {
     if (!_navigationView) {
         _navigationView = [UIView new];
-        _navigationView.backgroundColor = Color16(0xF2F2F2);
+        _navigationView.backgroundColor = UIColor.clearColor;
     }
     return _navigationView;
 }
-
-// 分页菜单视图
-- (JXCategoryBaseView *)categoryView {
-    if (!_categoryView) {
-        _categoryView = [self preferredCategoryView];
-        _categoryView.delegate = self;
-        _categoryView.titleColorGradientEnabled = YES;
-        _categoryView.titleLabelZoomEnabled = YES;
-        _categoryView.titleFont = [UIFont pingFangSemiboldWithSize:18];
-        _categoryView.titleLabelZoomScale = 1.125;
-        _categoryView.titleSelectedColor = [UIColor blackColor];
-        _categoryView.titleColor = Color16(0x7B7B7B);
-        _categoryView.cellSpacing = 24;
-        _categoryView.averageCellSpacingEnabled = NO;
-    }
-    return _categoryView;
-}
-
-// ---- 
 
 - (void)addRefresh {
     @weakobj(self);
@@ -320,7 +196,7 @@
 
 - (void)loadMessagesList:(CaocaoCarMessageListRefreshType)type {
     @weakobj(self);
-    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:self.myCategoryView.selectedIndex withLabel:self.label resultHandler:^(BOOL isSuccess, NSError *error) {
+    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:0 withLabel:self.label resultHandler:^(BOOL isSuccess, NSError *error) {
         @strongobj(self);
         if (isSuccess) {
             if ([self.viewModel.dataArray count] == 0) {
@@ -387,7 +263,7 @@
         cell.args = @{
             @"url": entity.url,
             @"title": entity.title,
-            @"index": @(self.myCategoryView.selectedIndex)
+            @"index": @(0)
         };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
@@ -424,7 +300,7 @@
                                                             NSDictionary* param = @{
                                                                 @"url": entity.url,
                                                                 @"label": self.label,
-                                                                @"index": @(self.myCategoryView.selectedIndex)
+                                                                @"index": @(0)
                                                             };
                                                             [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_TAGLIST" parameters:param];
                                                                                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
@@ -461,26 +337,6 @@
         };
     }
     return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 58;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    CGFloat categoryViewHeight = 58;
-    UIView* sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, categoryViewHeight)];
-    sectionView.backgroundColor = UIColor.whiteColor;
-    sectionView.clipsToBounds = NO;
-    sectionView.layer.cornerRadius = 16.0;
-    sectionView.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner;
-    [sectionView addSubview:self.categoryView];
-    [self.categoryView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(sectionView).offset(14);
-        make.left.right.equalTo(sectionView);
-        make.bottom.equalTo(sectionView).offset(-14);
-    }];
-    return sectionView;
 }
 
 #pragma mark - UI Elements

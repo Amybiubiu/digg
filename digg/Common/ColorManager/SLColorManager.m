@@ -73,13 +73,13 @@
 }
 
 + (UIColor *)tagBackgroundTextColor {
-    UIColor *lightColor = Color16A(0xEA2A2A, 0.1);
+    UIColor *lightColor = Color16A(0xFF1852, 0.1);
     UIColor *darkColor = Color16A(0xFF3468, 0.1);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
 + (UIColor *)tagTextColor {
-    UIColor *lightColor = Color16(0xEA2A2A);
+    UIColor *lightColor = Color16(0xFF1852);
     UIColor *darkColor = Color16(0xFF3468);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
@@ -159,6 +159,25 @@
 + (UIColor *)recorderTagBorderColor {
     UIColor *lightColor = Color16A(0x000000, 0.26);
     UIColor *darkColor = Color16A(0xffffff, 0.26);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
+//textview输入框相关颜色
++ (UIColor *)textViewBgColor {
+    UIColor *lightColor = Color16(0xF4F4F6);
+    UIColor *darkColor = Color16(0x232228);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)textViewPlaceholderColor {
+    UIColor *lightColor = Color16(0xC3C3C3);
+    UIColor *darkColor = Color16(0x5d5e66);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)textViewTextColor {
+    UIColor *lightColor = Color16(0x333333);
+    UIColor *darkColor = Color16(0xd5d7dc);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 

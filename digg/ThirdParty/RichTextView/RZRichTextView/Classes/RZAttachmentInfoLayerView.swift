@@ -52,16 +52,16 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
                         if let imageData = data {
                             self?.imageView.kf.setImage(with: .provider(RawImageDataProvider(data: imageData, cacheKey: asset.localIdentifier))) { res in
                                 if let image = try? res.get().image, !asset.qisGif {
-                                    self?.imageView.image = image.qfixOrientation   
+                                    self?.imageView.image = image.qfixOrientation
                                 }
                                 self?.updateImageViewSize()
                             }
                         }
                     }
                 } else if let image = info.image {
-                    self.imageView.image = image
-                    self.updateImageViewSize()
-                } else if let url = (info.poster ?? info.src) {
+                     self.imageView.image = image
+                     self.updateImageViewSize()
+                 } else if let url = (info.poster ?? info.src) {
                     if let c = RZRichTextViewConfigure.shared.async_imageBy {
                         let complete: ((String?, UIImage?) -> Void)? = { [weak self] source, image in
                             self?.imageView.image = image

@@ -127,6 +127,8 @@
 		345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
+		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
+		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
 		3486EFD82D2A634200A55258 /* SLProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFD72D2A634200A55258 /* SLProfileViewController.m */; };
 		3486EFDC2D2A6A4100A55258 /* SLProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFDB2D2A6A4100A55258 /* SLProfileHeaderView.m */; };
@@ -155,6 +157,7 @@
 		34A071152D72D999006BC583 /* UIViewController+TMViewExposure.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070ED2D72D999006BC583 /* UIViewController+TMViewExposure.m */; };
 		34A0711C2D732FBC006BC583 /* SLAlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A0711B2D732FBC006BC583 /* SLAlertManager.m */; };
 		34A0711F2D733882006BC583 /* SLTrackingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A0711E2D733882006BC583 /* SLTrackingManager.m */; };
+		34A951522DB121B500579CC6 /* SLCommentInputViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A951512DB121B500579CC6 /* SLCommentInputViewController.m */; };
 		34D2E97F2D33C4A90067CC05 /* SLTagListContainerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2E97E2D33C4A90067CC05 /* SLTagListContainerViewController.m */; };
 		34D2E9822D33C8370067CC05 /* SLTagListContainerViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2E9812D33C8370067CC05 /* SLTagListContainerViewModel.m */; };
 		34D2EB992D3941DE0067CC05 /* TZImagePickerController.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 34D2EB832D3941DE0067CC05 /* TZImagePickerController.bundle */; };
@@ -383,6 +386,10 @@
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
 		346486002D4286050084A3BF /* SLConcernedViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewModel.m; sourceTree = "<group>"; };
+		348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLEmpty.h"; sourceTree = "<group>"; };
+		348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLEmpty.m"; sourceTree = "<group>"; };
+		348628F52DB3CCB600CB341C /* UIView+SLToast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SLToast.h"; sourceTree = "<group>"; };
+		348628F62DB3CCB600CB341C /* UIView+SLToast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+SLToast.m"; sourceTree = "<group>"; };
 		3486EBC02D1D3C2700A55258 /* SLNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNavigationController.h; sourceTree = "<group>"; };
 		3486EBC12D1D3C2700A55258 /* SLNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNavigationController.m; sourceTree = "<group>"; };
 		3486EFD62D2A634200A55258 /* SLProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileViewController.h; sourceTree = "<group>"; };
@@ -443,6 +450,8 @@
 		34A0711B2D732FBC006BC583 /* SLAlertManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLAlertManager.m; sourceTree = "<group>"; };
 		34A0711D2D733882006BC583 /* SLTrackingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTrackingManager.h; sourceTree = "<group>"; };
 		34A0711E2D733882006BC583 /* SLTrackingManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTrackingManager.m; sourceTree = "<group>"; };
+		34A951502DB121B500579CC6 /* SLCommentInputViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCommentInputViewController.h; sourceTree = "<group>"; };
+		34A951512DB121B500579CC6 /* SLCommentInputViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentInputViewController.m; sourceTree = "<group>"; };
 		34D2E97D2D33C4A90067CC05 /* SLTagListContainerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagListContainerViewController.h; sourceTree = "<group>"; };
 		34D2E97E2D33C4A90067CC05 /* SLTagListContainerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagListContainerViewController.m; sourceTree = "<group>"; };
 		34D2E9802D33C8370067CC05 /* SLTagListContainerViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagListContainerViewModel.h; sourceTree = "<group>"; };
@@ -1231,6 +1240,10 @@
 		E76A45BD2CB8C090008B2746 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				348628F52DB3CCB600CB341C /* UIView+SLToast.h */,
+				348628F62DB3CCB600CB341C /* UIView+SLToast.m */,
+				348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */,
+				348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */,
 				345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */,
 				345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */,
 				345C0AA02DAA287B005FCCDB /* UIView+Associated.h */,
@@ -1388,6 +1401,8 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
+				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
 				E7769EA22CA503C300AE84F4 /* SLGeneralMacro.h */,
 				E7C137E42CF3239700C5053A /* EnvConfigHeader.h */,
@@ -1645,6 +1660,7 @@
 				34D2EBC82D3942880067CC05 /* RZCss.swift in Sources */,
 				345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */,
 				345C11E82DABD7DF005FCCDB /* SLNumberIconView.m in Sources */,
+				348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */,
 				345C121B2DAC95AB005FCCDB /* QAlertViewController.swift in Sources */,
 				345C121C2DAC95AB005FCCDB /* QTableViewHelper.swift in Sources */,
 				345C121D2DAC95AB005FCCDB /* QuicklyCollectionView.swift in Sources */,
@@ -1674,6 +1690,7 @@
 				345C12352DAC95AB005FCCDB /* QuicklyNotification.swift in Sources */,
 				345C12362DAC95AB005FCCDB /* QPlayer.swift in Sources */,
 				345C12372DAC95AB005FCCDB /* QuicklyLabel.swift in Sources */,
+				348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */,
 				345C12382DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift in Sources */,
 				345C12392DAC95AB005FCCDB /* QuicklyArray.swift in Sources */,
 				345C123A2DAC95AB005FCCDB /* QDispatch.swift in Sources */,
@@ -1804,6 +1821,7 @@
 				345C12D82DACB84D005FCCDB /* SkeletonView.swift in Sources */,
 				345C12D92DACB84D005FCCDB /* UIView+Extensions.swift in Sources */,
 				345C12DA2DACB84D005FCCDB /* UIView+SkeletonView.swift in Sources */,
+				34A951522DB121B500579CC6 /* SLCommentInputViewController.m in Sources */,
 				345C12DB2DACB84D005FCCDB /* UITableView+Extensions.swift in Sources */,
 				345C12DC2DACB84D005FCCDB /* SubviewsSkeletonables.swift in Sources */,
 				345C12DD2DACB84D005FCCDB /* UICollectionView+Extensions.swift in Sources */,
@@ -2018,8 +2036,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2030,11 +2047,15 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = infoflow_dev;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = infoflow_dev;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "digg/ThirdParty/RichTextView/RZRichTextView/digg-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -2064,8 +2085,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2076,10 +2096,14 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = infoflow_app_distribution;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = infoflow_app_distribution;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "digg/ThirdParty/RichTextView/RZRichTextView/digg-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

@@ -73,28 +73,69 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     self.tableView.backgroundColor = UIColor.clearColor;
-    @weakobj(self)
-    [self.viewModel isUserLogin:^(BOOL isLogin, NSError * _Nonnull error) {
-        @strongobj(self)
-        if (isLogin) {
-            if ([self.userId length] == 0) {
-                self.userId = [SLUser defaultUser].userEntity.userId;
+    if (!_fromWeb) {
+        @weakobj(self)
+        [self.viewModel isUserLogin:^(BOOL isLogin, NSError * _Nonnull error) {
+            @strongobj(self)
+            if (isLogin) {
+                if ([self.userId length] == 0) {
+                    self.userId = [SLUser defaultUser].userEntity.userId;
+                }
+                [self updateUI];
+            } else {
+                [self.hideView setHidden:YES];
+                [self.emptyView setHidden:NO];
             }
-            [self updateUI];
-        } else {
-            [self.hideView setHidden:YES];
-            [self.emptyView setHidden:NO];
-        }
-    }];
+        }];
+    } else {
+        [self updateUI];
+    }
 }
 
 - (void)updateUI {
-    [self.hideView setHidden:YES];
-    if (self.userId.length == 0) {
-        [self.emptyView setHidden:NO];
+    if (!_fromWeb) {
+        [self.hideView setHidden:YES];
+        if (self.userId.length == 0) {
+            [self.emptyView setHidden:NO];
+        } else {
+            [self.emptyView setHidden:YES];
+            
+            @weakobj(self);
+            [self.viewModel loadUserProfileWithProfileID:self.userId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
+                @strongobj(self)
+                if (isSuccess) {
+                    if ([self.viewModel.entity.bgImage length] > 0) {
+                        [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage]];
+                    }
+                    
+                    self.nameLabel.text = self.viewModel.entity.userName;
+                    self.briefLabel.text = self.viewModel.entity.desc;
+                    if (self.viewModel.entity.isSelf && !self.fromWeb) {
+                        [self.leftBackButton setHidden:YES];
+                        [self.moreButton setHidden:NO];
+                        [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                            make.left.equalTo(self.headerImageView).offset(16);
+                            make.top.equalTo(self.headerImageView).offset(52);
+                            make.right.equalTo(self.moreButton.mas_left).offset(-12);
+                        }];
+                    } else {
+                        [self.leftBackButton setHidden:NO];
+                        [self.moreButton setHidden:YES];
+                        [self.nameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                            make.left.equalTo(self.leftBackButton.mas_right).offset(12);
+                            make.bottom.equalTo(self.leftBackButton.mas_centerY);
+                            make.right.equalTo(self.moreButton.mas_left).offset(-12);
+                        }];
+                    }
+                    self.headerView.entity = self.viewModel.entity;
+                    [self updateTableHeaderViewHeight];
+                    [self.tableView reloadData];
+                }
+            }];
+        }
     } else {
+        [self.hideView setHidden:YES];
         [self.emptyView setHidden:YES];
-        
         @weakobj(self);
         [self.viewModel loadUserProfileWithProfileID:self.userId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
             @strongobj(self)
@@ -102,7 +143,7 @@
                 if ([self.viewModel.entity.bgImage length] > 0) {
                     [self.headerImageView sd_setImageWithURL:[NSURL URLWithString:self.viewModel.entity.bgImage]];
                 }
-
+                
                 self.nameLabel.text = self.viewModel.entity.userName;
                 self.briefLabel.text = self.viewModel.entity.desc;
                 if (self.viewModel.entity.isSelf && !self.fromWeb) {
@@ -143,22 +184,40 @@
     
     // 只有当高度发生变化时才更新frame
     if (self.headerView.frame.size.height != height) {
+        CGFloat oldHeight = self.headerView.frame.size.height;
+
         CGRect frame = self.headerView.frame;
         frame.size.height = height;
-        self.headerView.frame = frame;
-        self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
-        self.blurEffectView.frame = self.headerImageView.bounds;
-        
-        // 只有当headerView不是当前tableHeaderView时才设置
-        if (currentHeaderView != self.headerView) {
-            self.tableView.tableHeaderView = self.headerView;
-        }
+
+        [UIView animateWithDuration:0.3 animations:^{
+            self.headerView.frame = frame;
+            self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, height);
+            self.blurEffectView.frame = self.headerImageView.bounds;
+            
+            // 调整tableView的contentOffset以保持视觉连续性
+            if (oldHeight > 0) {
+                CGFloat offsetDiff = height - oldHeight;
+                CGPoint contentOffset = self.tableView.contentOffset;
+                if (contentOffset.y <= 0) { // 只在顶部时调整
+                    contentOffset.y -= offsetDiff;
+                    self.tableView.contentOffset = contentOffset;
+                }
+            }
+        } completion:^(BOOL finished) {
+            // 只有当headerView不是当前tableHeaderView时才设置
+            if (currentHeaderView != self.headerView) {
+                self.tableView.tableHeaderView = self.headerView;
+            } else {
+                // 即使是同一个headerView，也需要重新设置以更新布局
+                self.tableView.tableHeaderView = self.headerView;
+            }
+        }];
     }
 }
 
 #pragma mark - Setup UI
 - (void)setupUI {
-    self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 300);
+    self.headerImageView.frame = CGRectMake(0, 0, self.view.bounds.size.width, 180);
     [self.view addSubview:self.headerImageView];
     
     UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
@@ -607,6 +666,7 @@
                     SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                     vc.hidesBottomBarWhenPushed = YES;
                     vc.label = entity.label;
+                    vc.entity = entity;
                     [self.navigationController pushViewController:vc animated:YES];
                 }
             };
@@ -655,7 +715,16 @@
 - (UIButton *)leftBackButton {
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_leftBackButton setImage:[UIImage imageNamed:@"profile_left_btn"] forState:UIControlStateNormal];
+        // 创建配置
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium];
+        // 创建图标并设置颜色
+        UIImage *backImage = [[UIImage systemImageNamed:@"chevron.backward" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        // 设置按钮背景为黑色圆形
+        _leftBackButton.backgroundColor =  [UIColor colorWithWhite:0 alpha:0.4];
+        _leftBackButton.layer.cornerRadius = 16; // 圆形效果
+        _leftBackButton.clipsToBounds = YES;
+        
+        [_leftBackButton setImage:backImage forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
@@ -664,7 +733,18 @@
 - (UIButton *)moreButton {
     if (!_moreButton) {
         _moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_moreButton setImage:[UIImage imageNamed:@"profile_more_btn"] forState:UIControlStateNormal];
+        // 创建配置 - 调整大小使图标更大
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:22 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium];
+        
+        // 使用普通的ellipsis图标而不是circle.fill版本
+        UIImage *moreImage = [[UIImage systemImageNamed:@"ellipsis" withConfiguration:config] imageWithTintColor:UIColor.whiteColor renderingMode:UIImageRenderingModeAlwaysOriginal];
+        
+        // 设置按钮背景为黑色圆形
+        _moreButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
+        _moreButton.layer.cornerRadius = 16; // 圆形效果
+        _moreButton.clipsToBounds = YES;
+        
+        [_moreButton setImage:moreImage forState:UIControlStateNormal];
         [_moreButton addTarget:self action:@selector(showMenu) forControlEvents:UIControlEventTouchUpInside];
     }
     return _moreButton;

@@ -11,6 +11,7 @@
 #import "IQKeyboardManager.h"
 #import "TMViewTrackerManager.h"
 #import "ViewTrackerProxy.h"
+#import <UMCommon/UMCommon.h>
 
 @interface AppDelegate ()<UIApplicationDelegate>
 
@@ -21,6 +22,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [UMConfigure initWithAppkey:@"680205bdbc47b67d8340d966" channel:@"Internal"];
+
     [[IQKeyboardManager sharedManager] setEnable:YES];
     [[TMViewTrackerManager sharedManager] setCommitProtocol:[ViewTrackerProxy new]];
 
