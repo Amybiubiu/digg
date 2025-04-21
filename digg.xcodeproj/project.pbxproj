@@ -2031,7 +2031,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";
+				INFOPLIST_KEY_CFBundleDisplayName = Reed;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "请求上传图片";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -2080,7 +2080,7 @@
 				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "沏茶";
+				INFOPLIST_KEY_CFBundleDisplayName = Reed;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "请求上传图片";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

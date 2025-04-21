@@ -99,14 +99,14 @@
     
     [self.navigationView addSubview:self.leftBackButton];
     [self.leftBackButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.navigationView).offset(27);
+        make.left.equalTo(self.navigationView).offset(17);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
     
     [self.navigationView addSubview:self.commitButton];
     [self.commitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.navigationView).offset(-27);
+        make.right.equalTo(self.navigationView).offset(-17);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
@@ -122,54 +122,54 @@
     [self.contentView addSubview:self.titleField];
     [self.titleField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView);
-        make.left.equalTo(self.contentView).offset(22);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.contentView).offset(12);
+        make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
     [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.titleField);
-        make.left.equalTo(self.contentView).offset(23);
+        make.left.equalTo(self.contentView).offset(13);
     }];
     [self.contentView addSubview:self.line1View];
     [self.line1View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleField.mas_bottom);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.contentView).offset(10);
+        make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(0.5);
     }];
     [self.contentView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line1View.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(23);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.contentView).offset(13);
+        make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
 
     [self.contentView addSubview:self.line2View];
     [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.linkField.mas_bottom);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.contentView).offset(10);
+        make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(0.5);
     }];
     [self.contentView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line2View.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(22);
-        make.right.equalTo(self.contentView).offset(-16);
+        make.left.equalTo(self.contentView).offset(12);
+        make.right.equalTo(self.contentView).offset(-12);
         make.height.mas_equalTo(300);
     }];
     [self.contentView addSubview:self.line3View];
     [self.line3View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textView.mas_bottom);
-        make.left.equalTo(self.contentView).offset(16);
-        make.right.equalTo(self.contentView).offset(-16);
+        make.left.equalTo(self.contentView).offset(12);
+        make.right.equalTo(self.contentView).offset(-12);
         make.height.mas_equalTo(0.5);
     }];
     [self.contentView addSubview:self.tagScrollView];
     [self.tagScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line3View.mas_bottom).offset(16);
-        make.left.equalTo(self.contentView).offset(27);
+        make.left.equalTo(self.contentView).offset(17);
         make.right.equalTo(self.contentView).offset(-16);
         make.bottom.equalTo(self.contentView).offset(-16);
     }];
