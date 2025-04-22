@@ -8,6 +8,15 @@
 import UIKit
 //import QuicklySwift
 
+@objc public protocol RZRichTextViewDelegate: UITextViewDelegate {
+    
+    @objc optional func richTextViewDidInsertAttachment(_ textView: RZRichTextView)
+    
+    @objc optional func richTextView(_ textView: RZRichTextView, contentHeightDidChange height: CGFloat)
+    
+    @objc optional func richTextView(_ textView: RZRichTextView, attachmentUploadStatusChanged info: RZAttachmentInfo, isUploading: Bool)
+}
+
 /// 初始化TextView时，一定要设置frame.size.width，内部附件以frame的宽度来做最宽显示处理
 /// 如何使用以及配置？ 请查看demo的HowToUseDemo，直接复制代码，填充选择资源、预览资源的方法就可以了
 /// https://github.com/rztime/RZRichTextView/blob/master/Example/RZRichTextView/HowToUseDemo.swift
@@ -406,10 +415,17 @@ public extension RZRichTextView {
         let attachment = NSTextAttachment.createWithinfo(attachmentinfo)
         let attr = NSMutableAttributedString.init(attachment: attachment)
         attr.addAttributes(self.typingAttributes, range: .init(location: 0, length: attr.length))
+
+        // 添加换行符
+        let newlineAttr = NSAttributedString(string: "\n", attributes: self.typingAttributes)
+        attr.append(newlineAttr)
+
         self.textStorage.replaceCharacters(in: self.selectedRange, with: attr)
         self.selectedRange = NSRange.init(location: self.selectedRange.lowerBound + attr.length, length: 0)
         if let d = self.delegate {
             d.textViewDidChange?(self)
+            // 添加自定义通知
+            (d as? RZRichTextViewDelegate)?.richTextViewDidInsertAttachment?(self)
         } else {
             self.contentTextChanged()
         }

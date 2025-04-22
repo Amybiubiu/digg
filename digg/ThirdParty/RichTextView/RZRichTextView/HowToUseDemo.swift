@@ -116,19 +116,46 @@ public extension RZRichTextViewModel {
                     }
                 case .upload(let info): // 上传 以及点击重新上传时，将会执行
                     // FIXME: 此处自行实现上传功能，通过info获取里边的image、asset、filePath， 上传的进度需要设置到info.uploadStatus
-                    UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
-                        if progress < 1 {
-                            info?.uploadStatus.accept(.uploading(progress: progress))
-                        } else {
-                            info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
-                            switch info?.type ?? .image {
-                            case .image:
-                                info?.src = url
-                            case .audio:
-                                info?.src = ""
-                            case .video:
-                                info?.src = ""
-                                info?.poster = ""
+                    print("--> upload")
+                    if info.image == nil && info.asset != nil {
+                        // 确保有图片数据
+                        let options = PHImageRequestOptions()
+                        options.isNetworkAccessAllowed = true
+                        options.deliveryMode = .highQualityFormat
+                        PHImageManager.default().requestImage(for: info.asset!, targetSize: PHImageManagerMaximumSize, contentMode: .default, options: options) { image, _ in
+                            info.image = image
+                            UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
+                                if progress < 1 {
+                                    info?.uploadStatus.accept(.uploading(progress: progress))
+                                } else {
+                                    info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
+                                    switch info?.type ?? .image {
+                                    case .image:
+                                        info?.src = url
+                                    case .audio:
+                                        info?.src = ""
+                                    case .video:
+                                        info?.src = ""
+                                        info?.poster = ""
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
+                            if progress < 1 {
+                                info?.uploadStatus.accept(.uploading(progress: progress))
+                            } else {
+                                info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
+                                switch info?.type ?? .image {
+                                case .image:
+                                    info?.src = url
+                                case .audio:
+                                    info?.src = ""
+                                case .video:
+                                    info?.src = ""
+                                    info?.poster = ""
+                                }
                             }
                         }
                     }
