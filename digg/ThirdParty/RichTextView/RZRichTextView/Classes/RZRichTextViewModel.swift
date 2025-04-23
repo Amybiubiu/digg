@@ -143,6 +143,7 @@ open class RZRichTextViewModel: NSObject {
         /// 默认居左
         let p = NSMutableParagraphStyle.init()
         p.alignment = .left
+        p.lineSpacing = 4.0
 
         defaultTypingAttributes[.paragraphStyle] = p
         // 默认 16 标准字体

@@ -36,7 +36,7 @@
             break;
     }
     
-    UIFont *font = [UIFont fontWithName:fontName size:size];
+    UIFont *font = nil;//[UIFont fontWithName:fontName size:size];
     
     // 如果指定字体不可用，则回退到系统字体
     if (!font) {

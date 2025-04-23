@@ -406,7 +406,7 @@
            url = [NSString stringWithFormat:@"https://%@", url];
        }
        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-       webVC.isShowProgress = YES;
+       webVC.isShowProgress = NO;
        [webVC startLoadRequestWithUrl:url];
        webVC.hidesBottomBarWhenPushed = YES;
        [self.navigationController pushViewController:webVC animated:YES];
