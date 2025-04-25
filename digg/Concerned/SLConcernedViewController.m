@@ -80,7 +80,7 @@
         @strongobj(self);
         if (isSuccess) {
             if ([self.viewModel.dataArray count] == 0) {
-                self.dataState = CaocaoDataLoadStateEmpty;
+//                self.dataState = CaocaoDataLoadStateEmpty;
             } else {
                 self.dataState = CaocaoDataLoadStateNormal;
             }
@@ -247,6 +247,10 @@
 
 - (CGFloat)verticalOffsetForEmptyDataSet:(UIScrollView *)scrollView {
     return 98.0/2.0;
+}
+
+- (void)emptyDataSet:(UIScrollView *)scrollView didTapView:(UIView *)view {
+    [self dataLoadActionCallback];
 }
 
 #pragma mark - UI Element
