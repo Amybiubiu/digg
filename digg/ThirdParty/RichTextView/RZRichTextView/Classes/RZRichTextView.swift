@@ -665,6 +665,14 @@ extension RZRichTextView {
         } else {
             self.textStorage.addAttributes([:], range: .init(location: 0, length: 1))
         }
+        //插入html
+        if let d = self.delegate {
+            d.textViewDidChange?(self)
+            // 添加自定义通知
+            (d as? RZRichTextViewDelegate)?.richTextViewDidInsertAttachment?(self)
+        } else {
+            self.contentTextChanged()
+        }
     }
     /// 更新 附件、序列号等等
     private func updateSubViews() {

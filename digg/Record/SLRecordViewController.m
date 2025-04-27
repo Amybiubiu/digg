@@ -179,7 +179,6 @@
         make.top.equalTo(self.line3View.mas_bottom).offset(16);
         make.left.equalTo(self.containerView).offset(17);
         make.right.equalTo(self.containerView).offset(-16);
-//        make.bottom.equalTo(self.containerView).offset(-16);
     }];
     // 添加"+ 标签"按钮
     [self.tagContainerView addSubview:self.addTagButton];
