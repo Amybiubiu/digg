@@ -52,7 +52,7 @@
     };
     
     JXCategoryIndicatorLineView *lineView = [[JXCategoryIndicatorLineView alloc] init];
-    lineView.indicatorColor = Color16(0xFF1852);
+    lineView.indicatorColor = Color16(0x15932A);
     lineView.indicatorWidth = 28;
     self.myCategoryView.indicators = @[lineView];
 }

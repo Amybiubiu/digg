@@ -119,7 +119,8 @@
     if (hasContent) {
         self.contentLabel.hidden = NO;
         
-        NSString *contentStr = [entiy.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+        NSString *cleanedContent = [entiy.content stringByReplacingOccurrencesOfString:@"\\U0000fffc\\n\\n" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, entiy.content.length)];
+        NSString *contentStr = [cleanedContent stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
