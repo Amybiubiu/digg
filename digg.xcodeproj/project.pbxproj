@@ -129,6 +129,8 @@
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
 		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
 		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
+		348685692DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m in Sources */ = {isa = PBXBuildFile; fileRef = 348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */; };
+		3486856C2DBDD8F300CB341C /* SLHomeTagViewV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
 		3486EFD82D2A634200A55258 /* SLProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFD72D2A634200A55258 /* SLProfileViewController.m */; };
 		3486EFDC2D2A6A4100A55258 /* SLProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFDB2D2A6A4100A55258 /* SLProfileHeaderView.m */; };
@@ -390,6 +392,10 @@
 		348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLEmpty.m"; sourceTree = "<group>"; };
 		348628F52DB3CCB600CB341C /* UIView+SLToast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SLToast.h"; sourceTree = "<group>"; };
 		348628F62DB3CCB600CB341C /* UIView+SLToast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+SLToast.m"; sourceTree = "<group>"; };
+		348685672DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCellV3.h; sourceTree = "<group>"; };
+		348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV3.m; sourceTree = "<group>"; };
+		3486856A2DBDD8F300CB341C /* SLHomeTagViewV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomeTagViewV2.h; sourceTree = "<group>"; };
+		3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomeTagViewV2.m; sourceTree = "<group>"; };
 		3486EBC02D1D3C2700A55258 /* SLNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNavigationController.h; sourceTree = "<group>"; };
 		3486EBC12D1D3C2700A55258 /* SLNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNavigationController.m; sourceTree = "<group>"; };
 		3486EFD62D2A634200A55258 /* SLProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileViewController.h; sourceTree = "<group>"; };
@@ -1389,6 +1395,10 @@
 		E7769E9E2CA4F9E800AE84F4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3486856A2DBDD8F300CB341C /* SLHomeTagViewV2.h */,
+				3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */,
+				348685672DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.h */,
+				348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */,
 				345C11E62DABD7DF005FCCDB /* ActionBar */,
 				E7C1393A2CF33C8800C5053A /* SLHomeTagView.h */,
 				E7C1393B2CF33C8800C5053A /* SLHomeTagView.m */,
@@ -1702,6 +1712,7 @@
 				345C12402DAC95AB005FCCDB /* QActionSheetController.swift in Sources */,
 				345C12412DAC95AB005FCCDB /* QuicklyFile.swift in Sources */,
 				345C12422DAC95AB005FCCDB /* QuicklyColor.swift in Sources */,
+				348685692DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m in Sources */,
 				345C12432DAC95AB005FCCDB /* QuicklyPopmenu.swift in Sources */,
 				345C12442DAC95AB005FCCDB /* QuicklyNSAttributedString.swift in Sources */,
 				345C12452DAC95AB005FCCDB /* QuicklyTextField.swift in Sources */,
@@ -1715,6 +1726,7 @@
 				34D2EBC92D3942880067CC05 /* RZRichTextViewConfigure.swift in Sources */,
 				34D2EBCA2D3942880067CC05 /* RZRichTextView.swift in Sources */,
 				34D2EBCB2D3942880067CC05 /* RZRichTableStyleView.swift in Sources */,
+				3486856C2DBDD8F300CB341C /* SLHomeTagViewV2.m in Sources */,
 				34D2EBCC2D3942880067CC05 /* RZAttachmentInfoLayerView.swift in Sources */,
 				34D2EBCD2D3942880067CC05 /* RZRichParagraphStyleView.swift in Sources */,
 				34D2EBCE2D3942880067CC05 /* LabelRZRich.swift in Sources */,

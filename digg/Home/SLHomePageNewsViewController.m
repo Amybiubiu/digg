@@ -11,7 +11,7 @@
 #import "CaocaoRefresh.h"
 #import "SLGeneralMacro.h"
 #import "SLColorManager.h"
-#import "SLHomePageNewsTableViewCellV2.h"
+#import "SLHomePageNewsTableViewCellV3.h"
 #import "SLTagListContainerViewController.h"
 #import "SLWebViewController.h"
 #import "SLUser.h"
@@ -139,7 +139,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    SLHomePageNewsTableViewCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
+    SLHomePageNewsTableViewCellV3 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
@@ -239,7 +239,7 @@
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tableView registerClass:[SLHomePageNewsTableViewCellV2 class] forCellReuseIdentifier:kSLHomePageNewsTableViewCellID];
+        [_tableView registerClass:[SLHomePageNewsTableViewCellV3 class] forCellReuseIdentifier:kSLHomePageNewsTableViewCellID];
         _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         if (@available(iOS 15.0, *)) {
             _tableView.sectionHeaderTopPadding = 0;

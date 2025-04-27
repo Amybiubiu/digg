@@ -32,7 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 //tag
 + (UIColor *)tagBackgroundTextColor;
++ (UIColor *)tagV2BackgroundTextColor;
 + (UIColor *)tagTextColor;
++ (UIColor *)tagV2TextColor;
 
 //cell
 + (UIColor *)cellTitleColor;

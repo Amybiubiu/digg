@@ -28,6 +28,8 @@
 @property (nonatomic, assign) NSInteger dislikeCnt;
 @property (nonatomic, copy) NSString *label;
 @property (nonatomic, copy) NSString *actionName;
+@property (nonatomic, copy) NSString *mainPicUrl; //图片链接
+@property (nonatomic, assign) NSInteger picSize;  //0 small | 1 large
 
 @end
 
