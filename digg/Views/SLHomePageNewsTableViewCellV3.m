@@ -41,15 +41,82 @@
 
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy{
     self.entity = entiy;
+    self.smallImageView.hidden = YES;
+    self.bigImageView.hidden = YES;
+    self.contentLabel.hidden = YES;
+
     self.titleLabel.text = entiy.title;
-    
+    self.contentLabel.text = nil;
+    self.contentLabel.attributedText = nil;
+
     CGFloat lineSpacing = 4;
     CGFloat offset = 16;
+    
+    if (stringIsEmpty(entiy.label)) {
+        self.tagView.hidden = YES;
+        
+        if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            [self.smallImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
+            [self.bigImageView setHidden:YES];
+            [self.smallImageView setHidden:NO];
+            
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.contentView).offset(offset);
+                make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
+                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+            }];
+        } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
+            [self.bigImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
+            [self.smallImageView setHidden:YES];
+            [self.bigImageView setHidden:NO];
+            
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.contentView).offset(offset);
+                make.top.equalTo(self.bigImageView.mas_bottom).offset(offset);
+                make.right.equalTo(self.contentView).offset(-offset);
+            }];
+        } else {
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.contentView).offset(offset);
+                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.right.equalTo(self.contentView).offset(-offset);
+            }];
+        }
+    } else {
+        self.tagView.hidden = NO;
+        [self.tagView updateWithLabel:entiy.label];
 
-    // 判断内容是否为空
+        if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            [self.smallImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
+            [self.bigImageView setHidden:YES];
+            [self.smallImageView setHidden:NO];
+            
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.left.equalTo(self.tagView.mas_right).offset(8);
+                make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
+            }];
+        } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
+            [self.bigImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
+            [self.smallImageView setHidden:YES];
+            [self.bigImageView setHidden:NO];
+            
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.tagView.mas_right).offset(8);
+                make.top.equalTo(self.bigImageView.mas_bottom).offset(offset);
+                make.right.equalTo(self.contentView).offset(-offset);
+            }];
+        } else {
+            [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.tagView.mas_right).offset(8);
+                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.right.equalTo(self.contentView).offset(-offset);
+            }];
+        }
+    }
+
     BOOL hasContent = entiy.content != nil && entiy.content.length > 0;
     if (hasContent) {
-        // 有内容时显示contentLabel
         self.contentLabel.hidden = NO;
         
         NSString *contentStr = [entiy.content stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
@@ -64,22 +131,17 @@
         [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(offset);
             make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
-            make.right.equalTo(self.contentView).offset(-offset);
+            make.right.equalTo(self.titleLabel);
         }];
         
         [self.interactionBar mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(48);
             make.top.equalTo(self.contentLabel.mas_bottom);
             make.left.equalTo(self.contentView).offset(offset);
-            make.right.equalTo(self.contentView).offset(-offset);
+            make.right.equalTo(self.titleLabel);
             make.bottom.equalTo(self.contentView);
         }];
     } else {
-        // 内容为空时隐藏contentLabel并调整interactionBar位置
-        self.contentLabel.hidden = YES;
-        self.contentLabel.attributedText = nil;
-        
-        // 移除contentLabel的所有约束
         [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.equalTo(@0);
         }];
@@ -88,49 +150,8 @@
             make.height.mas_equalTo(48);
             make.top.equalTo(self.titleLabel.mas_bottom);
             make.left.equalTo(self.contentView).offset(offset);
-            make.right.equalTo(self.contentView).offset(-offset);
+            make.right.equalTo(self.titleLabel);
             make.bottom.equalTo(self.contentView);
-        }];
-    }
-
-    if (stringIsEmpty(entiy.label)) {
-        self.tagView.hidden = YES;
-        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.contentView).offset(offset);
-            make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
-            make.right.equalTo(self.contentView).offset(-offset);
-        }];
-    } else {
-        self.tagView.hidden = NO;
-        [self.tagView updateWithLabel:entiy.label];
-
-        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.tagView.mas_right).offset(8);
-            make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
-            make.right.equalTo(self.contentView).offset(-offset);
-        }];
-    }
-    
-    if (entiy.picSize == 0) {
-        [self.smallImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
-        [self.bigImageView setHidden:YES];
-        [self.smallImageView setHidden:NO];
-        
-        [self.titleLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
-        }];
-        
-        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
-        }];
-        
-    } else {
-        [self.bigImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
-        [self.smallImageView setHidden:YES];
-        [self.bigImageView setHidden:NO];
-        
-        [self.titleLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.bigImageView.mas_bottom).offset(offset);
         }];
     }
     
@@ -186,14 +207,15 @@
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
         make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
-        make.right.equalTo(self.contentView).offset(-offset);
+        make.right.equalTo(self.titleLabel);
+        make.height.mas_equalTo(0);
     }];
     
     [self.interactionBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(48);
         make.top.equalTo(self.contentLabel.mas_bottom);
         make.left.equalTo(self.contentView).offset(offset);
-        make.right.equalTo(self.contentView).offset(-offset);
+        make.right.equalTo(self.titleLabel);
         make.bottom.equalTo(self.contentView);
     }];
     
