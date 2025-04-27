@@ -396,6 +396,8 @@
 		348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV3.m; sourceTree = "<group>"; };
 		3486856A2DBDD8F300CB341C /* SLHomeTagViewV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomeTagViewV2.h; sourceTree = "<group>"; };
 		3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomeTagViewV2.m; sourceTree = "<group>"; };
+		348685702DBE0DDA00CB341C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		348685712DBE0DDB00CB341C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		3486EBC02D1D3C2700A55258 /* SLNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNavigationController.h; sourceTree = "<group>"; };
 		3486EBC12D1D3C2700A55258 /* SLNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNavigationController.m; sourceTree = "<group>"; };
 		3486EFD62D2A634200A55258 /* SLProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileViewController.h; sourceTree = "<group>"; };
@@ -1539,11 +1541,12 @@
 			};
 			buildConfigurationList = E7769E512CA2E63A00AE84F4 /* Build configuration list for PBXProject "digg" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = E7769E4D2CA2E63A00AE84F4;
 			productRefGroup = E7769E572CA2E63A00AE84F4 /* Products */;
@@ -1891,6 +1894,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E7769E682CA2E63B00AE84F4 /* Base */,
+				348685702DBE0DDA00CB341C /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1899,6 +1903,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				E7769EA82CB1A10900AE84F4 /* Base */,
+				348685712DBE0DDB00CB341C /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1911,6 +1916,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1972,6 +1978,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

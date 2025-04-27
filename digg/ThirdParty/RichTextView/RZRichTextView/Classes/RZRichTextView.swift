@@ -417,7 +417,7 @@ public extension RZRichTextView {
         attr.addAttributes(self.typingAttributes, range: .init(location: 0, length: attr.length))
 
         // 添加换行符
-        let newlineAttr = NSAttributedString(string: "\n", attributes: self.typingAttributes)
+        let newlineAttr = NSAttributedString(string: "\n\n", attributes: self.typingAttributes)
         attr.append(newlineAttr)
 
         self.textStorage.replaceCharacters(in: self.selectedRange, with: attr)
@@ -429,6 +429,8 @@ public extension RZRichTextView {
         } else {
             self.contentTextChanged()
         }
+        
+        self.becomeFirstResponder()
     }
     /// 删除附件
     func removeAttachment(_ attachmentInfo: RZAttachmentInfo?) {
