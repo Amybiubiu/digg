@@ -131,7 +131,6 @@
 		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
 		348685692DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m in Sources */ = {isa = PBXBuildFile; fileRef = 348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */; };
 		3486856C2DBDD8F300CB341C /* SLHomeTagViewV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */; };
-		348688C82DBF205600CB341C /* SLNewsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 348688C62DBF205500CB341C /* SLNewsDetailViewController.m */; };
 		3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EBC12D1D3C2700A55258 /* SLNavigationController.m */; };
 		3486EFD82D2A634200A55258 /* SLProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFD72D2A634200A55258 /* SLProfileViewController.m */; };
 		3486EFDC2D2A6A4100A55258 /* SLProfileHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFDB2D2A6A4100A55258 /* SLProfileHeaderView.m */; };
@@ -140,6 +139,7 @@
 		3486EFE52D2B721900A55258 /* SLEmptyWithLoginButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFE42D2B721900A55258 /* SLEmptyWithLoginButtonView.m */; };
 		3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFE72D2B807A00A55258 /* SLProfilePageViewModel.m */; };
 		3486EFEB2D2B80EB00A55258 /* SLProfileEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFEA2D2B80EB00A55258 /* SLProfileEntity.m */; };
+		348EE3272DBF7F7C00E88092 /* SLWebViewControllerV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */; };
 		34933F842D2E780E009F781A /* SLProfileDynamicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */; };
 		34933F872D2E9951009F781A /* SLTagsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F862D2E9951009F781A /* SLTagsView.m */; };
 		34A071062D72D999006BC583 /* ViewTrackerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A071032D72D999006BC583 /* ViewTrackerProxy.m */; };
@@ -399,8 +399,6 @@
 		3486856B2DBDD8F300CB341C /* SLHomeTagViewV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomeTagViewV2.m; sourceTree = "<group>"; };
 		348685702DBE0DDA00CB341C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		348685712DBE0DDB00CB341C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
-		348688C52DBF205500CB341C /* SLNewsDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNewsDetailViewController.h; sourceTree = "<group>"; };
-		348688C62DBF205500CB341C /* SLNewsDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNewsDetailViewController.m; sourceTree = "<group>"; };
 		3486EBC02D1D3C2700A55258 /* SLNavigationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLNavigationController.h; sourceTree = "<group>"; };
 		3486EBC12D1D3C2700A55258 /* SLNavigationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLNavigationController.m; sourceTree = "<group>"; };
 		3486EFD62D2A634200A55258 /* SLProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileViewController.h; sourceTree = "<group>"; };
@@ -417,6 +415,8 @@
 		3486EFE72D2B807A00A55258 /* SLProfilePageViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfilePageViewModel.m; sourceTree = "<group>"; };
 		3486EFE92D2B80EB00A55258 /* SLProfileEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileEntity.h; sourceTree = "<group>"; };
 		3486EFEA2D2B80EB00A55258 /* SLProfileEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfileEntity.m; sourceTree = "<group>"; };
+		348EE3252DBF7F7C00E88092 /* SLWebViewControllerV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLWebViewControllerV2.h; sourceTree = "<group>"; };
+		348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLWebViewControllerV2.m; sourceTree = "<group>"; };
 		34933F822D2E780E009F781A /* SLProfileDynamicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileDynamicTableViewCell.h; sourceTree = "<group>"; };
 		34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfileDynamicTableViewCell.m; sourceTree = "<group>"; };
 		34933F852D2E9951009F781A /* SLTagsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagsView.h; sourceTree = "<group>"; };
@@ -965,15 +965,6 @@
 			path = Concerned;
 			sourceTree = "<group>";
 		};
-		348688C72DBF205500CB341C /* Detial */ = {
-			isa = PBXGroup;
-			children = (
-				348688C52DBF205500CB341C /* SLNewsDetailViewController.h */,
-				348688C62DBF205500CB341C /* SLNewsDetailViewController.m */,
-			);
-			path = Detial;
-			sourceTree = "<group>";
-		};
 		3486EFD92D2A69F800A55258 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1350,7 +1341,6 @@
 		E7769E582CA2E63A00AE84F4 /* digg */ = {
 			isa = PBXGroup;
 			children = (
-				348688C72DBF205500CB341C /* Detial */,
 				34A071182D72DBC1006BC583 /* Monitor */,
 				34A071052D72D999006BC583 /* ThirdParty */,
 				346485FB2D4283950084A3BF /* Concerned */,
@@ -1426,6 +1416,8 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				348EE3252DBF7F7C00E88092 /* SLWebViewControllerV2.h */,
+				348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */,
 				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
 				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
@@ -1664,7 +1656,6 @@
 				34A0710C2D72D999006BC583 /* TMViewTrackerConfigModel.m in Sources */,
 				34A0710D2D72D999006BC583 /* UIView+TMViewExposure.m in Sources */,
 				34A0710E2D72D999006BC583 /* UITableView+EventTracking.m in Sources */,
-				348688C82DBF205600CB341C /* SLNewsDetailViewController.m in Sources */,
 				34A0710F2D72D999006BC583 /* TMExposureManager.m in Sources */,
 				34A071102D72D999006BC583 /* UIViewController+TMViewTracker.m in Sources */,
 				34A071112D72D999006BC583 /* UIScrollView+TMViewTracker.m in Sources */,
@@ -1863,6 +1854,7 @@
 				E7769E6C2CA2E63B00AE84F4 /* main.m in Sources */,
 				3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */,
 				E7C139372CF325BC00C5053A /* SLUserEntity.m in Sources */,
+				348EE3272DBF7F7C00E88092 /* SLWebViewControllerV2.m in Sources */,
 				3486EFE52D2B721900A55258 /* SLEmptyWithLoginButtonView.m in Sources */,
 				34D2E9822D33C8370067CC05 /* SLTagListContainerViewModel.m in Sources */,
 				E7C405742CC0EF13004D90CD /* SLHomePageViewModel.m in Sources */,

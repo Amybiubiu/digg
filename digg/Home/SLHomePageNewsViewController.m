@@ -19,8 +19,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
-
-#import "SLNewsDetailViewController.h"
+#import "SLWebViewControllerV2.h"
 
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
@@ -108,16 +107,10 @@
 }
 
 - (void)jumpToH5WithUrl:(NSString *)url andShowProgress:(BOOL)show {
-    SLWebViewController *dvc = [[SLWebViewController alloc] init];
-    dvc.isShowProgress = show;
+    SLWebViewControllerV2 *dvc = [[SLWebViewControllerV2 alloc] init];
     [dvc startLoadRequestWithUrl:url];
     dvc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:dvc animated:YES];
-//    SLNewsDetailViewController *detailVC = [[SLNewsDetailViewController alloc] init];
-//    detailVC.newsURL = @"https://www.apple.com";
-//    detailVC.newsTitle = @"测试动画效果";
-//    detailVC.hidesBottomBarWhenPushed = YES;
-//    [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 - (void)endRefresh
