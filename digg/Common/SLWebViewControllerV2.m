@@ -658,6 +658,7 @@
     
     // 滚动到顶部时显示导航栏
     if (contentOffset <= 0) {
+        NSLog(@"--> scrollViewDidScroll contentOffset <= 0");
         [self updateBarsPosition:0.0 animated:NO];
         self.lastContentOffset = contentOffset;
         return;
@@ -670,13 +671,11 @@
     
     if (isAtBottom) {
         // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidScroll isAtBottom");
         [self updateBarsPosition:0.0 animated:YES];
         self.lastContentOffset = contentOffset;
         return;
     }
-    
-    // 计算导航栏和底部工具栏应该移动的距离
-    CGFloat maxOffset = self.navBarHeight * 2; // 增加滚动距离，使过渡更平滑
     
     // 根据滚动方向调整进度
     CGFloat diff = contentOffset - self.lastContentOffset;
@@ -699,6 +698,7 @@
     }
     
     // 更新导航栏和底部工具栏位置，使用平滑过渡
+    NSLog(@"--> scrollViewDidScroll targetProgress");
     [self updateBarsPosition:targetProgress animated:NO];
     
     self.lastContentOffset = contentOffset;
@@ -714,6 +714,7 @@
     
     if (isAtBottom) {
         // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidEndDragging isAtBottom");
         [self updateBarsPosition:0.0 animated:YES];
         return;
     }
@@ -732,6 +733,7 @@
     
     if (isAtBottom) {
         // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidEndDecelerating isAtBottom");
         [self updateBarsPosition:0.0 animated:YES];
         return;
     }
@@ -741,6 +743,7 @@
 
 // 修改更新方法，添加平滑过渡
 - (void)updateBarsPosition:(CGFloat)progress animated:(BOOL)animated {
+    NSLog(@"--> updateBarsPosition progress = %.2f animated = %d", progress, animated);
     // 计算导航栏应该移动的距离
     CGFloat navBarOffset = -self.navBarHeight * progress;
     CGFloat tabBarOffset = self.tabBarHeight * progress;
@@ -781,14 +784,18 @@
     
     // 如果接近某个状态，直接设置为该状态
     if (currentProgress < 0.1) {
+        NSLog(@"--> finishScrollingWithVelocity currentProgress < 0.1");
         [self updateBarsPosition:0.0 animated:YES]; // 显示
     } else if (currentProgress > 0.9) {
+        NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.9");
         [self updateBarsPosition:1.0 animated:YES]; // 隐藏
     } else {
         // 如果在中间状态，根据进度决定
         if (currentProgress > 0.5) {
+            NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.5");
             [self updateBarsPosition:1.0 animated:YES]; // 隐藏
         } else {
+            NSLog(@"--> finishScrollingWithVelocity currentProgress <= 0.5");
             [self updateBarsPosition:0.0 animated:YES]; // 显示
         }
     }
@@ -808,7 +815,6 @@
         _wkwebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
         _wkwebView.backgroundColor = [UIColor clearColor];
         [_wkwebView setOpaque:NO];
-        _wkwebView.scrollView.bounces = NO;
         _wkwebView.navigationDelegate = self;
         _wkwebView.scrollView.delegate = self;
         _wkwebView.allowsBackForwardNavigationGestures = YES;
