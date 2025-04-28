@@ -10,11 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class SLProfileHeaderView;
+
 @protocol SLProfileHeaderViewDelegate <NSObject>
 
 @optional
 - (void)gotoEditPersonalInfo;
 - (void)follow:(BOOL)cancel;
+- (void)profileHeaderView:(SLProfileHeaderView *)headerView didSelectTag:(NSString *)tag atIndex:(NSInteger)index;
 
 @end
 

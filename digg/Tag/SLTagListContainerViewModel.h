@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadMessageListWithRefreshType:(CaocaoCarMessageListRefreshType)refreshType
                          withPageStyle:(NSInteger)index
                              withLabel:(NSString *)label
+                                souce:(NSString *)source
+                             articleId:(NSString *)articleId
                         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
 
 @end

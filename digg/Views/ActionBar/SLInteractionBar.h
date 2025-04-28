@@ -78,6 +78,9 @@ typedef NS_ENUM(NSInteger, SLInteractionType) {
  */
 - (void)addCustomItem:(SLNumberIconItem *)item forType:(SLInteractionType)type;
 
+- (void)hideItemForType:(SLInteractionType)type;
+- (void)showItemForType:(SLInteractionType)type;
+
 @end
 
 NS_ASSUME_NONNULL_END

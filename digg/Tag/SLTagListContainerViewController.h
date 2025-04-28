@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SLTagListContainerViewController : CaocaoRootViewController
 
 @property (nonatomic, strong) NSString* label;
+@property (nonatomic, strong) NSString* source; //self | today | news | forYou | article
+@property (nonatomic, strong) NSString* articleId;
 @property (nonatomic, strong) SLArticleTodayEntity *entity;
 
 @end

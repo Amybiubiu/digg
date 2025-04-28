@@ -25,51 +25,5 @@
             stopOnStyle = "0">
          </BreakpointContent>
       </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "973FB12E-5915-459B-8C9B-274E9C107D7A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "digg/ThirdParty/RichTextView/TZImagePickerController/TZImagePickerController/TZImagePickerController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
-            landmarkName = "-initWithSelectedAssets:selectedPhotos:index:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "973FB12E-5915-459B-8C9B-274E9C107D7A - bf098ff467378b20"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[TZImagePickerController initWithSelectedAssets:selectedPhotos:index:]"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/ThirdParty/RichTextView/TZImagePickerController/TZImagePickerController/TZImagePickerController.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "244"
-                  endingLineNumber = "244">
-               </Location>
-               <Location
-                  uuid = "973FB12E-5915-459B-8C9B-274E9C107D7A - fa8bd511c6308f37"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__71-[TZImagePickerController initWithSelectedAssets:selectedPhotos:index:]_block_invoke"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/ThirdParty/RichTextView/TZImagePickerController/TZImagePickerController/TZImagePickerController.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "245"
-                  endingLineNumber = "245">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

@@ -282,7 +282,7 @@
             continue;
         }
         
-        itemView.hidden = NO;
+        itemView.hidden = item.hidden;
         
         // 计算项视图大小
         CGSize itemSize = [itemView sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)];
@@ -382,6 +382,19 @@
     // 调用代理方法
     if ([self.delegate respondsToSelector:@selector(numberIconView:didClickAtIndex:)]) {
         [self.delegate numberIconView:self didClickAtIndex:index];
+    }
+}
+
+- (void)setItemHidden:(BOOL)hidden atIndex:(NSInteger)index {
+    if (index < self.items.count) {
+        SLNumberIconItem *item = self.items[index];
+        item.hidden = hidden;
+        
+        // 直接设置对应视图的隐藏状态，而不是重新布局整个视图
+        if (index < self.itemViews.count) {
+            SLNumberIconItemView *itemView = self.itemViews[index];
+            itemView.hidden = hidden;
+        }
     }
 }
 

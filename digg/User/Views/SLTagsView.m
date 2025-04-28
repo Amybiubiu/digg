@@ -235,6 +235,15 @@
 - (SLTagItemView *)createTagItemWithTitle:(NSString *)title {
     SLTagItemView* item = [SLTagItemView new];
     [item bindData:title];
+
+    // 添加点击手势
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tagTapped:)];
+    [item addGestureRecognizer:tapGesture];
+    item.userInteractionEnabled = YES;
+    
+    // 保存标签文本，用于回调
+    item.tag = [self.tagsArray indexOfObject:title];
+
     return item;
 }
 
@@ -252,6 +261,21 @@
     tagNameLabel.textAlignment = NSTextAlignmentCenter;
     CGSize size = [tagNameLabel sizeThatFits:CGSizeZero];
     return size;
+}
+
+// 处理标签点击事件
+- (void)tagTapped:(UITapGestureRecognizer *)gesture {
+    SLTagItemView *tagView = (SLTagItemView *)gesture.view;
+    NSInteger index = tagView.tag;
+    
+    if (index < self.tagsArray.count) {
+        NSString *tagText = self.tagsArray[index];
+        
+        // 调用代理方法
+        if (self.delegate && [self.delegate respondsToSelector:@selector(tagsView:didSelectTag:atIndex:)]) {
+            [self.delegate tagsView:self didSelectTag:tagText atIndex:index];
+        }
+    }
 }
 
 @end

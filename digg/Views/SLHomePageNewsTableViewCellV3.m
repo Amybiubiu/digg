@@ -48,6 +48,7 @@
     self.titleLabel.text = entiy.title;
     self.contentLabel.text = nil;
     self.contentLabel.attributedText = nil;
+    self.contentLabel.numberOfLines = 3;
 
     CGFloat lineSpacing = 4;
     CGFloat offset = 16;
@@ -56,6 +57,7 @@
         self.tagView.hidden = YES;
         
         if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            self.contentLabel.numberOfLines = 2;
             [self.smallImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
             [self.bigImageView setHidden:YES];
             [self.smallImageView setHidden:NO];
@@ -66,6 +68,7 @@
                 make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
             }];
         } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
+            self.contentLabel.numberOfLines = 2;
             [self.bigImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
             [self.smallImageView setHidden:YES];
             [self.bigImageView setHidden:NO];
@@ -87,6 +90,7 @@
         [self.tagView updateWithLabel:entiy.label];
 
         if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            self.contentLabel.numberOfLines = 2;
             [self.smallImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
             [self.bigImageView setHidden:YES];
             [self.smallImageView setHidden:NO];
@@ -97,6 +101,7 @@
                 make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
             }];
         } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
+            self.contentLabel.numberOfLines = 2;
             [self.bigImageView sd_setImageWithURL:[NSURL URLWithString:entiy.mainPicUrl]];
             [self.smallImageView setHidden:YES];
             [self.bigImageView setHidden:NO];
@@ -121,6 +126,9 @@
         
         NSString *cleanedContent = [entiy.content stringByReplacingOccurrencesOfString:@"\\U0000fffc\\n\\n" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, entiy.content.length)];
         NSString *contentStr = [cleanedContent stringByReplacingOccurrencesOfString:@"\n" withString:@" "];
+        if (contentStr.length == 0 && entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            contentStr = @"\n";
+        }
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
@@ -143,9 +151,18 @@
             make.bottom.equalTo(self.contentView);
         }];
     } else {
-        [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.height.equalTo(@0);
-        }];
+        if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+            self.contentLabel.text = @"\n";
+            [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.contentView).offset(offset);
+                make.top.equalTo(self.titleLabel.mas_bottom).offset(CELL_CONTENT_V_SPACE);
+                make.right.equalTo(self.titleLabel);
+            }];
+        } else {
+            [self.contentLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.height.equalTo(@0);
+            }];
+        }
         
         [self.interactionBar mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(48);
@@ -164,6 +181,12 @@
     // 设置选中状态
     [self.interactionBar setSelected:entiy.liked forType:SLInteractionTypeLike];
     [self.interactionBar setSelected:entiy.disliked forType:SLInteractionTypeDislike];
+    
+    if (entiy.url.length == 0) {
+        [self.interactionBar hideItemForType:SLInteractionTypeCustom];
+    } else {
+        [self.interactionBar showItemForType:SLInteractionTypeCustom];
+    }
 }
 
 - (void)createViews{

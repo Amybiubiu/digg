@@ -113,7 +113,7 @@
 
 - (void)shareBtnClick {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = _entity.url;
+    pasteboard.string = [NSString stringWithFormat:@"http://39.106.147.0/label?name=%@", self.label];
     
     [self.view sl_showToast:@"链接已复制到粘贴板"];
 }
@@ -196,7 +196,7 @@
 
 - (void)loadMessagesList:(CaocaoCarMessageListRefreshType)type {
     @weakobj(self);
-    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:0 withLabel:self.label resultHandler:^(BOOL isSuccess, NSError *error) {
+    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:0 withLabel:self.label souce:self.source articleId:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
         @strongobj(self);
         if (isSuccess) {
             if ([self.viewModel.dataArray count] == 0) {

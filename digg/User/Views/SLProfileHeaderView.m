@@ -15,7 +15,7 @@
 #import "SLColorManager.h"
 
 
-@interface SLProfileHeaderView()
+@interface SLProfileHeaderView() <SLTagsViewDelegate>
 
 @property (nonatomic, strong) UIView* contentView;
 @property (nonatomic, strong) UIButton* editorButton;
@@ -232,6 +232,15 @@
     }
 }
 
+#pragma mark - SLTagsViewDelegate
+
+- (void)tagsView:(SLTagsView *)tagsView didSelectTag:(NSString *)tag atIndex:(NSInteger)index {
+    // 将点击事件传递给 SLProfileViewController
+    if (self.delegate && [self.delegate respondsToSelector:@selector(profileHeaderView:didSelectTag:atIndex:)]) {
+        [self.delegate profileHeaderView:self didSelectTag:tag atIndex:index];
+    }
+}
+
 #pragma mark - UI Elements
 - (UIImageView *)avatarImageView {
     if (!_avatarImageView) {
@@ -401,6 +410,7 @@
 - (SLTagsView *)tagsView {
     if (!_tagsView) {
         _tagsView = [[SLTagsView alloc] init];
+        _tagsView.delegate = self;
     }
     return _tagsView;
 }

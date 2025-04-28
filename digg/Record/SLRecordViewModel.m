@@ -62,6 +62,7 @@
     parameters[@"content"] = content;
     parameters[@"htmlContent"] = htmlContent;
     parameters[@"labels"] = labels;
+    parameters[@"userId"] = [SLUser defaultUser].userEntity.userId;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
             NSData* data = (NSData*)responseObject;

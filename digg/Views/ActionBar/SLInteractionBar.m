@@ -173,6 +173,24 @@
     return [self.typeOrder indexOfObject:@(type)];
 }
 
+- (void)hideItemForType:(SLInteractionType)type {
+    // 获取对应类型的索引
+    NSInteger index = [self indexForType:type];
+    if (index != NSNotFound) {
+        // 直接隐藏对应的视图
+        [self.numberIconView setItemHidden:YES atIndex:index];
+    }
+}
+
+- (void)showItemForType:(SLInteractionType)type {
+    // 获取对应类型的索引
+    NSInteger index = [self indexForType:type];
+    if (index != NSNotFound) {
+        // 直接显示对应的视图
+        [self.numberIconView setItemHidden:NO atIndex:index];
+    }
+}
+
 #pragma mark - SLNumberIconViewDelegate
 
 - (void)numberIconView:(SLNumberIconView *)numberIconView didClickAtIndex:(NSInteger)index {

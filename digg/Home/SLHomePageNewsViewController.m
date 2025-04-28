@@ -20,6 +20,8 @@
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
 
+#import "SLNewsDetailViewController.h"
+
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
 @interface SLHomePageNewsViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -111,6 +113,11 @@
     [dvc startLoadRequestWithUrl:url];
     dvc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:dvc animated:YES];
+//    SLNewsDetailViewController *detailVC = [[SLNewsDetailViewController alloc] init];
+//    detailVC.newsURL = @"https://www.apple.com";
+//    detailVC.newsTitle = @"测试动画效果";
+//    detailVC.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 - (void)endRefresh
@@ -220,6 +227,8 @@
                 SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                 vc.label = entity.label;
                 vc.entity = entity;
+                vc.articleId = entity.articleId;
+                vc.source = self.pageStyle == HomePageStyleToday ? @"today" : @"news";
                 vc.hidesBottomBarWhenPushed = YES;
                 [self.navigationController pushViewController:vc animated:YES];
             }

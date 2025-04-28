@@ -667,6 +667,8 @@
                     vc.hidesBottomBarWhenPushed = YES;
                     vc.label = entity.label;
                     vc.entity = entity;
+                    vc.source = @"self";
+                    vc.articleId = entity.articleId;
                     [self.navigationController pushViewController:vc animated:YES];
                 }
             };
@@ -699,6 +701,17 @@
 
 - (CGFloat)verticalOffsetForEmptyDataSet:(UIScrollView *)scrollView {
     return 98.0/2.0;
+}
+
+#pragma mark - SLProfileHeaderViewDelegate
+
+- (void)profileHeaderView:(SLProfileHeaderView *)headerView didSelectTag:(NSString *)tag atIndex:(NSInteger)index {
+    SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
+    vc.label = tag;
+    vc.source = @"self";
+    vc.articleId = @"";
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma makr - UI Elements
