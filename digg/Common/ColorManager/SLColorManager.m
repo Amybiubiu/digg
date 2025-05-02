@@ -193,4 +193,14 @@
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
++ (UIColor *)tagBackgroundColor {
+    return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithRed:0.25 green:0.25 blue:0.25 alpha:1.0];
+            } else {
+                return [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];
+            }
+        }];
+}
+
 @end

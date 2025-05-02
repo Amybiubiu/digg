@@ -64,6 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIColor *)textViewPlaceholderColor;
 + (UIColor *)textViewTextColor;
 
++ (UIColor *)tagBackgroundColor;
+
 @end
 
 NS_ASSUME_NONNULL_END

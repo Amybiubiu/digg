@@ -19,7 +19,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
-#import "SLWebViewControllerV2.h"
+#import "SLArticleDetailViewController.h"
 
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
@@ -107,10 +107,17 @@
 }
 
 - (void)jumpToH5WithUrl:(NSString *)url andShowProgress:(BOOL)show {
-    SLWebViewControllerV2 *dvc = [[SLWebViewControllerV2 alloc] init];
+    SLWebViewController *dvc = [[SLWebViewController alloc] init];
     [dvc startLoadRequestWithUrl:url];
     dvc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:dvc animated:YES];
+}
+
+- (void)gotoArticaleDetail:(NSString *)articaleId {
+    SLArticleDetailViewController* vc = [SLArticleDetailViewController new];
+    vc.articleId = articaleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)endRefresh
@@ -126,8 +133,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{

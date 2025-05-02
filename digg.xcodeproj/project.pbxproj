@@ -127,6 +127,17 @@
 		345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
+		3478D6C92DC3A743007D366B /* SLTagListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C72DC3A743007D366B /* SLTagListView.m */; };
+		3478D6CA2DC3A743007D366B /* SLBottomToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C32DC3A743007D366B /* SLBottomToolBar.m */; };
+		3478D6CB2DC3A743007D366B /* SLArticleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C12DC3A743007D366B /* SLArticleEntity.m */; };
+		3478D6CC2DC3A743007D366B /* SLCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C52DC3A743007D366B /* SLCustomNavigationBar.m */; };
+		3478D6CD2DC3A743007D366B /* SLArticleDetailViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */; };
+		3478D6CE2DC3A743007D366B /* SLArticleDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */; };
+		3478D6D32DC3A884007D366B /* SLArticleTagCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D02DC3A884007D366B /* SLArticleTagCell.m */; };
+		3478D6D42DC3A884007D366B /* SLCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D22DC3A884007D366B /* SLCommentCell.m */; };
+		3478D6D72DC474B5007D366B /* SLArticleHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */; };
+		3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D92DC47C91007D366B /* SLArticleContentView.m */; };
+		3478D6DD2DC4A003007D366B /* SLRelatedLinksView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */; };
 		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
 		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
 		348685692DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m in Sources */ = {isa = PBXBuildFile; fileRef = 348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */; };
@@ -202,7 +213,6 @@
 		34D2EBD62D3943660067CC05 /* SLRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD52D3943660067CC05 /* SLRecordViewController.m */; };
 		34D2EBD82D394A8B0067CC05 /* HowToUseDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD72D394A8B0067CC05 /* HowToUseDemo.swift */; };
 		34D2EBDE2D3A01410067CC05 /* SLRecordViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */; };
-		34D2EBE72D3A2D340067CC05 /* SLCustomFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */; };
 		703F132D482FE46A6379243D /* libPods-digg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E828F1163A81AA53E358E2FB /* libPods-digg.a */; };
 		E76A45B92CB8C06F008B2746 /* CaocaoButton.m in Sources */ = {isa = PBXBuildFile; fileRef = E76A45B82CB8C06F008B2746 /* CaocaoButton.m */; };
 		E76A45BC2CB8C08D008B2746 /* UIView+CommonKit.m in Sources */ = {isa = PBXBuildFile; fileRef = E76A45BB2CB8C08D008B2746 /* UIView+CommonKit.m */; };
@@ -389,6 +399,28 @@
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
 		346486002D4286050084A3BF /* SLConcernedViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewModel.m; sourceTree = "<group>"; };
+		3478D6BC2DC3A743007D366B /* SLArticleDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewController.h; sourceTree = "<group>"; };
+		3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewController.m; sourceTree = "<group>"; };
+		3478D6BE2DC3A743007D366B /* SLArticleDetailViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewModel.h; sourceTree = "<group>"; };
+		3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewModel.m; sourceTree = "<group>"; };
+		3478D6C02DC3A743007D366B /* SLArticleEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleEntity.h; sourceTree = "<group>"; };
+		3478D6C12DC3A743007D366B /* SLArticleEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleEntity.m; sourceTree = "<group>"; };
+		3478D6C22DC3A743007D366B /* SLBottomToolBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLBottomToolBar.h; sourceTree = "<group>"; };
+		3478D6C32DC3A743007D366B /* SLBottomToolBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLBottomToolBar.m; sourceTree = "<group>"; };
+		3478D6C42DC3A743007D366B /* SLCustomNavigationBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCustomNavigationBar.h; sourceTree = "<group>"; };
+		3478D6C52DC3A743007D366B /* SLCustomNavigationBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCustomNavigationBar.m; sourceTree = "<group>"; };
+		3478D6C62DC3A743007D366B /* SLTagListView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagListView.h; sourceTree = "<group>"; };
+		3478D6C72DC3A743007D366B /* SLTagListView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagListView.m; sourceTree = "<group>"; };
+		3478D6CF2DC3A884007D366B /* SLArticleTagCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleTagCell.h; sourceTree = "<group>"; };
+		3478D6D02DC3A884007D366B /* SLArticleTagCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleTagCell.m; sourceTree = "<group>"; };
+		3478D6D12DC3A884007D366B /* SLCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCommentCell.h; sourceTree = "<group>"; };
+		3478D6D22DC3A884007D366B /* SLCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentCell.m; sourceTree = "<group>"; };
+		3478D6D52DC474B5007D366B /* SLArticleHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleHeaderView.h; sourceTree = "<group>"; };
+		3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleHeaderView.m; sourceTree = "<group>"; };
+		3478D6D82DC47C91007D366B /* SLArticleContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleContentView.h; sourceTree = "<group>"; };
+		3478D6D92DC47C91007D366B /* SLArticleContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleContentView.m; sourceTree = "<group>"; };
+		3478D6DB2DC4A003007D366B /* SLRelatedLinksView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRelatedLinksView.h; sourceTree = "<group>"; };
+		3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRelatedLinksView.m; sourceTree = "<group>"; };
 		348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLEmpty.h"; sourceTree = "<group>"; };
 		348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLEmpty.m"; sourceTree = "<group>"; };
 		348628F52DB3CCB600CB341C /* UIView+SLToast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SLToast.h"; sourceTree = "<group>"; };
@@ -527,8 +559,6 @@
 		34D2EBDB2D394C760067CC05 /* digg-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "digg-Bridging-Header.h"; sourceTree = "<group>"; };
 		34D2EBDC2D3A01410067CC05 /* SLRecordViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRecordViewModel.h; sourceTree = "<group>"; };
 		34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRecordViewModel.m; sourceTree = "<group>"; };
-		34D2EBE52D3A2D340067CC05 /* SLCustomFlowLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCustomFlowLayout.h; sourceTree = "<group>"; };
-		34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCustomFlowLayout.m; sourceTree = "<group>"; };
 		44262EF495A884D327C8F69E /* Pods-digg.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digg.debug.xcconfig"; path = "Target Support Files/Pods-digg/Pods-digg.debug.xcconfig"; sourceTree = "<group>"; };
 		C0C36A29D1E20E9D246DAEB5 /* Pods-digg.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digg.release.xcconfig"; path = "Target Support Files/Pods-digg/Pods-digg.release.xcconfig"; sourceTree = "<group>"; };
 		E76A45B72CB8C06F008B2746 /* CaocaoButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaocaoButton.h; sourceTree = "<group>"; };
@@ -965,6 +995,35 @@
 			path = Concerned;
 			sourceTree = "<group>";
 		};
+		3478D6C82DC3A743007D366B /* Articale */ = {
+			isa = PBXGroup;
+			children = (
+				3478D6DB2DC4A003007D366B /* SLRelatedLinksView.h */,
+				3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */,
+				3478D6D82DC47C91007D366B /* SLArticleContentView.h */,
+				3478D6D92DC47C91007D366B /* SLArticleContentView.m */,
+				3478D6D52DC474B5007D366B /* SLArticleHeaderView.h */,
+				3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */,
+				3478D6CF2DC3A884007D366B /* SLArticleTagCell.h */,
+				3478D6D02DC3A884007D366B /* SLArticleTagCell.m */,
+				3478D6D12DC3A884007D366B /* SLCommentCell.h */,
+				3478D6D22DC3A884007D366B /* SLCommentCell.m */,
+				3478D6BC2DC3A743007D366B /* SLArticleDetailViewController.h */,
+				3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */,
+				3478D6BE2DC3A743007D366B /* SLArticleDetailViewModel.h */,
+				3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */,
+				3478D6C02DC3A743007D366B /* SLArticleEntity.h */,
+				3478D6C12DC3A743007D366B /* SLArticleEntity.m */,
+				3478D6C22DC3A743007D366B /* SLBottomToolBar.h */,
+				3478D6C32DC3A743007D366B /* SLBottomToolBar.m */,
+				3478D6C42DC3A743007D366B /* SLCustomNavigationBar.h */,
+				3478D6C52DC3A743007D366B /* SLCustomNavigationBar.m */,
+				3478D6C62DC3A743007D366B /* SLTagListView.h */,
+				3478D6C72DC3A743007D366B /* SLTagListView.m */,
+			);
+			path = Articale;
+			sourceTree = "<group>";
+		};
 		3486EFD92D2A69F800A55258 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1219,8 +1278,6 @@
 				34D2EBD52D3943660067CC05 /* SLRecordViewController.m */,
 				34D2EBDC2D3A01410067CC05 /* SLRecordViewModel.h */,
 				34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */,
-				34D2EBE52D3A2D340067CC05 /* SLCustomFlowLayout.h */,
-				34D2EBE62D3A2D340067CC05 /* SLCustomFlowLayout.m */,
 			);
 			path = Record;
 			sourceTree = "<group>";
@@ -1341,6 +1398,7 @@
 		E7769E582CA2E63A00AE84F4 /* digg */ = {
 			isa = PBXGroup;
 			children = (
+				3478D6C82DC3A743007D366B /* Articale */,
 				34A071182D72DBC1006BC583 /* Monitor */,
 				34A071052D72D999006BC583 /* ThirdParty */,
 				346485FB2D4283950084A3BF /* Concerned */,
@@ -1649,7 +1707,14 @@
 				E76A45CC2CB93827008B2746 /* CaocaoRefreshCircleView.m in Sources */,
 				34A071062D72D999006BC583 /* ViewTrackerProxy.m in Sources */,
 				34A071072D72D999006BC583 /* CALayer+TMViewExposure.m in Sources */,
+				3478D6C92DC3A743007D366B /* SLTagListView.m in Sources */,
+				3478D6CA2DC3A743007D366B /* SLBottomToolBar.m in Sources */,
+				3478D6CB2DC3A743007D366B /* SLArticleEntity.m in Sources */,
+				3478D6CC2DC3A743007D366B /* SLCustomNavigationBar.m in Sources */,
+				3478D6CD2DC3A743007D366B /* SLArticleDetailViewModel.m in Sources */,
+				3478D6CE2DC3A743007D366B /* SLArticleDetailViewController.m in Sources */,
 				34A071082D72D999006BC583 /* Swizzler.m in Sources */,
+				3478D6D72DC474B5007D366B /* SLArticleHeaderView.m in Sources */,
 				34A071092D72D999006BC583 /* TMEventManager.m in Sources */,
 				34A0710A2D72D999006BC583 /* UICollectionView+EventTracking.m in Sources */,
 				34A0710B2D72D999006BC583 /* TMViewTrackerManager.m in Sources */,
@@ -1729,6 +1794,7 @@
 				345C12482DAC95AB005FCCDB /* QSlider.swift in Sources */,
 				345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */,
 				345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */,
+				3478D6DD2DC4A003007D366B /* SLRelatedLinksView.m in Sources */,
 				345C124D2DAC9984005FCCDB /* SLHomePageNewsTableViewCellV2.m in Sources */,
 				34A0711C2D732FBC006BC583 /* SLAlertManager.m in Sources */,
 				34D2EBC92D3942880067CC05 /* RZRichTextViewConfigure.swift in Sources */,
@@ -1773,10 +1839,11 @@
 				3486EFD82D2A634200A55258 /* SLProfileViewController.m in Sources */,
 				346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */,
 				E76A45BC2CB8C08D008B2746 /* UIView+CommonKit.m in Sources */,
+				3478D6D32DC3A884007D366B /* SLArticleTagCell.m in Sources */,
+				3478D6D42DC3A884007D366B /* SLCommentCell.m in Sources */,
 				E7C1393C2CF33C8800C5053A /* SLHomeTagView.m in Sources */,
 				34933F842D2E780E009F781A /* SLProfileDynamicTableViewCell.m in Sources */,
 				E76A45B92CB8C06F008B2746 /* CaocaoButton.m in Sources */,
-				34D2EBE72D3A2D340067CC05 /* SLCustomFlowLayout.m in Sources */,
 				E76A45E82CBFB994008B2746 /* CaocaoRootViewController.m in Sources */,
 				34933F872D2E9951009F781A /* SLTagsView.m in Sources */,
 				3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */,
@@ -1804,6 +1871,7 @@
 				345C12B32DACB84D005FCCDB /* ProcessInfo+Extensions.swift in Sources */,
 				345C12B42DACB84D005FCCDB /* SkeletonDebug.swift in Sources */,
 				345C12B52DACB84D005FCCDB /* SkeletonGradient.swift in Sources */,
+				3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */,
 				345C12B62DACB84D005FCCDB /* CALayer+Extensions.swift in Sources */,
 				345C12B72DACB84D005FCCDB /* SkeletonReusableCell.swift in Sources */,
 				345C12B82DACB84D005FCCDB /* SkeletonConfig.swift in Sources */,

@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SLHomeTagViewV2 : UIView
 
+@property (nonatomic, strong) UILabel *tagLabel;
+
 - (void)updateWithLabel:(NSString *)label;
 
 @end

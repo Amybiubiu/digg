@@ -88,7 +88,7 @@ open class RZRichTextView: UITextView {
         super.init(frame: frame, textContainer: nil)
         self.layoutManager.allowsNonContiguousLayout = false
         isInit = false
-//        self.qplaceholder("添加内容")
+
         let placeholder = "添加内容"
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.placeholderText,
@@ -96,6 +96,7 @@ open class RZRichTextView: UITextView {
         ]
         let placeholderAttrString = NSAttributedString(string: placeholder, attributes: attributes)
         self.qattributedPlaceholder(placeholderAttrString)
+        
         self.viewModel.textView = self
         self.isEditable = self.viewModel.canEdit
         if self.isEditable {
