@@ -12,7 +12,21 @@
 #import <YYModel/YYModel.h>
 #import "SLUser.h"
 
+@interface SLArticleDetailViewModel()
+
+@property (nonatomic, strong) NSMutableSet *expandedCommentIds; // 存储已展开的评论ID
+
+@end
+
 @implementation SLArticleDetailViewModel
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.expandedCommentIds = [NSMutableSet set];
+    }
+    return self;
+}
 
 - (void)loadArticleDetail:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
     if (articleId.length == 0) {
@@ -187,6 +201,18 @@
             handler(NO, error);
         }
     }];
+}
+
+- (BOOL)isCommentExpanded:(NSString *)commentId {
+    return [self.expandedCommentIds containsObject:commentId];
+}
+
+- (void)setCommentExpanded:(NSString *)commentId expanded:(BOOL)expanded {
+    if (expanded) {
+        [self.expandedCommentIds addObject:commentId];
+    } else {
+        [self.expandedCommentIds removeObject:commentId];
+    }
 }
 
 @end

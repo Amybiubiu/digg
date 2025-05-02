@@ -50,7 +50,7 @@
         make.top.equalTo(self);
         make.left.equalTo(self).offset(margin);
         make.right.equalTo(self).offset(-margin);
-        make.height.mas_equalTo(300);
+        make.height.mas_equalTo(0);
         make.bottom.equalTo(self);
     }];
 }

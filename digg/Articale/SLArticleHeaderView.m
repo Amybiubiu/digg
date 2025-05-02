@@ -74,7 +74,7 @@
     // 发布时间
     self.publishTimeLabel = [[UILabel alloc] init];
     self.publishTimeLabel.font = [UIFont pingFangMediumWithSize:12];
-    self.publishTimeLabel.textColor = Color16(0x666666); //TODO: 暗黑模式
+    self.publishTimeLabel.textColor = Color16(0xC6C6C6); //TODO: 暗黑模式
     [self addSubview:self.publishTimeLabel];
     
     //分割线
@@ -83,19 +83,17 @@
     [self addSubview:self.dividingView];
     
     // 设置约束
-    CGFloat topMargin = 25.0;
+    CGFloat topMargin = 16.0;
     CGFloat leftMargin = 16.0;
     
     [self.sourceUrlLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self).offset(topMargin);
         make.left.equalTo(self).offset(leftMargin);
-        make.height.mas_equalTo(14);
     }];
     
     [self.readOriginalButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.sourceUrlLabel);
         make.right.equalTo(self).offset(-leftMargin);
-        make.height.mas_equalTo(14);
     }];
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -105,7 +103,7 @@
     }];
     
     [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleLabel.mas_bottom).offset(17);
+        make.top.equalTo(self.titleLabel.mas_bottom).offset(topMargin);
         make.left.equalTo(self).offset(leftMargin);
         make.width.height.equalTo(@30);
         make.bottom.equalTo(self).offset(-17);
@@ -147,13 +145,25 @@
 }
 
 - (CGFloat)getContentHeight {
-    // 确保布局已更新
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
+    // 计算标题实际高度
+    CGFloat titleWidth = self.titleLabel.frame.size.width;
+    CGFloat titleHeight = [self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
+                                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                          attributes:@{NSFontAttributeName: self.titleLabel.font}
+                                                             context:nil].size.height;
     
-    // 找到最底部的子视图
-    CGFloat height = CGRectGetMaxY(self.dividingView.frame);
-    return MAX(height, 135);
+    CGFloat sourceHeight = [self.sourceUrlLabel sizeThatFits:CGSizeZero].height;
+    
+    // 计算总高度
+    CGFloat topMargin = 16.0; // 顶部边距
+    CGFloat titleTopMargin = 7.0; // 标题上方边距
+    CGFloat avatarTopMargin = 16.0; // 头像上方边距
+    CGFloat avatarHeight = 30.0; // 头像高度
+    CGFloat bottomMargin = 17.0; // 底部边距
+    
+    CGFloat totalHeight = topMargin + sourceHeight + titleTopMargin + titleHeight + avatarTopMargin + avatarHeight + bottomMargin;
+    
+    return MAX(totalHeight, 135);
 }
 
 @end

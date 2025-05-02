@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UILabel *likeCountLabel;
 @property (nonatomic, strong) UIView *separatorLine;
 @property (nonatomic, strong) SLCommentEntity *comment;
+@property (nonatomic, strong, readwrite) NSMutableArray<UIView *> *replyViews;
 
 @end
 
@@ -33,6 +34,7 @@
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [SLColorManager primaryBackgroundColor];
+        _replyViews = [NSMutableArray array];
         [self setupUI];
     }
     return self;
@@ -41,27 +43,27 @@
 - (void)setupUI {
     // 头像
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 20;
+    self.avatarImageView.layer.cornerRadius = 15;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
     [self.contentView addSubview:self.avatarImageView];
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont pingFangMediumWithSize:14];
-    self.usernameLabel.textColor = [SLColorManager primaryTextColor];
+    self.usernameLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.usernameLabel.textColor = Color16(0x666666);
     [self.contentView addSubview:self.usernameLabel];
     
     // 时间
     self.timeLabel = [[UILabel alloc] init];
-    self.timeLabel.font = [UIFont pingFangRegularWithSize:12];
-    self.timeLabel.textColor = [SLColorManager cellContentColor];
+    self.timeLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.timeLabel.textColor = Color16(0xC6C6C6);
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
     self.contentLabel = [[UILabel alloc] init];
     self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
-    self.contentLabel.textColor = [SLColorManager primaryTextColor];
+    self.contentLabel.textColor = Color16(0x313131);
     self.contentLabel.numberOfLines = 0;
     [self.contentView addSubview:self.contentLabel];
     
@@ -92,24 +94,23 @@
     // 设置约束
     [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(16);
-        make.top.equalTo(self.contentView).offset(12);
-        make.width.height.equalTo(@40);
+        make.top.equalTo(self.contentView).offset(19);
+        make.width.height.equalTo(@30);
     }];
     
     [self.usernameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.avatarImageView.mas_right).offset(10);
-        make.top.equalTo(self.avatarImageView);
-        make.right.lessThanOrEqualTo(self.contentView).offset(-80);
+        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
+        make.top.equalTo(self.contentView).offset(18);
     }];
     
     [self.timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.usernameLabel);
-        make.top.equalTo(self.usernameLabel.mas_bottom).offset(4);
+        make.top.equalTo(self.usernameLabel.mas_bottom).offset(1);
     }];
     
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.usernameLabel);
-        make.top.equalTo(self.timeLabel.mas_bottom).offset(8);
+        make.left.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.timeLabel.mas_bottom).offset(4);
         make.right.equalTo(self.contentView).offset(-16);
     }];
     
@@ -142,33 +143,158 @@
 - (void)updateWithComment:(SLCommentEntity *)comment {
     self.comment = comment;
     
-    // 更新头像
-    if (comment.avatar.length > 0) {
-        [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:comment.avatar]
-                                placeholderImage:[UIImage imageNamed:@"avatar_default_icon"]];
-    } else {
-        self.avatarImageView.image = [UIImage imageNamed:@"avatar_default_icon"];
-    }
+    // 设置头像
+    [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:comment.avatar]
+                            placeholderImage:[UIImage imageNamed:@"default_avatar"]];
     
-    // 更新用户名
-    self.usernameLabel.text = comment.username ?: @"匿名用户";
+    // 设置用户名
+    self.usernameLabel.text = comment.username;
     
-    // 更新时间
-    if (comment.gmtCreate > 0) {
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:comment.gmtCreate.integerValue / 1000.0];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-        self.timeLabel.text = [formatter stringFromDate:date];
-    } else {
-        self.timeLabel.text = @"";
-    }
+    // 设置时间
+    NSDate *commentDate = [NSDate dateWithTimeIntervalSince1970:[comment.gmtCreate doubleValue]/1000];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
     
-    // 更新内容
+    // 设置内容
     self.contentLabel.text = comment.content;
     
-    // 更新点赞状态和数量
+    // 设置点赞状态
     self.likeButton.selected = comment.disliked;
     self.likeCountLabel.text = [NSString stringWithFormat:@"%ld", (long)comment.likeCount];
+    
+    // 如果有回复，更新回复视图
+    if (comment.replyList.count > 0) {
+        [self updateRepliesWithList:comment.replyList isCollapsed:YES totalCount:comment.replyList.count];
+    } else {
+        // 清除现有回复视图
+        for (UIView *view in self.replyViews) {
+            [view removeFromSuperview];
+        }
+        [self.replyViews removeAllObjects];
+    }
+}
+
+- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount {
+    // 清除现有回复视图
+    for (UIView *view in self.replyViews) {
+        [view removeFromSuperview];
+    }
+    [self.replyViews removeAllObjects];
+    
+    // 添加回复视图
+    [self addReplyViews:replyList];
+    
+    // 如果回复数量超过2条且处于收起状态，添加"展开x条评论"按钮
+    if (totalCount > 2 && isCollapsed) {
+        [self addExpandButton:totalCount];
+    } 
+    // 如果已展开，添加"收起评论"按钮
+    else if (totalCount > 2 && !isCollapsed) {
+        [self addCollapseButton];
+    }
+    
+    [self updateConstraints];
+}
+
+- (void)addReplyViews:(NSArray<SLCommentEntity *> *)replyList {
+    // 为每条回复创建视图
+    CGFloat topOffset = 8;
+    UIView *lastView = self.contentLabel;
+    
+    for (SLCommentEntity *reply in replyList) {
+        // 创建回复视图容器
+        UIView *replyView = [[UIView alloc] init];
+        replyView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:0.5];
+        replyView.layer.cornerRadius = 4;
+        [self.contentView addSubview:replyView];
+        
+        // 创建回复内容标签
+        UILabel *replyLabel = [[UILabel alloc] init];
+        replyLabel.font = [UIFont pingFangRegularWithSize:13];
+        replyLabel.textColor = [SLColorManager primaryTextColor];
+        replyLabel.numberOfLines = 0;
+        
+        // 设置回复内容，格式为"用户名: 内容"
+        NSString *replyText = [NSString stringWithFormat:@"%@: %@", reply.username, reply.content];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:replyText];
+        
+        // 设置用户名为粗体
+        NSRange usernameRange = [replyText rangeOfString:[NSString stringWithFormat:@"%@:", reply.username]];
+        [attributedString addAttribute:NSFontAttributeName value:[UIFont pingFangMediumWithSize:13] range:usernameRange];
+        
+        replyLabel.attributedText = attributedString;
+        [replyView addSubview:replyLabel];
+        
+        // 设置约束
+        [replyView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(lastView.mas_bottom).offset(topOffset);
+            make.left.equalTo(self.contentView).offset(60); // 缩进，与主评论区分
+            make.right.equalTo(self.contentView).offset(-16);
+        }];
+        
+        [replyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(replyView).insets(UIEdgeInsetsMake(8, 8, 8, 8));
+        }];
+        
+        // 添加到回复视图数组
+        [self.replyViews addObject:replyView];
+        
+        // 更新最后一个视图引用
+        lastView = replyView;
+    }
+}
+
+- (void)addExpandButton:(NSInteger)totalCount {
+    UIButton *expandButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [expandButton setTitle:[NSString stringWithFormat:@"展开%ld条评论", (long)totalCount - 2] forState:UIControlStateNormal];
+    expandButton.titleLabel.font = [UIFont systemFontOfSize:14];
+    [expandButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [expandButton addTarget:self action:@selector(expandButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.contentView addSubview:expandButton];
+    
+    // 设置约束
+    [expandButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        UIView *lastView = [self.replyViews lastObject] ?: self.contentLabel;
+        make.top.equalTo(lastView.mas_bottom).offset(8);
+        make.left.equalTo(self.contentView).offset(60); // 与回复内容对齐
+        make.height.equalTo(@30);
+    }];
+    
+    [self.replyViews addObject:expandButton];
+}
+
+- (void)addCollapseButton {
+    UIButton *collapseButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [collapseButton setTitle:@"收起评论" forState:UIControlStateNormal];
+    collapseButton.titleLabel.font = [UIFont systemFontOfSize:14];
+    [collapseButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [collapseButton addTarget:self action:@selector(collapseButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self.contentView addSubview:collapseButton];
+    
+    // 设置约束
+    [collapseButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        UIView *lastView = [self.replyViews lastObject] ?: self.contentLabel;
+        make.top.equalTo(lastView.mas_bottom).offset(8);
+        make.left.equalTo(self.contentView).offset(60); // 与回复内容对齐
+        make.height.equalTo(@30);
+    }];
+    
+    [self.replyViews addObject:collapseButton];
+}
+
+- (void)expandButtonTapped {
+    if (self.expandHandler) {
+        self.expandHandler();
+    }
+}
+
+- (void)collapseButtonTapped {
+    if (self.collapseHandler) {
+        self.collapseHandler();
+    }
 }
 
 #pragma mark - Actions

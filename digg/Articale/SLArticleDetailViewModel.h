@@ -50,6 +50,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)likeComment:(NSString *)commentId isLike:(BOOL)isLike resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
 
+// 检查评论是否处于展开状态
+- (BOOL)isCommentExpanded:(NSString *)commentId;
+
+// 设置评论的展开状态
+- (void)setCommentExpanded:(NSString *)commentId expanded:(BOOL)expanded;
+
 @end
 
 NS_ASSUME_NONNULL_END

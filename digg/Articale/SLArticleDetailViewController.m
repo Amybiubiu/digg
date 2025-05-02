@@ -150,11 +150,11 @@
     // 2. 内容区域 - 富文本内容
     self.articleContentView = [[SLArticleContentView alloc] init];
     self.articleContentView.heightChangedHandler = ^(CGFloat height) {
-        [weakSelf updateTableHeaderViewHeight];
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.height.mas_equalTo([weakSelf.articleContentView getContentHeight]);
             }];
+            [weakSelf updateTableHeaderViewHeight];
         });
     };
     [self.headerView addSubview:self.articleContentView];
@@ -181,7 +181,6 @@
         make.top.equalTo(self.headerView);
         make.left.equalTo(self.headerView);
         make.right.equalTo(self.headerView);
-        make.height.mas_equalTo(135);
     }];
     
     // 2. 内容区域约束
@@ -189,6 +188,7 @@
         make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
         make.left.equalTo(self.headerView);
         make.right.equalTo(self.headerView);
+        make.height.mas_equalTo(0);
     }];
     
     // 3. 标签区域约束
@@ -235,19 +235,12 @@
     
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
-        
         if (isSuccess) {
-            // 从viewModel中获取文章详情数据
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
             if (articleEntity) {
                 // 更新UI
                 [weakSelf updateUIWithArticleEntity:articleEntity];
-            } else {
-//                [SLAlertManager showAlertWithTitle:@"提示" message:@"获取文章详情失败" confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil fromViewController:weakSelf];
             }
-        } else {
-//            NSString *errorMsg = error ? error.localizedDescription : @"获取文章详情失败";
-//            [SLAlertManager showAlertWithTitle:@"提示" message:errorMsg confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil fromViewController:weakSelf];
         }
     }];
 }
@@ -268,12 +261,17 @@
                                 authorName:self.viewModel.userEntity.userName
                                publishTime:publishTimeStr];
     
-    [self.articleHeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo([self.articleHeaderView getContentHeight]);
-    }];
-    
     // 更新内容区域
-    [self.articleContentView setupWithRichContent:entity.richContent ?: entity.content];
+    NSString* content = entity.richContent ?: entity.content;
+    if (content.length > 0) {
+        self.articleContentView.hidden = NO;
+        [self.articleContentView setupWithRichContent:entity.richContent ?: entity.content];
+    } else {
+        self.articleContentView.hidden = YES;
+        [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(0);
+        }];
+    }
 
     // 更新标签
     if (entity.labels.count > 0) {
@@ -308,34 +306,25 @@
 }
 
 - (void)updateTableHeaderViewHeight {
-    [self.view setNeedsLayout];
-    [self.headerView setNeedsLayout];
-    [self.articleHeaderView setNeedsLayout];
-    [self.articleContentView setNeedsLayout];
-    [self.tagListView setNeedsLayout];
-    [self.relatedLinksView setNeedsLayout];
-
-    [self.view layoutIfNeeded];
     [self.headerView layoutIfNeeded];
-    [self.articleHeaderView layoutIfNeeded];
-    [self.articleContentView layoutIfNeeded];
-    [self.tagListView layoutIfNeeded];
-    [self.relatedLinksView layoutIfNeeded];
     
     // 修改：使用更可靠的方式计算高度
     CGFloat margin = 16.0;
-    CGFloat height = 0;
-    NSLog(@"--> self.articleHeaderView height = %.2f", self.articleHeaderView.frame.size.height);
-    NSLog(@"--> self.articleContentView height = %.2f", [self.articleContentView getContentHeight]);
-    NSLog(@"--> self.tagListView height = %.2f", [self.articleContentView getContentHeight]);
-    NSLog(@"--> self.relatedLinksView height = %.2f", [self.relatedLinksView getContentHeight]);
+    CGFloat height = margin;
+
     height += [self.articleHeaderView getContentHeight];
     height += margin;
-    height += [self.articleContentView getContentHeight];
-    height += margin;
-    height += [self.tagListView getContentHeight];
-    height += margin;
-    height += [self.relatedLinksView getContentHeight];
+    if (!self.articleContentView.isHidden) {
+        height += [self.articleContentView getContentHeight];
+        height += margin;
+    }
+    if (!self.tagListView.isHidden) {
+        height += [self.tagListView getContentHeight];
+        height += margin;
+    }
+    if (self.viewModel.referList.count > 0) {
+        height += [self.relatedLinksView getContentHeight];
+    }
     
     CGRect frame = self.headerView.frame;
     frame.size.height = height;
@@ -348,8 +337,7 @@
     if (self.viewModel.commentList.count > 0) {
         [self.tableView reloadData];
     } else {
-        // 如果没有评论，可以显示一个空状态视图
-        // 这里可以添加一个空状态视图的实现
+        // TODO：这里可以添加一个空状态视图的实现
     }
 }
 
@@ -559,6 +547,34 @@
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
     [cell updateWithComment:comment];
     
+    // 设置展开/收起状态
+    if (comment.replyList.count > 2) {
+        // 检查该评论是否处于展开状态
+        BOOL isExpanded = [self.viewModel isCommentExpanded:comment.commentId];
+        
+        // 如果未展开，只显示前两条回复
+        if (!isExpanded) {
+            NSArray *limitedReplies = [comment.replyList subarrayWithRange:NSMakeRange(0, 2)];
+            [cell updateRepliesWithList:limitedReplies isCollapsed:YES totalCount:comment.replyList.count];
+            
+            // 添加展开按钮点击事件
+            cell.expandHandler = ^{
+                [self expandRepliesForComment:comment];
+            };
+        } else {
+            // 已展开，显示所有回复
+            [cell updateRepliesWithList:comment.replyList isCollapsed:NO totalCount:comment.replyList.count];
+            
+            // 添加收起按钮点击事件
+            cell.collapseHandler = ^{
+                [self collapseRepliesForComment:comment];
+            };
+        }
+    } else {
+        // 回复数量不超过2条，直接显示全部
+        [cell updateRepliesWithList:comment.replyList isCollapsed:NO totalCount:comment.replyList.count];
+    }
+    
     __weak typeof(self) weakSelf = self;
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
         [weakSelf replyToComment:commentEntity];
@@ -581,7 +597,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return self.viewModel.commentList.count > 0 ? 44.0 : 0.0;
+    return self.viewModel.commentList.count > 0 ? 7.0 : 0.0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -592,29 +608,35 @@
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 44)];
     headerView.backgroundColor = [SLColorManager primaryBackgroundColor];
     
-    UILabel *titleLabel = [[UILabel alloc] init];
-    titleLabel.text = [NSString stringWithFormat:@"评论 (%ld)", (long)self.viewModel.commentList.count];
-    titleLabel.font = [UIFont pingFangMediumWithSize:16];
-    titleLabel.textColor = [SLColorManager primaryTextColor];
-    [headerView addSubview:titleLabel];
-    
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(headerView).offset(16);
-        make.centerY.equalTo(headerView);
-    }];
-    
     UIView *separatorView = [[UIView alloc] init];
-    separatorView.backgroundColor = [SLColorManager cellDivideLineColor];
+    separatorView.backgroundColor = Color16(0xF6F6F6);
     [headerView addSubview:separatorView];
     
     [separatorView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(headerView).offset(16);
-        make.right.equalTo(headerView);
-        make.bottom.equalTo(headerView);
-        make.height.equalTo(@0.5);
+        make.left.right.equalTo(headerView);
+        make.top.equalTo(headerView);
+        make.height.equalTo(@7);
     }];
     
     return headerView;
+}
+
+#pragma mark - 评论展开/收起方法
+
+- (void)expandRepliesForComment:(SLCommentEntity *)comment {
+    // 标记评论为展开状态
+    [self.viewModel setCommentExpanded:comment.commentId expanded:YES];
+    
+    // 刷新表格
+    [self.tableView reloadData];
+}
+
+- (void)collapseRepliesForComment:(SLCommentEntity *)comment {
+    // 标记评论为收起状态
+    [self.viewModel setCommentExpanded:comment.commentId expanded:NO];
+    
+    // 刷新表格
+    [self.tableView reloadData];
 }
 
 #pragma mark - UIScrollViewDelegate
