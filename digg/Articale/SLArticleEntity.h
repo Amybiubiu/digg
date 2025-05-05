@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *replyId;
 @property (nonatomic, strong) NSString *replyUsername;
 @property (nonatomic, strong) NSString *replyUserId;
-@property (nonatomic, assign) BOOL disliked;
+@property (nonatomic, strong) NSString *disliked;
 @property (nonatomic, assign) NSInteger likeCount;
 @property (nonatomic, assign) NSInteger dislikeCount;
 @property (nonatomic, strong) NSArray<SLCommentEntity *> *replyList;

@@ -12,7 +12,7 @@
 #import <SDWebImage/SDWebImage.h>
 #import "SLArticleEntity.h"
 
-@interface SLCommentCell ()
+@interface SLCommentCell () <SLSimpleInteractionBarDelegate>
 
 @end
 
@@ -23,7 +23,6 @@
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [SLColorManager primaryBackgroundColor];
-        _replyViews = [NSMutableArray array];
         [self setupUI];
     }
     return self;
@@ -43,6 +42,12 @@
     self.usernameLabel.textColor = Color16(0x666666);
     [self.contentView addSubview:self.usernameLabel];
     
+    // 标签列表视图
+    self.tagView = [[SLHomeTagViewV2 alloc] init];
+    self.tagView.tagLabel.font = [UIFont pingFangRegularWithSize:10];
+    [self.tagView updateWithLabelBySmall:@"作者"];
+    [self.contentView addSubview:self.tagView];
+    
     // 时间
     self.timeLabel = [[UILabel alloc] init];
     self.timeLabel.font = [UIFont pingFangMediumWithSize:12];
@@ -56,29 +61,10 @@
     self.contentLabel.numberOfLines = 0;
     [self.contentView addSubview:self.contentLabel];
     
-    // 回复按钮
-    self.replyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.replyButton setImage:[UIImage imageNamed:@"comment_reply"] forState:UIControlStateNormal];
-    [self.replyButton addTarget:self action:@selector(replyButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.replyButton];
-    
-    // 点赞按钮
-    self.likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.likeButton setImage:[UIImage imageNamed:@"like_normal"] forState:UIControlStateNormal];
-    [self.likeButton setImage:[UIImage imageNamed:@"like_selected"] forState:UIControlStateSelected];
-    [self.likeButton addTarget:self action:@selector(likeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self.contentView addSubview:self.likeButton];
-    
-    // 点赞数
-    self.likeCountLabel = [[UILabel alloc] init];
-    self.likeCountLabel.font = [UIFont pingFangRegularWithSize:12];
-    self.likeCountLabel.textColor = [SLColorManager cellContentColor];
-    [self.contentView addSubview:self.likeCountLabel];
-    
-    // 分隔线
-    self.separatorLine = [[UIView alloc] init];
-    self.separatorLine.backgroundColor = [SLColorManager cellDivideLineColor];
-    [self.contentView addSubview:self.separatorLine];
+    // 创建交互栏
+    self.interactionBar = [[SLSimpleInteractionBar alloc] initWithFrame:CGRectZero];
+    self.interactionBar.delegate = self;
+    [self.contentView addSubview:self.interactionBar];
     
     // 设置约束
     [self.avatarImageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -92,6 +78,11 @@
         make.top.equalTo(self.contentView).offset(18);
     }];
     
+    [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.usernameLabel);
+        make.left.equalTo(self.usernameLabel.mas_right).offset(4);
+    }];
+    
     [self.timeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.usernameLabel);
         make.top.equalTo(self.usernameLabel.mas_bottom).offset(1);
@@ -99,37 +90,20 @@
     
     [self.contentLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(16);
-        make.top.equalTo(self.timeLabel.mas_bottom).offset(4);
+        make.top.equalTo(self.timeLabel.mas_bottom).offset(8);
         make.right.equalTo(self.contentView).offset(-16);
     }];
     
-    [self.replyButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.usernameLabel);
-        make.top.equalTo(self.contentLabel.mas_bottom).offset(8);
-        make.width.height.equalTo(@24);
-        make.bottom.equalTo(self.contentView).offset(-12);
-    }];
-    
-    [self.likeButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.replyButton.mas_right).offset(16);
-        make.centerY.equalTo(self.replyButton);
-        make.width.height.equalTo(@24);
-    }];
-    
-    [self.likeCountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.likeButton.mas_right).offset(4);
-        make.centerY.equalTo(self.likeButton);
-    }];
-    
-    [self.separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.interactionBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.contentLabel.mas_bottom).offset(12);
+        make.height.mas_equalTo(16);
         make.left.equalTo(self.contentView).offset(16);
         make.right.equalTo(self.contentView).offset(-16);
-        make.bottom.equalTo(self.contentView);
-        make.height.equalTo(@0.5);
+        make.bottom.equalTo(self.contentView).offset(-8);
     }];
 }
 
-- (void)updateWithComment:(SLCommentEntity *)comment {
+- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId {
     self.comment = comment;
     
     // 设置头像
@@ -138,6 +112,7 @@
     
     // 设置用户名
     self.usernameLabel.text = comment.username;
+    self.tagView.hidden = !(comment.userId == authorId);
     
     // 设置时间
     NSDate *commentDate = [NSDate dateWithTimeIntervalSince1970:[comment.gmtCreate doubleValue]/1000];
@@ -148,40 +123,17 @@
     // 设置内容
     self.contentLabel.text = comment.content;
     
-    // 设置点赞状态
-    self.likeButton.selected = comment.disliked;
-    self.likeCountLabel.text = [NSString stringWithFormat:@"%ld", (long)comment.likeCount];
-    
-    // 如果有回复，更新回复视图
-    if (comment.replyList.count > 0) {
-        [self updateRepliesWithList:comment.replyList isCollapsed:YES totalCount:comment.replyList.count];
-    } else {
-        // 清除现有回复视图
-        for (UIView *view in self.replyViews) {
-            [view removeFromSuperview];
-        }
-        [self.replyViews removeAllObjects];
-    }
+    [self.interactionBar updateLikeNumber:comment.likeCount];
+    [self.interactionBar updateDislikeNumber:comment.dislikeCount];
+    [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
+    [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
+    [self updateConstraints];
 }
 
 - (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount {
-    // 清除现有回复视图
-    for (UIView *view in self.replyViews) {
-        [view removeFromSuperview];
-    }
-    [self.replyViews removeAllObjects];
     
     // 添加回复视图
     [self addReplyViews:replyList];
-    
-    // 如果回复数量超过2条且处于收起状态，添加"展开x条评论"按钮
-    if (totalCount > 2 && isCollapsed) {
-        [self addExpandButton:totalCount];
-    } 
-    // 如果已展开，添加"收起评论"按钮
-    else if (totalCount > 2 && !isCollapsed) {
-        [self addCollapseButton];
-    }
     
     [self updateConstraints];
 }
@@ -226,53 +178,12 @@
             make.edges.equalTo(replyView).insets(UIEdgeInsetsMake(8, 8, 8, 8));
         }];
         
-        // 添加到回复视图数组
-        [self.replyViews addObject:replyView];
         
         // 更新最后一个视图引用
         lastView = replyView;
     }
 }
 
-- (void)addExpandButton:(NSInteger)totalCount {
-    UIButton *expandButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [expandButton setTitle:[NSString stringWithFormat:@"展开%ld条评论", (long)totalCount - 2] forState:UIControlStateNormal];
-    expandButton.titleLabel.font = [UIFont systemFontOfSize:14];
-    [expandButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-    [expandButton addTarget:self action:@selector(expandButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.contentView addSubview:expandButton];
-    
-    // 设置约束
-    [expandButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        UIView *lastView = [self.replyViews lastObject] ?: self.contentLabel;
-        make.top.equalTo(lastView.mas_bottom).offset(8);
-        make.left.equalTo(self.contentView).offset(60); // 与回复内容对齐
-        make.height.equalTo(@30);
-    }];
-    
-    [self.replyViews addObject:expandButton];
-}
-
-- (void)addCollapseButton {
-    UIButton *collapseButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [collapseButton setTitle:@"收起评论" forState:UIControlStateNormal];
-    collapseButton.titleLabel.font = [UIFont systemFontOfSize:14];
-    [collapseButton setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
-    [collapseButton addTarget:self action:@selector(collapseButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    
-    [self.contentView addSubview:collapseButton];
-    
-    // 设置约束
-    [collapseButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        UIView *lastView = [self.replyViews lastObject] ?: self.contentLabel;
-        make.top.equalTo(lastView.mas_bottom).offset(8);
-        make.left.equalTo(self.contentView).offset(60); // 与回复内容对齐
-        make.height.equalTo(@30);
-    }];
-    
-    [self.replyViews addObject:collapseButton];
-}
 
 - (void)expandButtonTapped {
     if (self.expandHandler) {
@@ -292,6 +203,20 @@
     if (self.likeHandler) {
         self.likeHandler(self.comment);
     }
+}
+
+#pragma mark - SLSimpleInteractionBarDelegate
+
+- (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapLikeWithSelected:(BOOL)selected {
+    // 处理点赞事件
+}
+
+- (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapDislikeWithSelected:(BOOL)selected {
+    // 处理不喜欢事件
+}
+
+- (void)interactionBarDidTapReply:(SLSimpleInteractionBar *)interactionBar {
+    // 处理回复事件
 }
 
 @end

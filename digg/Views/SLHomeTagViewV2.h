@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *tagLabel;
 
 - (void)updateWithLabel:(NSString *)label;
+- (void)updateWithLabelBySmall:(NSString *)label;
 
 @end
 

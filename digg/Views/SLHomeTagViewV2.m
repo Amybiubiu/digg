@@ -40,6 +40,15 @@
     }];
 }
 
+- (void)updateWithLabelBySmall:(NSString *)label {
+    self.tagLabel.text = label;
+    CGSize size = [self.tagLabel sizeThatFits:CGSizeZero];
+    [self.tagLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self).insets(UIEdgeInsetsMake(1, 4, 1, 4));
+        make.width.equalTo(@(size.width));
+    }];
+}
+
 - (UILabel *)tagLabel{
     if (!_tagLabel) {
         _tagLabel = [[UILabel alloc] init];

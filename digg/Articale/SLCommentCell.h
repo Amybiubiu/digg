@@ -6,6 +6,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SLHomeTagViewV2.h"
+#import "SLSimpleInteractionBar.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,15 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UILabel *usernameLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
 @property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) UIButton *replyButton;
-@property (nonatomic, strong) UIButton *likeButton;
-@property (nonatomic, strong) UILabel *likeCountLabel;
-@property (nonatomic, strong) UIView *separatorLine;
+@property (nonatomic, strong) SLSimpleInteractionBar *interactionBar;
+@property (nonatomic, strong) SLHomeTagViewV2 *tagView;
 @property (nonatomic, strong) SLCommentEntity *comment;
-@property (nonatomic, strong, readwrite) NSMutableArray<UIView *> *replyViews;
 
 @property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
+@property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^expandHandler)(void);
 
 - (void)setupUI;
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 更新评论单元格
  * @param comment 评论实体
  */
- - (void)updateWithComment:(SLCommentEntity *)comment;
+- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId;
  
 - (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount;
 

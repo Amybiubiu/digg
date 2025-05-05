@@ -303,7 +303,7 @@
     [self updateTableHeaderViewHeight];
     
     // 加载评论数据
-//    [self loadComments];
+    [self loadComments];
 }
 
 - (void)updateTableHeaderViewHeight {    
@@ -530,42 +530,21 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.viewModel.commentList.count;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    SLCommentEntity *comment = self.viewModel.commentList[section];
-    NSInteger visibleReplyCount = 0;
-    
-    // 如果评论有回复
-    if (comment.replyList.count > 0) {
-        // 默认显示1条回复
-        visibleReplyCount = 1;
-        
-        // 如果评论已展开，则显示更多回复（每次展开6条）
-        if ([self.viewModel isCommentExpanded:comment.commentId]) {
-            NSInteger expandedCount = MIN(comment.replyList.count, 1 + ([self.viewModel isCommentExpanded:comment.commentId] * 6));
-            visibleReplyCount = expandedCount;
-        }
-        
-        // 如果还有未显示的回复，添加一个展开按钮行
-        if (visibleReplyCount < comment.replyList.count && comment.replyList.count > 1) {
-            visibleReplyCount += 1; // 为展开按钮添加一行
-        }
-    }
-    
-    // 一级评论 + 可见的二级评论（包括可能的展开按钮）
-    return 1 + visibleReplyCount;
+    return self.viewModel.commentList.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
+    SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
     SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
     if (!cell) {
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
     
-    [cell updateWithComment:comment];
+    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId];
     
     __weak typeof(self) weakSelf = self;
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
@@ -583,12 +562,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    // 如果点击的是一级评论
-    if (indexPath.row == 0) {
-        SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
-        [self replyToComment:comment];
-    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -639,36 +612,36 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGFloat contentOffsetY = scrollView.contentOffset.y;
-    
-    // 导航栏显示/隐藏逻辑
-    if (contentOffsetY > 200 && !self.isNavBarHidden) {
-        [self showNavigationBarTitle:YES];
-    } else if (contentOffsetY <= 200 && self.isNavBarHidden) {
-        [self showNavigationBarTitle:NO];
-    }
-    
-    // 工具栏显示/隐藏逻辑
-    if (contentOffsetY > self.lastContentOffset + 50 && !self.isToolbarHidden) {
-        [self showToolbar:NO];
-    } else if (contentOffsetY < self.lastContentOffset - 50 && self.isToolbarHidden) {
-        [self showToolbar:YES];
-    }
-    
-    // 记录最后的滚动位置
-    if (ABS(contentOffsetY - self.lastContentOffset) > 50) {
-        self.lastContentOffset = contentOffsetY;
-    }
+//    CGFloat contentOffsetY = scrollView.contentOffset.y;
+//    
+//    // 导航栏显示/隐藏逻辑
+//    if (contentOffsetY > 200 && !self.isNavBarHidden) {
+//        [self showNavigationBarTitle:YES];
+//    } else if (contentOffsetY <= 200 && self.isNavBarHidden) {
+//        [self showNavigationBarTitle:NO];
+//    }
+//    
+//    // 工具栏显示/隐藏逻辑
+//    if (contentOffsetY > self.lastContentOffset + 50 && !self.isToolbarHidden) {
+//        [self showToolbar:NO];
+//    } else if (contentOffsetY < self.lastContentOffset - 50 && self.isToolbarHidden) {
+//        [self showToolbar:YES];
+//    }
+//    
+//    // 记录最后的滚动位置
+//    if (ABS(contentOffsetY - self.lastContentOffset) > 50) {
+//        self.lastContentOffset = contentOffsetY;
+//    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (!decelerate) {
-        [self showToolbar:YES];
-    }
+//    if (!decelerate) {
+//        [self showToolbar:YES];
+//    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self showToolbar:YES];
+//    [self showToolbar:YES];
 }
 
 #pragma mark - SLCustomNavigationBarDelegate
