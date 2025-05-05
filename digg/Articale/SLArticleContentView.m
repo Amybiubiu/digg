@@ -57,7 +57,7 @@
 
 - (void)setupWithRichContent:(NSString *)richContent {    
     [self.richTextView html2AttributedstringWithHtml:richContent];
-    [self.richTextView showPlaceHolder];
+    [self.richTextView hidePlaceHolder];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateRichTextViewHeight];
@@ -65,7 +65,9 @@
 }
 
 - (void)richTextViewDidInsertAttachment:(RZRichTextView *)textView {
-    [self updateRichTextViewHeight];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self updateRichTextViewHeight];
+    });
 }
 
 - (void)updateRichTextViewHeight {

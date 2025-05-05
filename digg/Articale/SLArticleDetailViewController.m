@@ -122,6 +122,7 @@
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     [self.tableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"CommentCell"];
+    
     [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -265,7 +266,7 @@
     NSString* content = entity.richContent ?: entity.content;
     if (content.length > 0) {
         self.articleContentView.hidden = NO;
-        [self.articleContentView setupWithRichContent:entity.richContent ?: entity.content];
+        [self.articleContentView setupWithRichContent:content];
     } else {
         self.articleContentView.hidden = YES;
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -305,9 +306,7 @@
 //    [self loadComments];
 }
 
-- (void)updateTableHeaderViewHeight {
-    [self.headerView layoutIfNeeded];
-    
+- (void)updateTableHeaderViewHeight {    
     // 修改：使用更可靠的方式计算高度
     CGFloat margin = 16.0;
     CGFloat height = margin;
@@ -379,7 +378,7 @@
         return;
     }
     
-    __weak typeof(self) weakSelf = self;
+//    __weak typeof(self) weakSelf = self;
 //    [self.viewModel likeArticleWithID:self.articleId isLike:!self.likeButton.selected completion:^(BOOL success, NSError *error) {
 //        if (success) {
 //            weakSelf.likeButton.selected = !weakSelf.likeButton.selected;
@@ -531,49 +530,42 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.viewModel.commentList.count;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    SLCommentEntity *comment = self.viewModel.commentList[section];
+    NSInteger visibleReplyCount = 0;
+    
+    // 如果评论有回复
+    if (comment.replyList.count > 0) {
+        // 默认显示1条回复
+        visibleReplyCount = 1;
+        
+        // 如果评论已展开，则显示更多回复（每次展开6条）
+        if ([self.viewModel isCommentExpanded:comment.commentId]) {
+            NSInteger expandedCount = MIN(comment.replyList.count, 1 + ([self.viewModel isCommentExpanded:comment.commentId] * 6));
+            visibleReplyCount = expandedCount;
+        }
+        
+        // 如果还有未显示的回复，添加一个展开按钮行
+        if (visibleReplyCount < comment.replyList.count && comment.replyList.count > 1) {
+            visibleReplyCount += 1; // 为展开按钮添加一行
+        }
+    }
+    
+    // 一级评论 + 可见的二级评论（包括可能的展开按钮）
+    return 1 + visibleReplyCount;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
     if (!cell) {
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
     
-    SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
     [cell updateWithComment:comment];
-    
-    // 设置展开/收起状态
-    if (comment.replyList.count > 2) {
-        // 检查该评论是否处于展开状态
-        BOOL isExpanded = [self.viewModel isCommentExpanded:comment.commentId];
-        
-        // 如果未展开，只显示前两条回复
-        if (!isExpanded) {
-            NSArray *limitedReplies = [comment.replyList subarrayWithRange:NSMakeRange(0, 2)];
-            [cell updateRepliesWithList:limitedReplies isCollapsed:YES totalCount:comment.replyList.count];
-            
-            // 添加展开按钮点击事件
-            cell.expandHandler = ^{
-                [self expandRepliesForComment:comment];
-            };
-        } else {
-            // 已展开，显示所有回复
-            [cell updateRepliesWithList:comment.replyList isCollapsed:NO totalCount:comment.replyList.count];
-            
-            // 添加收起按钮点击事件
-            cell.collapseHandler = ^{
-                [self collapseRepliesForComment:comment];
-            };
-        }
-    } else {
-        // 回复数量不超过2条，直接显示全部
-        [cell updateRepliesWithList:comment.replyList isCollapsed:NO totalCount:comment.replyList.count];
-    }
     
     __weak typeof(self) weakSelf = self;
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
@@ -592,51 +584,56 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
-    [self replyToComment:comment];
+    // 如果点击的是一级评论
+    if (indexPath.row == 0) {
+        SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
+        [self replyToComment:comment];
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return self.viewModel.commentList.count > 0 ? 7.0 : 0.0;
+    return 7.0;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (self.viewModel.commentList.count == 0) {
-        return nil;
-    }
-    
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 44)];
-    headerView.backgroundColor = [SLColorManager primaryBackgroundColor];
-    
-    UIView *separatorView = [[UIView alloc] init];
-    separatorView.backgroundColor = Color16(0xF6F6F6);
-    [headerView addSubview:separatorView];
-    
-    [separatorView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(headerView);
-        make.top.equalTo(headerView);
-        make.height.equalTo(@7);
-    }];
-    
+    UIView *headerView = [[UIView alloc] init];
+    headerView.backgroundColor = [UIColor colorWithRed:246/255.0 green:246/255.0 blue:246/255.0 alpha:1.0]; // #F6F6F6
     return headerView;
 }
 
-#pragma mark - 评论展开/收起方法
-
-- (void)expandRepliesForComment:(SLCommentEntity *)comment {
-    // 标记评论为展开状态
-    [self.viewModel setCommentExpanded:comment.commentId expanded:YES];
-    
-    // 刷新表格
-    [self.tableView reloadData];
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.01;
 }
 
-- (void)collapseRepliesForComment:(SLCommentEntity *)comment {
-    // 标记评论为收起状态
-    [self.viewModel setCommentExpanded:comment.commentId expanded:NO];
-    
-    // 刷新表格
-    [self.tableView reloadData];
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [[UIView alloc] init];
+}
+
+#pragma mark - 评论展开方法
+
+- (void)expandButtonTapped:(UIButton *)button {
+//    NSString *commentId = objc_getAssociatedObject(button, "commentId");
+//    if (!commentId) return;
+//    
+//    // 增加展开计数
+//    NSInteger currentExpandCount = [self.viewModel isCommentExpanded:commentId] ? 1 : 0;
+//    [self.viewModel setCommentExpanded:commentId expanded:(currentExpandCount + 1)];
+//    
+//    // 刷新对应的section
+//    NSInteger section = [self findSectionForCommentId:commentId];
+//    if (section != NSNotFound) {
+//        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationFade];
+//    }
+}
+
+- (NSInteger)findSectionForCommentId:(NSString *)commentId {
+    for (NSInteger i = 0; i < self.viewModel.commentList.count; i++) {
+        SLCommentEntity *comment = self.viewModel.commentList[i];
+        if ([comment.commentId isEqualToString:commentId]) {
+            return i;
+        }
+    }
+    return NSNotFound;
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -770,11 +767,6 @@
 
 - (void)navigateToLogin {
     // 跳转到登录页面的逻辑
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Login" bundle:nil];
-    UIViewController *loginVC = [storyboard instantiateInitialViewController];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:loginVC];
-    navController.modalPresentationStyle = UIModalPresentationFullScreen;
-    [self presentViewController:navController animated:YES completion:nil];
 }
 
 @end

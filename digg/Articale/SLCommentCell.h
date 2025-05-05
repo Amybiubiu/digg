@@ -13,11 +13,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SLCommentCell : UITableViewCell
 
-@property (nonatomic, strong, readonly) NSMutableArray<UIView *> *replyViews;
+@property (nonatomic, strong) UIImageView *avatarImageView;
+@property (nonatomic, strong) UILabel *usernameLabel;
+@property (nonatomic, strong) UILabel *timeLabel;
+@property (nonatomic, strong) UILabel *contentLabel;
+@property (nonatomic, strong) UIButton *replyButton;
+@property (nonatomic, strong) UIButton *likeButton;
+@property (nonatomic, strong) UILabel *likeCountLabel;
+@property (nonatomic, strong) UIView *separatorLine;
+@property (nonatomic, strong) SLCommentEntity *comment;
+@property (nonatomic, strong, readwrite) NSMutableArray<UIView *> *replyViews;
+
 @property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^expandHandler)(void);
-@property (nonatomic, copy) void (^collapseHandler)(void);
+
+- (void)setupUI;
 
 /**
  * 更新评论单元格

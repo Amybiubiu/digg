@@ -537,6 +537,11 @@ public extension RZRichTextView {
             self.qtextViewHelper.placeHolderLabel?.isHidden = !show
         }
     }
+    func hidePlaceHolder() {
+        DispatchQueue.main.async {
+            self.qtextViewHelper.placeHolderLabel?.isHidden = true
+        }
+    }
     /// 清空所有内容，包括富文本内容
     func clearContent() {
         // 清空文本存储

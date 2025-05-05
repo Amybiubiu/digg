@@ -14,17 +14,6 @@
 
 @interface SLCommentCell ()
 
-@property (nonatomic, strong) UIImageView *avatarImageView;
-@property (nonatomic, strong) UILabel *usernameLabel;
-@property (nonatomic, strong) UILabel *timeLabel;
-@property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) UIButton *replyButton;
-@property (nonatomic, strong) UIButton *likeButton;
-@property (nonatomic, strong) UILabel *likeCountLabel;
-@property (nonatomic, strong) UIView *separatorLine;
-@property (nonatomic, strong) SLCommentEntity *comment;
-@property (nonatomic, strong, readwrite) NSMutableArray<UIView *> *replyViews;
-
 @end
 
 @implementation SLCommentCell
@@ -288,12 +277,6 @@
 - (void)expandButtonTapped {
     if (self.expandHandler) {
         self.expandHandler();
-    }
-}
-
-- (void)collapseButtonTapped {
-    if (self.collapseHandler) {
-        self.collapseHandler();
     }
 }
 
