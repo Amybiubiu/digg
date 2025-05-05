@@ -52,11 +52,11 @@ static char kViewExposureStartTimeKey;
         NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
         _filePath = [documentsPath stringByAppendingPathComponent:@"tracking_events.json"];
         
-        // 从文件加载历史事件
-        [self loadEventsFromFile];
-        
-        // 启动定时上传
-        [self startUploadTimer];
+//        // 从文件加载历史事件
+//        [self loadEventsFromFile];
+//        
+//        // 启动定时上传
+//        [self startUploadTimer];
     }
     return self;
 }

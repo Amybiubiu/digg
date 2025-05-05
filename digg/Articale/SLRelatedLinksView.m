@@ -120,6 +120,7 @@
     }
     
     // 计算内容高度
+    [self setNeedsLayout];
     [self layoutIfNeeded];
     UILabel *lastLabel = [self.linkLabels lastObject];
     if (lastLabel) {

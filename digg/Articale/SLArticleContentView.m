@@ -65,9 +65,7 @@
 }
 
 - (void)richTextViewDidInsertAttachment:(RZRichTextView *)textView {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self updateRichTextViewHeight];
-    });
+    [self updateRichTextViewHeight];
 }
 
 - (void)updateRichTextViewHeight {
@@ -79,7 +77,7 @@
 
     // 通知高度变化
     if (self.heightChangedHandler) {
-        self.heightChangedHandler(self.richTextView.contentTextHeight);
+        self.heightChangedHandler(self.contentHeight);
     }
 }
 

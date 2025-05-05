@@ -153,7 +153,7 @@
     self.articleContentView.heightChangedHandler = ^(CGFloat height) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.mas_equalTo([weakSelf.articleContentView getContentHeight]);
+                make.height.mas_equalTo(height);
             }];
             [weakSelf updateTableHeaderViewHeight];
         });
@@ -240,7 +240,9 @@
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
             if (articleEntity) {
                 // 更新UI
-                [weakSelf updateUIWithArticleEntity:articleEntity];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf updateUIWithArticleEntity:articleEntity];
+                });
             }
         }
     }];
@@ -530,15 +532,15 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.viewModel.commentList.count;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
+    SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
     if (!cell) {
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
@@ -570,7 +572,7 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *headerView = [[UIView alloc] init];
-    headerView.backgroundColor = [UIColor colorWithRed:246/255.0 green:246/255.0 blue:246/255.0 alpha:1.0]; // #F6F6F6
+    headerView.backgroundColor = Color16(0xF6F6F6);
     return headerView;
 }
 

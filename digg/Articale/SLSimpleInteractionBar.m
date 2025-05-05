@@ -8,6 +8,7 @@
 #import "SLSimpleInteractionBar.h"
 #import "SLNumberIconView.h"
 #import "SLColorManager.h"
+#import "Masonry.h"
 
 @interface SLSimpleInteractionBar () <SLNumberIconViewDelegate>
 
@@ -87,10 +88,6 @@
     _rightIconView.itemSpacing = 4.0;
     _rightIconView.touchAreaExtension = 10.0;
     [self addSubview:_rightIconView];
-    
-    // 设置自动布局
-    _leftIconView.translatesAutoresizingMaskIntoConstraints = NO;
-    _rightIconView.translatesAutoresizingMaskIntoConstraints = NO;
 
     // 计算"回复"文本的宽度
     UILabel* label = [UILabel new];
@@ -99,21 +96,16 @@
     CGSize replySize = [label sizeThatFits:CGSizeZero];
     CGFloat replyWidth = replySize.width + 1;
     
-    [NSLayoutConstraint activateConstraints:@[
-        // 左侧视图约束
-        [_leftIconView.topAnchor constraintEqualToAnchor:self.topAnchor],
-        [_leftIconView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor],
-        [_leftIconView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-        
-        // 右侧视图约束
-        [_rightIconView.topAnchor constraintEqualToAnchor:self.topAnchor],
-        [_rightIconView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor],
-        [_rightIconView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor],
-        [_rightIconView.widthAnchor constraintEqualToConstant:replyWidth],
-        
-        // 确保左侧视图不会与右侧视图重叠
-        [_leftIconView.trailingAnchor constraintLessThanOrEqualToAnchor:_rightIconView.leadingAnchor constant:-10]
-    ]];
+    [_leftIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.bottom.equalTo(self);
+        make.left.equalTo(self);
+        make.right.equalTo(_rightIconView.mas_left).offset(-10);
+    }];
+    [_rightIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.bottom.equalTo(self);
+        make.right.equalTo(self);
+        make.width.mas_equalTo(replyWidth);
+    }];
 }
 
 #pragma mark - Public Methods
@@ -140,14 +132,6 @@
 
 - (BOOL)isDislikeSelected {
     return [self.leftIconView isSelectedAtIndex:self.dislikeIndex];
-}
-
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    NSLog(@"SLSimpleInteractionBar frame: %@", NSStringFromCGRect(self.frame));
-    NSLog(@"leftIconView frame: %@", NSStringFromCGRect(_leftIconView.frame));
-    NSLog(@"rightIconView frame: %@", NSStringFromCGRect(_rightIconView.frame));
 }
 
 #pragma mark - SLNumberIconViewDelegate
