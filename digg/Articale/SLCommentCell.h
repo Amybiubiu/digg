@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 更新评论单元格
  * @param comment 评论实体
  */
-- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId;
+- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)contentWidth;
  
 - (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount;
 

@@ -116,12 +116,16 @@
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.backgroundColor = [SLColorManager primaryBackgroundColor];
+    self.tableView.backgroundColor = UIColor.clearColor; //[SLColorManager primaryBackgroundColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.estimatedRowHeight = 44.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     [self.tableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"CommentCell"];
+    self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    if (@available(iOS 15.0, *)) {
+        self.tableView.sectionHeaderTopPadding = 0;
+    }
     
     [self.view addSubview:self.tableView];
     
@@ -546,7 +550,7 @@
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
     
-    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId];
+    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.bounds.size.width - 32];
     
     __weak typeof(self) weakSelf = self;
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
@@ -566,23 +570,23 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 7.0;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = [[UIView alloc] init];
-    headerView.backgroundColor = Color16(0xF6F6F6);
-    return headerView;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 0.01;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-    return [[UIView alloc] init];
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//    return 7.0;
+//}
+//
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//    UIView *headerView = [[UIView alloc] init];
+//    headerView.backgroundColor = Color16(0xF6F6F6);
+//    return headerView;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+//    return 0.01;
+//}
+//
+//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+//    return [[UIView alloc] init];
+//}
 
 #pragma mark - 评论展开方法
 

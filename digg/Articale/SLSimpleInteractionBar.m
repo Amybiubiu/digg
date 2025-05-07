@@ -13,14 +13,12 @@
 @interface SLSimpleInteractionBar () <SLNumberIconViewDelegate>
 
 @property (nonatomic, strong) SLNumberIconView *leftIconView;  // 左侧点赞和不喜欢
-@property (nonatomic, strong) SLNumberIconView *rightIconView; // 右侧回复
+@property (nonatomic, strong) UIButton *replyButton;          // 右侧回复按钮
 @property (nonatomic, strong) NSMutableArray<SLNumberIconItem *> *leftItems;
-@property (nonatomic, strong) NSMutableArray<SLNumberIconItem *> *rightItems;
 
 // 固定索引常量
 @property (nonatomic, assign, readonly) NSInteger likeIndex;
 @property (nonatomic, assign, readonly) NSInteger dislikeIndex;
-@property (nonatomic, assign, readonly) NSInteger replyIndex;
 
 @end
 
@@ -31,7 +29,6 @@
     if (self) {
         _likeIndex = 0;
         _dislikeIndex = 1;
-        _replyIndex = 0;
         
         [self setupItems];
         [self setupViews];
@@ -58,18 +55,6 @@
     dislikeItem.numberColor = [SLColorManager caocaoButtonTextColor];
     dislikeItem.iconColor = [SLColorManager caocaoButtonTextColor];
     [_leftItems addObject:dislikeItem];
-    
-    // 初始化右侧项目（回复）
-    _rightItems = [NSMutableArray array];
-    
-    // 回复
-    SLNumberIconItem *replyItem = [SLNumberIconItem itemWithNumber:0 
-                                                       normalImage:nil
-                                                     selectedImage:nil];
-    replyItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    replyItem.iconColor = [SLColorManager caocaoButtonTextColor];
-    replyItem.customText = @"回复";
-    [_rightItems addObject:replyItem];
 }
 
 - (void)setupViews {
@@ -81,13 +66,13 @@
     _leftIconView.touchAreaExtension = 10.0;
     [self addSubview:_leftIconView];
     
-    // 创建右侧视图
-    _rightIconView = [[SLNumberIconView alloc] initWithFrame:CGRectZero items:_rightItems];
-    _rightIconView.delegate = self;
-    _rightIconView.spacing = 12.0;
-    _rightIconView.itemSpacing = 4.0;
-    _rightIconView.touchAreaExtension = 10.0;
-    [self addSubview:_rightIconView];
+    // 创建右侧回复按钮
+    _replyButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [_replyButton setTitle:@"回复" forState:UIControlStateNormal];
+    [_replyButton setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
+    _replyButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+    [_replyButton addTarget:self action:@selector(replyButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:_replyButton];
 
     // 计算"回复"文本的宽度
     UILabel* label = [UILabel new];
@@ -99,13 +84,21 @@
     [_leftIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.bottom.equalTo(self);
         make.left.equalTo(self);
-        make.right.equalTo(_rightIconView.mas_left).offset(-10);
+        make.right.equalTo(_replyButton.mas_left).offset(-10);
     }];
-    [_rightIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [_replyButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.bottom.equalTo(self);
         make.right.equalTo(self);
         make.width.mas_equalTo(replyWidth);
     }];
+}
+
+#pragma mark - Actions
+
+- (void)replyButtonTapped {
+    if ([self.delegate respondsToSelector:@selector(interactionBarDidTapReply:)]) {
+        [self.delegate interactionBarDidTapReply:self];
+    }
 }
 
 #pragma mark - Public Methods
@@ -163,11 +156,6 @@
             }
         }
     } 
-    else if (numberIconView == self.rightIconView && index == self.replyIndex) {
-        if ([self.delegate respondsToSelector:@selector(interactionBarDidTapReply:)]) {
-            [self.delegate interactionBarDidTapReply:self];
-        }
-    }
 }
 
 @end

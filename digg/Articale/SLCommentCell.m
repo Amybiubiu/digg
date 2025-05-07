@@ -33,6 +33,7 @@
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = [SLColorManager primaryBackgroundColor];
+        self.contentView.backgroundColor = UIColor.clearColor;
         self.secondaryComments = [NSMutableArray array];
         self.displayedSecondaryComments = [NSMutableArray array];
         self.isSecondaryCommentsExpanded = NO;
@@ -48,6 +49,7 @@
     self.avatarImageView = [[UIImageView alloc] init];
     self.avatarImageView.layer.cornerRadius = 15;
     self.avatarImageView.layer.masksToBounds = YES;
+    self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
     [self.contentView addSubview:self.avatarImageView];
     
@@ -91,6 +93,10 @@
     self.secondaryCommentsTableView.estimatedRowHeight = 80;
     self.secondaryCommentsTableView.rowHeight = UITableViewAutomaticDimension;
     [self.secondaryCommentsTableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"SecondaryCommentCell"];
+    self.secondaryCommentsTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    if (@available(iOS 15.0, *)) {
+        self.secondaryCommentsTableView.sectionHeaderTopPadding = 0;
+    }
     self.secondaryCommentsTableView.hidden = YES;
     [self.contentView addSubview:self.secondaryCommentsTableView];
     
@@ -114,9 +120,8 @@
     CGFloat leftMargin = self.isSecondary ? 28 : 0;
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(16 + leftMargin);
-        make.top.equalTo(self.contentView).offset(19);
-        make.width.mas_equalTo(30);
-        make.height.mas_equalTo(30);
+        make.top.equalTo(self.contentView).offset(16);
+        make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -149,7 +154,7 @@
     }];
     
     [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.interactionBar.mas_bottom).offset(16);
+        make.top.equalTo(self.interactionBar.mas_bottom).offset(8);
         make.left.equalTo(self.contentView);
         make.right.equalTo(self.contentView);
         make.height.mas_equalTo(0);
@@ -159,7 +164,7 @@
         make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(44);
         make.height.mas_equalTo(20);
-        make.bottom.equalTo(self.contentView).offset(-8);
+        make.bottom.equalTo(self.contentView).offset(-16);
     }];
     
     [self.line mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -170,7 +175,8 @@
     }];
 }
 
-- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId {
+- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)contentWidth {
+
     self.comment = comment;
     self.authorId = authorId;
     
@@ -193,9 +199,9 @@
     self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
     
     // 设置内容
-    if (comment.replyToArticle) {
+    if (comment.replyToArticle || comment.replyToComment) {
         self.contentLabel.text = comment.content;
-    } else if (comment.replyToComment || comment.replyToSecondComment) {
+    } else if (comment.replyToSecondComment) {
         if (comment.replyUsername.length > 0) {
             self.contentLabel.text = [NSString stringWithFormat:@"回复:%@ : %@", comment.replyUsername, comment.content];
         } else {
@@ -203,7 +209,6 @@
         }
     }
     [self.contentLabel sizeToFit];
-    CGFloat contentWidth = self.contentView.bounds.size.width - 32;
     CGFloat contentHeight = [self heightForText:self.contentLabel.text
                                       withFont:[UIFont pingFangRegularWithSize:14]
                                          width:contentWidth];
@@ -215,11 +220,6 @@
     [self.interactionBar updateDislikeNumber:comment.dislikeCount];
     [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
     [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
-
-    // 清空现有的二级评论数据
-    [self.secondaryComments removeAllObjects];
-    [self.displayedSecondaryComments removeAllObjects];
-    self.isSecondaryCommentsExpanded = NO;
     
     // 处理二级评论
     if (comment.replyList && comment.replyList.count > 0) {
@@ -232,6 +232,20 @@
         self.secondaryCommentsTableView.hidden = YES;
         self.showMoreButton.hidden = YES;
         self.line.hidden = YES;
+        
+        [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.interactionBar.mas_bottom).offset(0);
+            make.left.equalTo(self.contentView);
+            make.right.equalTo(self.contentView);
+            make.height.mas_equalTo(0);
+        }];
+        
+        [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
+            make.left.equalTo(self.contentView).offset(44);
+            make.height.mas_equalTo(0);
+            make.bottom.equalTo(self.contentView).offset(0);
+        }];
     }
 
     [self setNeedsLayout];
@@ -239,10 +253,6 @@
 }
 
 - (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount {
-    // 清空现有的二级评论
-    [self.secondaryComments removeAllObjects];
-    [self.displayedSecondaryComments removeAllObjects];
-    
     // 保存所有二级评论
     if (replyList && replyList.count > 0) {
         [self.secondaryComments addObjectsFromArray:replyList];
@@ -268,7 +278,17 @@
         self.line.hidden = YES;
         
         [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.interactionBar.mas_bottom).offset(0);
+            make.left.equalTo(self.contentView);
+            make.right.equalTo(self.contentView);
             make.height.mas_equalTo(0);
+        }];
+        
+        [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
+            make.left.equalTo(self.contentView).offset(44);
+            make.height.mas_equalTo(0);
+            make.bottom.equalTo(self.contentView).offset(-16);
         }];
     }
 }
@@ -283,8 +303,27 @@
     
     // 更新表格视图高度约束
     [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.interactionBar.mas_bottom).offset(8);
+        make.left.equalTo(self.contentView);
+        make.right.equalTo(self.contentView);
         make.height.mas_equalTo(totalHeight);
     }];
+    
+    if (!self.showMoreButton.hidden) {
+        [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(16);
+            make.left.equalTo(self.contentView).offset(44);
+            make.height.mas_equalTo(20);
+            make.bottom.equalTo(self.contentView).offset(-16);
+        }];
+    } else {
+        [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
+            make.left.equalTo(self.contentView).offset(44);
+            make.height.mas_equalTo(0);
+            make.bottom.equalTo(self.contentView).offset(0);
+        }];
+    }
 }
 
 - (void)showMoreButtonTapped {
@@ -292,31 +331,57 @@
     NSInteger remainingComments = self.secondaryComments.count - self.displayedSecondaryComments.count;
     NSInteger commentsToAdd = MIN(5, remainingComments);
     
+    NSMutableArray * insertNodeRows = [NSMutableArray array];
     if (commentsToAdd > 0) {
         // 添加下一批评论
         NSInteger startIndex = self.displayedSecondaryComments.count;
         for (NSInteger i = 0; i < commentsToAdd; i++) {
             if (startIndex + i < self.secondaryComments.count) {
-                [self.displayedSecondaryComments addObject:self.secondaryComments[startIndex + i]];
+                [self.displayedSecondaryComments insertObject:self.secondaryComments[startIndex + i] atIndex:startIndex + i];
+                [insertNodeRows addObject:[NSIndexPath indexPathForRow:startIndex + i inSection:0]];
             }
         }
-        
-        // 刷新表格视图
-        [self.secondaryCommentsTableView reloadData];
 
         // 如果所有评论都已加载，隐藏"展开更多评论"按钮
         if (self.displayedSecondaryComments.count >= self.secondaryComments.count) {
             self.showMoreButton.hidden = YES;
             self.line.hidden = YES;
+            [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
+                make.left.equalTo(self.contentView).offset(44);
+                make.height.mas_equalTo(0);
+                make.bottom.equalTo(self.contentView).offset(0);
+            }];
         }
         
-        // 更新表格视图高度
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self updateSecondaryCommentsTableViewHeight];
-            [self setNeedsLayout];
-            [self layoutIfNeeded];
-        });
+        // 更新表格视图高度（带动画效果）
+        CGFloat totalHeight = 0;
+        for (NSInteger i = 0; i < self.displayedSecondaryComments.count; i++) {
+            CGFloat cellHeight = [self tableView:self.secondaryCommentsTableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+            totalHeight += cellHeight;
+        }
+        
+        // 获取父表格视图，用于后续更新
+        UITableView *parentTableView = [self findParentTableView];
+        [parentTableView performBatchUpdates:^{
+            [self.secondaryCommentsTableView insertRowsAtIndexPaths:[NSArray arrayWithArray:insertNodeRows] withRowAnimation:UITableViewRowAnimationNone];
+            [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.height.mas_equalTo(totalHeight).priorityHigh;
+            }];
+        } completion:^(BOOL finished) {
+        }];
     }
+}
+
+- (UITableView *)findParentTableView {
+    UIView *superview = self.superview;
+    while (superview) {
+        if ([superview isKindOfClass:[UITableView class]]) {
+            return (UITableView *)superview;
+        }
+        superview = superview.superview;
+    }
+    return nil;
 }
 
 #pragma mark - UITableViewDataSource
@@ -337,15 +402,7 @@
     cell.showMoreButton.hidden = YES;
     cell.line.hidden = YES;
     [cell setupConstraints];
-    [cell updateWithComment:secondaryComment authorId:self.authorId];
-    // 确保内容标签有正确的高度
-    CGFloat contentWidth = tableView.frame.size.width - 40;
-    CGFloat contentHeight = [self heightForText:secondaryComment.content
-                                      withFont:[UIFont pingFangRegularWithSize:14]
-                                         width:contentWidth];
-    [cell.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(contentHeight);
-    }];
+    [cell updateWithComment:secondaryComment authorId:self.authorId contentWidth:tableView.frame.size.width - 60];
         
     return cell;
 }
@@ -357,12 +414,12 @@
     SLCommentEntity *secondaryComment = self.displayedSecondaryComments[indexPath.row];
     
     CGFloat baseHeight = 16 + 30 + 8;
-    CGFloat contentWidth = tableView.frame.size.width - 40;
+    CGFloat contentWidth = tableView.frame.size.width - 60;
     CGFloat contentHeight = [self heightForText:secondaryComment.content
                                        withFont:[UIFont pingFangRegularWithSize:14]
                                           width:contentWidth];
-    
-    return baseHeight + contentHeight + 8 + 16 + 8;
+
+    return baseHeight + contentHeight + 12 + 16;
 }
 
 - (CGFloat)heightForText:(NSString *)text withFont:(UIFont *)font width:(CGFloat)width {
