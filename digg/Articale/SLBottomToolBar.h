@@ -25,13 +25,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<SLBottomToolBarDelegate> delegate;
 
-@property (nonatomic, strong) UIButton *likeButton;
-@property (nonatomic, strong) UIButton *commentButton;
-@property (nonatomic, strong) UIButton *aiButton;
-@property (nonatomic, strong) UIButton *shareButton;
-
+// 更新点赞状态和数量
 - (void)updateLikeStatus:(BOOL)isLiked count:(NSInteger)count;
+
+// 更新评论数量
 - (void)updateCommentCount:(NSInteger)count;
+
+// 更新分享数量
 - (void)updateShareCount:(NSInteger)count;
 
 @end
