@@ -51,6 +51,10 @@
 @property (nonatomic, assign) CGFloat lastContentOffset;
 @property (nonatomic, assign) BOOL isNavBarHidden;
 @property (nonatomic, assign) BOOL isToolbarHidden;
+@property (nonatomic, assign) CGFloat tabBarHeight;
+@property (nonatomic, assign) CGFloat scrollThreshold;
+@property (nonatomic, assign) NSTimeInterval lastScrollTime;
+@property (nonatomic, assign) CGFloat scrollVelocity;
 
 @end
 
@@ -101,13 +105,14 @@
 }
 
 - (void)setupToolbar {
+    self.tabBarHeight = 49.0 + kiPhoneXBottomMargin;
     self.toolbarView = [[SLBottomToolBar alloc] init];
     self.toolbarView.delegate = self;
     [self.view addSubview:self.toolbarView];
     
     [self.toolbarView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self.view);
-        make.height.equalTo(@(49.0 + kiPhoneXBottomMargin));
+        make.height.equalTo(@(self.tabBarHeight));
     }];
 }
 
@@ -221,13 +226,6 @@
         [webVC startLoadRequestWithUrl:self.viewModel.articleEntity.url];
         [self.navigationController pushViewController:webVC animated:YES];
     }
-}
-
-- (void)setupGestures {
-    // 添加点击手势以隐藏键盘
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    tapGesture.cancelsTouchesInView = NO;
-    [self.view addGestureRecognizer:tapGesture];
 }
 
 - (void)loadData {
@@ -439,11 +437,6 @@
     [self.navigationController pushViewController:tagListVC animated:YES];
 }
 
-- (void)handleTapGesture:(UITapGestureRecognizer *)gesture {
-    // 点击空白区域隐藏键盘
-    [self.view endEditing:YES];
-}
-
 #pragma mark - Helper Methods
 
 - (void)showLoginAlert {
@@ -618,36 +611,177 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-//    CGFloat contentOffsetY = scrollView.contentOffset.y;
-//    
-//    // 导航栏显示/隐藏逻辑
-//    if (contentOffsetY > 200 && !self.isNavBarHidden) {
-//        [self showNavigationBarTitle:YES];
-//    } else if (contentOffsetY <= 200 && self.isNavBarHidden) {
-//        [self showNavigationBarTitle:NO];
-//    }
-//    
-//    // 工具栏显示/隐藏逻辑
-//    if (contentOffsetY > self.lastContentOffset + 50 && !self.isToolbarHidden) {
-//        [self showToolbar:NO];
-//    } else if (contentOffsetY < self.lastContentOffset - 50 && self.isToolbarHidden) {
-//        [self showToolbar:YES];
-//    }
-//    
-//    // 记录最后的滚动位置
-//    if (ABS(contentOffsetY - self.lastContentOffset) > 50) {
-//        self.lastContentOffset = contentOffsetY;
-//    }
+    // 计算滚动速度
+    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval timeDiff = currentTime - self.lastScrollTime;
+    
+    if (timeDiff > 0) {
+        CGFloat distance = scrollView.contentOffset.y - self.lastContentOffset;
+        self.scrollVelocity = fabs(distance / timeDiff);
+    }
+    
+    self.lastScrollTime = currentTime;
+    
+    // 判断滚动方向和速度
+    CGFloat contentOffset = scrollView.contentOffset.y;
+    
+    // 滚动到顶部时显示导航栏
+    if (contentOffset <= 0) {
+        NSLog(@"--> scrollViewDidScroll contentOffset <= 0");
+        [self updateBarsPosition:0.0 animated:NO];
+        self.lastContentOffset = contentOffset;
+        return;
+    }
+
+    // 检测是否滚动到底部
+    CGFloat contentHeight = scrollView.contentSize.height;
+    CGFloat scrollViewHeight = scrollView.frame.size.height;
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10); // 添加10像素的容差
+    
+    if (isAtBottom) {
+        // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidScroll isAtBottom");
+        [self updateBarsPosition:0.0 animated:YES];
+        self.lastContentOffset = contentOffset;
+        return;
+    }
+    
+    // 根据滚动方向调整进度
+    CGFloat diff = contentOffset - self.lastContentOffset;
+    
+    // 移除快速滚动的直接跳变，改为根据滚动方向逐渐调整进度
+    CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
+    CGFloat targetProgress = currentProgress;
+    
+    // 向下滚动（内容向上移动），增加进度（隐藏导航栏）
+    if (diff > 0) {
+        // 根据滚动速度调整进度增量
+        CGFloat increment = MIN(0.05, self.scrollVelocity / 500.0);
+        targetProgress = MIN(1.0, currentProgress + increment);
+    }
+    // 向上滚动（内容向下移动），减少进度（显示导航栏）
+    else if (diff < 0) {
+        // 根据滚动速度调整进度减量
+        CGFloat decrement = MIN(0.05, self.scrollVelocity / 500.0);
+        targetProgress = MAX(0.0, currentProgress - decrement);
+    }
+    
+    // 更新导航栏和底部工具栏位置，使用平滑过渡
+    NSLog(@"--> scrollViewDidScroll targetProgress");
+    [self updateBarsPosition:targetProgress animated:NO];
+    
+    self.lastContentOffset = contentOffset;
 }
 
+// 修改滚动结束处理，使其更平滑
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-//    if (!decelerate) {
-//        [self showToolbar:YES];
-//    }
+    // 检测是否滚动到底部
+    CGFloat contentOffset = scrollView.contentOffset.y;
+    CGFloat contentHeight = scrollView.contentSize.height;
+    CGFloat scrollViewHeight = scrollView.frame.size.height;
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10);
+    
+    if (isAtBottom) {
+        // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidEndDragging isAtBottom");
+        [self updateBarsPosition:0.0 animated:YES];
+        return;
+    }
+    
+    if (!decelerate) {
+        [self finishScrollingWithVelocity:0];
+    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-//    [self showToolbar:YES];
+    // 检测是否滚动到底部
+    CGFloat contentOffset = scrollView.contentOffset.y;
+    CGFloat contentHeight = scrollView.contentSize.height;
+    CGFloat scrollViewHeight = scrollView.frame.size.height;
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10);
+    
+    if (isAtBottom) {
+        // 滚动到底部时显示导航栏和底部工具栏
+        NSLog(@"--> scrollViewDidEndDecelerating isAtBottom");
+        [self updateBarsPosition:0.0 animated:YES];
+        return;
+    }
+    
+    [self finishScrollingWithVelocity:0];
+}
+
+// 修改更新方法，添加平滑过渡
+- (void)updateBarsPosition:(CGFloat)progress animated:(BOOL)animated {
+    NSLog(@"--> updateBarsPosition progress = %.2f animated = %d", progress, animated);
+    // 计算导航栏应该移动的距离
+    CGFloat navBarOffset = -NAVBAR_HEIGHT * progress;
+    CGFloat tabBarOffset = self.tabBarHeight * progress;
+    
+    // 更新导航栏位置
+    [self.navigationBar mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(navBarOffset);
+    }];
+    
+    // 更新底部工具栏位置
+    [self.toolbarView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view).offset(tabBarOffset);
+    }];
+    
+    // 更新状态
+    self.isNavBarHidden = (progress >= 0.99);
+    self.isToolbarHidden = (progress >= 0.99);
+    
+    if (animated) {
+        // 使用弹性动画效果，更接近 Apple News
+        [UIView animateWithDuration:0.3
+                              delay:0
+             usingSpringWithDamping:0.8
+              initialSpringVelocity:0.2
+                            options:UIViewAnimationOptionAllowUserInteraction
+                         animations:^{
+            [self.view layoutIfNeeded];
+        } completion:nil];
+    } else {
+        [self.view layoutIfNeeded];
+    }
+}
+
+// 根据最终速度决定导航栏和底部工具栏的最终状态
+- (void)finishScrollingWithVelocity:(CGFloat)velocity {
+    // 获取当前导航栏的位置
+    CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
+    
+    // 如果接近某个状态，直接设置为该状态
+    if (currentProgress < 0.1) {
+        NSLog(@"--> finishScrollingWithVelocity currentProgress < 0.1");
+        [self updateBarsPosition:0.0 animated:YES]; // 显示
+    } else if (currentProgress > 0.9) {
+        NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.9");
+        [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+    } else {
+        // 如果在中间状态，根据进度决定
+        if (currentProgress > 0.5) {
+            NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.5");
+            [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+        } else {
+            NSLog(@"--> finishScrollingWithVelocity currentProgress <= 0.5");
+            [self updateBarsPosition:0.0 animated:YES]; // 显示
+        }
+    }
+}
+
+- (void)setupGestures {
+    // 添加点击手势，点击内容区域时显示/隐藏导航栏和工具栏
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+    [self.tableView addGestureRecognizer:tapGesture];
+}
+
+- (void)handleTapGesture:(UITapGestureRecognizer *)gesture {
+    if (self.isNavBarHidden || self.isToolbarHidden) {
+        [self updateBarsPosition:0.0 animated:YES]; // 显示
+    } else {
+        [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+    }
 }
 
 #pragma mark - SLCustomNavigationBarDelegate
