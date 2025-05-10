@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		340F64022D2D55130046FC97 /* SLEditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 340F64012D2D55130046FC97 /* SLEditProfileViewController.m */; };
+		34287B2E2DCF87820042D6FC /* SLSecondCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */; };
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		344EFA042D2E5111001E5FAF /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 344EFA022D2E5111001E5FAF /* KxMenu.m */; };
 		345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C0AA12DAA287B005FCCDB /* UIView+Associated.m */; };
@@ -270,6 +271,8 @@
 /* Begin PBXFileReference section */
 		340F64002D2D55130046FC97 /* SLEditProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEditProfileViewController.h; sourceTree = "<group>"; };
 		340F64012D2D55130046FC97 /* SLEditProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEditProfileViewController.m; sourceTree = "<group>"; };
+		34287B2C2DCF87820042D6FC /* SLSecondCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLSecondCommentCell.h; sourceTree = "<group>"; };
+		34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLSecondCommentCell.m; sourceTree = "<group>"; };
 		344242762D55FE190081B948 /* SLColorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLColorManager.h; sourceTree = "<group>"; };
 		344242772D55FE190081B948 /* SLColorManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLColorManager.m; sourceTree = "<group>"; };
 		344EFA012D2E5111001E5FAF /* KxMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KxMenu.h; sourceTree = "<group>"; };
@@ -1001,6 +1004,8 @@
 		3478D6C82DC3A743007D366B /* Articale */ = {
 			isa = PBXGroup;
 			children = (
+				34287B2C2DCF87820042D6FC /* SLSecondCommentCell.h */,
+				34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */,
 				3478EC602DC869D1007D366B /* SLSimpleInteractionBar.h */,
 				3478EC612DC869D1007D366B /* SLSimpleInteractionBar.m */,
 				3478D6DB2DC4A003007D366B /* SLRelatedLinksView.h */,
@@ -1731,6 +1736,7 @@
 				34A071112D72D999006BC583 /* UIScrollView+TMViewTracker.m in Sources */,
 				34A071122D72D999006BC583 /* UIView+TMViewTracker.m in Sources */,
 				34A071132D72D999006BC583 /* UIView+EventTrackingFilter.m in Sources */,
+				34287B2E2DCF87820042D6FC /* SLSecondCommentCell.m in Sources */,
 				34A071142D72D999006BC583 /* UIView+PageName.m in Sources */,
 				34A071152D72D999006BC583 /* UIViewController+TMViewExposure.m in Sources */,
 				E76A45CD2CB93827008B2746 /* CaocaoRefreshFooter.m in Sources */,

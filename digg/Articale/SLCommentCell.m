@@ -11,18 +11,17 @@
 #import "SLColorManager.h"
 #import <SDWebImage/SDWebImage.h>
 #import "SLArticleEntity.h"
+#import "SLSecondCommentCell.h"
 
 @interface SLCommentCell () <SLSimpleInteractionBarDelegate, UITableViewDelegate, UITableViewDataSource>
 
+@property (nonatomic, strong) UIView *sectionSegment;
 @property (nonatomic, strong) UITableView *secondaryCommentsTableView;
 @property (nonatomic, strong) UIView *line;
 @property (nonatomic, strong) UIButton *showMoreButton;
 @property (nonatomic, strong) NSMutableArray<SLCommentEntity *> *secondaryComments;
 @property (nonatomic, strong) NSMutableArray<SLCommentEntity *> *displayedSecondaryComments;
-@property (nonatomic, assign) NSInteger totalSecondaryComments;
-@property (nonatomic, assign) BOOL isSecondaryCommentsExpanded;
 @property (nonatomic, strong) NSString* authorId;
-@property (nonatomic, assign) BOOL isSecondary;
 
 @end
 
@@ -36,8 +35,6 @@
         self.contentView.backgroundColor = UIColor.clearColor;
         self.secondaryComments = [NSMutableArray array];
         self.displayedSecondaryComments = [NSMutableArray array];
-        self.isSecondaryCommentsExpanded = NO;
-        self.isSecondary = NO;
         [self setupUI];
         [self setupConstraints];
     }
@@ -45,6 +42,11 @@
 }
 
 - (void)setupUI {
+    //分割条
+    self.sectionSegment = [UIView new];
+    self.sectionSegment.backgroundColor = Color16(0xF6F6F6);
+    [self.contentView addSubview:self.sectionSegment];
+    
     // 头像
     self.avatarImageView = [[UIImageView alloc] init];
     self.avatarImageView.layer.cornerRadius = 15;
@@ -92,7 +94,7 @@
     self.secondaryCommentsTableView.backgroundColor = [UIColor clearColor];
     self.secondaryCommentsTableView.estimatedRowHeight = 80;
     self.secondaryCommentsTableView.rowHeight = UITableViewAutomaticDimension;
-    [self.secondaryCommentsTableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"SecondaryCommentCell"];
+    [self.secondaryCommentsTableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SecondaryCommentCell"];
     self.secondaryCommentsTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     if (@available(iOS 15.0, *)) {
         self.secondaryCommentsTableView.sectionHeaderTopPadding = 0;
@@ -117,10 +119,14 @@
 
 - (void)setupConstraints {
     // 设置约束
-    CGFloat leftMargin = self.isSecondary ? 28 : 0;
+    [self.sectionSegment mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(self.contentView);
+        make.height.mas_equalTo(7);
+    }];
+    
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.contentView).offset(16 + leftMargin);
-        make.top.equalTo(self.contentView).offset(16);
+        make.left.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
@@ -161,10 +167,10 @@
     }];
     
     [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(16);
+        make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(8);
         make.left.equalTo(self.contentView).offset(44);
         make.height.mas_equalTo(20);
-        make.bottom.equalTo(self.contentView).offset(-16);
+        make.bottom.equalTo(self.contentView).offset(-24);
     }];
     
     [self.line mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -175,7 +181,7 @@
     }];
 }
 
-- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)contentWidth {
+- (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width {
 
     self.comment = comment;
     self.authorId = authorId;
@@ -203,7 +209,8 @@
         self.contentLabel.text = comment.content;
     } else if (comment.replyToSecondComment) {
         if (comment.replyUsername.length > 0) {
-            self.contentLabel.text = [NSString stringWithFormat:@"回复:%@ : %@", comment.replyUsername, comment.content];
+            //TODO:@ “comment.replyUsername” 这个字体颜色0x666666
+            self.contentLabel.text = [NSString stringWithFormat:@"回复:@%@ : %@", comment.replyUsername, comment.content];
         } else {
             self.contentLabel.text = comment.content;
         }
@@ -211,7 +218,7 @@
     [self.contentLabel sizeToFit];
     CGFloat contentHeight = [self heightForText:self.contentLabel.text
                                       withFont:[UIFont pingFangRegularWithSize:14]
-                                         width:contentWidth];
+                                        width:width];
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(contentHeight);
     }];
@@ -244,7 +251,7 @@
             make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
             make.left.equalTo(self.contentView).offset(44);
             make.height.mas_equalTo(0);
-            make.bottom.equalTo(self.contentView).offset(0);
+            make.bottom.equalTo(self.contentView).offset(-8);
         }];
     }
 
@@ -256,7 +263,6 @@
     // 保存所有二级评论
     if (replyList && replyList.count > 0) {
         [self.secondaryComments addObjectsFromArray:replyList];
-        self.totalSecondaryComments = totalCount;
         
         // 初始只显示第一条评论
         if (self.secondaryComments.count > 0) {
@@ -288,7 +294,7 @@
             make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
             make.left.equalTo(self.contentView).offset(44);
             make.height.mas_equalTo(0);
-            make.bottom.equalTo(self.contentView).offset(-16);
+            make.bottom.equalTo(self.contentView).offset(-8);
         }];
     }
 }
@@ -311,17 +317,17 @@
     
     if (!self.showMoreButton.hidden) {
         [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(16);
+            make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(8);
             make.left.equalTo(self.contentView).offset(44);
             make.height.mas_equalTo(20);
-            make.bottom.equalTo(self.contentView).offset(-16);
+            make.bottom.equalTo(self.contentView).offset(-24);
         }];
     } else {
         [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
             make.left.equalTo(self.contentView).offset(44);
             make.height.mas_equalTo(0);
-            make.bottom.equalTo(self.contentView).offset(0);
+            make.bottom.equalTo(self.contentView).offset(-8);
         }];
     }
 }
@@ -350,7 +356,7 @@
                 make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(0);
                 make.left.equalTo(self.contentView).offset(44);
                 make.height.mas_equalTo(0);
-                make.bottom.equalTo(self.contentView).offset(0);
+                make.bottom.equalTo(self.contentView).offset(-8);
             }];
         }
         
@@ -392,16 +398,11 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SLCommentEntity *secondaryComment = self.displayedSecondaryComments[indexPath.row];
-    SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SecondaryCommentCell"];
+    SLSecondCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SecondaryCommentCell"];
     if (!cell) {
-        cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SecondaryCommentCell"];
+        cell = [[SLSecondCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SecondaryCommentCell"];
     }
     // 配置二级评论单元格
-    cell.isSecondary = YES;
-    cell.secondaryCommentsTableView.hidden = YES;
-    cell.showMoreButton.hidden = YES;
-    cell.line.hidden = YES;
-    [cell setupConstraints];
     [cell updateWithComment:secondaryComment authorId:self.authorId contentWidth:tableView.frame.size.width - 60];
         
     return cell;
@@ -419,7 +420,7 @@
                                        withFont:[UIFont pingFangRegularWithSize:14]
                                           width:contentWidth];
 
-    return baseHeight + contentHeight + 12 + 16;
+    return baseHeight + contentHeight + 12 + 16 + 8;
 }
 
 - (CGFloat)heightForText:(NSString *)text withFont:(UIFont *)font width:(CGFloat)width {

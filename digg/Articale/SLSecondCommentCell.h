@@ -1,5 +1,5 @@
 //
-//  SLCommentCell.h
+//  SLSecondCommentCell.h
 //  digg
 //
 //  Created by Tim Bao on 2025/3/15.
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class SLCommentEntity;
 
-@interface SLCommentCell : UITableViewCell
+@interface SLSecondCommentCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *avatarImageView;
 @property (nonatomic, strong) UILabel *usernameLabel;
@@ -35,8 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param comment 评论实体
  */
 - (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width;
- 
-- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount;
 
 @end
 

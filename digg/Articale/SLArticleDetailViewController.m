@@ -543,7 +543,7 @@
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
     
-    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.bounds.size.width - 32];
+    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
     
     __weak typeof(self) weakSelf = self;
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
@@ -562,24 +562,6 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-//    return 7.0;
-//}
-//
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//    UIView *headerView = [[UIView alloc] init];
-//    headerView.backgroundColor = Color16(0xF6F6F6);
-//    return headerView;
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-//    return 0.01;
-//}
-//
-//- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-//    return [[UIView alloc] init];
-//}
 
 #pragma mark - 评论展开方法
 
