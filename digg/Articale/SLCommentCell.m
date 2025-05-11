@@ -35,6 +35,7 @@
         self.contentView.backgroundColor = UIColor.clearColor;
         self.secondaryComments = [NSMutableArray array];
         self.displayedSecondaryComments = [NSMutableArray array];
+        self.expandCount = 1;
         [self setupUI];
         [self setupConstraints];
     }
@@ -205,22 +206,13 @@
     self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
     
     // 设置内容
-    if (comment.replyToArticle || comment.replyToComment) {
-        self.contentLabel.text = comment.content;
-    } else if (comment.replyToSecondComment) {
-        if (comment.replyUsername.length > 0) {
-            //TODO:@ “comment.replyUsername” 这个字体颜色0x666666
-            self.contentLabel.text = [NSString stringWithFormat:@"回复:@%@ : %@", comment.replyUsername, comment.content];
-        } else {
-            self.contentLabel.text = comment.content;
-        }
-    }
+    self.contentLabel.text = comment.content;
     [self.contentLabel sizeToFit];
     CGFloat contentHeight = [self heightForText:self.contentLabel.text
                                       withFont:[UIFont pingFangRegularWithSize:14]
                                         width:width];
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(contentHeight);
+        make.height.mas_greaterThanOrEqualTo(contentHeight);
     }];
     
     [self.interactionBar updateLikeNumber:comment.likeCount];
@@ -347,7 +339,7 @@
                 [insertNodeRows addObject:[NSIndexPath indexPathForRow:startIndex + i inSection:0]];
             }
         }
-
+        self.expandCount = self.displayedSecondaryComments.count;
         // 如果所有评论都已加载，隐藏"展开更多评论"按钮
         if (self.displayedSecondaryComments.count >= self.secondaryComments.count) {
             self.showMoreButton.hidden = YES;
@@ -416,9 +408,16 @@
     
     CGFloat baseHeight = 16 + 30 + 8;
     CGFloat contentWidth = tableView.frame.size.width - 60;
-    CGFloat contentHeight = [self heightForText:secondaryComment.content
+    NSString* content = @"";
+    if (secondaryComment.replyToSecondComment && secondaryComment.replyUsername.length > 0) {
+        content = [NSString stringWithFormat:@"回复@%@ : %@", secondaryComment.replyUsername, secondaryComment.content];
+    } else {
+        content = secondaryComment.content;
+    }
+    CGFloat contentHeight = [self heightForText:content
                                        withFont:[UIFont pingFangRegularWithSize:14]
                                           width:contentWidth];
+    NSLog(@"1--> content = %@, height = %.2f", content, contentHeight);
 
     return baseHeight + contentHeight + 12 + 16 + 8;
 }

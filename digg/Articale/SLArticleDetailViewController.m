@@ -55,6 +55,7 @@
 @property (nonatomic, assign) CGFloat scrollThreshold;
 @property (nonatomic, assign) NSTimeInterval lastScrollTime;
 @property (nonatomic, assign) CGFloat scrollVelocity;
+@property (nonatomic, assign) BOOL isAtBottomState;
 
 @end
 
@@ -131,7 +132,7 @@
     if (@available(iOS 15.0, *)) {
         self.tableView.sectionHeaderTopPadding = 0;
     }
-    
+    self.tableView.bounces = NO;
     [self.view addSubview:self.tableView];
     
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -604,35 +605,53 @@
     
     self.lastScrollTime = currentTime;
     
-    // 判断滚动方向和速度
+    // 获取当前内容偏移量
     CGFloat contentOffset = scrollView.contentOffset.y;
     
-    // 滚动到顶部时显示导航栏
+    // 保存上次偏移量，确保每次调用都能正确更新
+    CGFloat previousOffset = self.lastContentOffset;
+    self.lastContentOffset = contentOffset;
+    
+    // 滚动到顶部时显示导航栏和工具栏
     if (contentOffset <= 0) {
-        NSLog(@"--> scrollViewDidScroll contentOffset <= 0");
         [self updateBarsPosition:0.0 animated:NO];
-        self.lastContentOffset = contentOffset;
         return;
     }
 
     // 检测是否滚动到底部
     CGFloat contentHeight = scrollView.contentSize.height;
     CGFloat scrollViewHeight = scrollView.frame.size.height;
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10); // 添加10像素的容差
+    CGFloat bottomThreshold = 30.0; // 增加容差值，更可靠地检测底部
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - bottomThreshold);
     
-    if (isAtBottom) {
-        // 滚动到底部时显示导航栏和底部工具栏
-        NSLog(@"--> scrollViewDidScroll isAtBottom");
-        [self updateBarsPosition:0.0 animated:YES];
-        self.lastContentOffset = contentOffset;
+    // 如果已经处于底部状态或者当前检测到底部
+    if (self.isAtBottomState || isAtBottom) {
+        // 确保状态标记设置为YES
+        if (!self.isAtBottomState) {
+            [self updateBarsPosition:0.0 animated:YES];
+            self.isAtBottomState = YES;
+        }
         return;
     }
     
-    // 根据滚动方向调整进度
-    CGFloat diff = contentOffset - self.lastContentOffset;
+    // 只有确定不在底部时才重置状态
+    if (contentOffset < contentHeight - scrollViewHeight - bottomThreshold - 20) {
+        self.isAtBottomState = NO;
+    }
     
-    // 移除快速滚动的直接跳变，改为根据滚动方向逐渐调整进度
-    CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
+    // 根据滚动方向调整进度
+    CGFloat diff = contentOffset - previousOffset;
+    
+    // 获取当前进度
+    CGFloat currentProgress;
+    if (self.isNavBarHidden) {
+        currentProgress = 1.0;
+    } else {
+        // 通过当前约束值计算进度
+        CGFloat navBarTop = self.navigationBar.frame.origin.y;
+        currentProgress = MAX(0, MIN(1, navBarTop / -NAVBAR_HEIGHT));
+    }
+    
     CGFloat targetProgress = currentProgress;
     
     // 向下滚动（内容向上移动），增加进度（隐藏导航栏）
@@ -649,29 +668,28 @@
     }
     
     // 更新导航栏和底部工具栏位置，使用平滑过渡
-    NSLog(@"--> scrollViewDidScroll targetProgress");
     [self updateBarsPosition:targetProgress animated:NO];
-    
-    self.lastContentOffset = contentOffset;
 }
 
-// 修改滚动结束处理，使其更平滑
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     // 检测是否滚动到底部
     CGFloat contentOffset = scrollView.contentOffset.y;
     CGFloat contentHeight = scrollView.contentSize.height;
     CGFloat scrollViewHeight = scrollView.frame.size.height;
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10);
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
     
     if (isAtBottom) {
-        // 滚动到底部时显示导航栏和底部工具栏
-        NSLog(@"--> scrollViewDidEndDragging isAtBottom");
-        [self updateBarsPosition:0.0 animated:YES];
+        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
+        if (!self.isAtBottomState) {
+            [self updateBarsPosition:0.0 animated:YES];
+            self.isAtBottomState = YES;
+        }
         return;
     }
     
+    // 如果不会减速，则直接完成滚动
     if (!decelerate) {
-        [self finishScrollingWithVelocity:0];
+        [self finishScrollingWithVelocity:self.scrollVelocity];
     }
 }
 
@@ -680,21 +698,26 @@
     CGFloat contentOffset = scrollView.contentOffset.y;
     CGFloat contentHeight = scrollView.contentSize.height;
     CGFloat scrollViewHeight = scrollView.frame.size.height;
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 10);
+    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
     
     if (isAtBottom) {
-        // 滚动到底部时显示导航栏和底部工具栏
-        NSLog(@"--> scrollViewDidEndDecelerating isAtBottom");
-        [self updateBarsPosition:0.0 animated:YES];
+        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
+        if (!self.isAtBottomState) {
+            [self updateBarsPosition:0.0 animated:YES];
+            self.isAtBottomState = YES;
+        }
         return;
+    } else {
+        // 不在底部时重置状态
+        self.isAtBottomState = NO;
     }
     
-    [self finishScrollingWithVelocity:0];
+    // 完成滚动，使用当前速度决定最终状态
+    [self finishScrollingWithVelocity:self.scrollVelocity];
 }
 
-// 修改更新方法，添加平滑过渡
+// 更新导航栏和工具栏位置，添加透明度渐变效果
 - (void)updateBarsPosition:(CGFloat)progress animated:(BOOL)animated {
-    NSLog(@"--> updateBarsPosition progress = %.2f animated = %d", progress, animated);
     // 计算导航栏应该移动的距离
     CGFloat navBarOffset = -NAVBAR_HEIGHT * progress;
     CGFloat tabBarOffset = self.tabBarHeight * progress;
@@ -709,12 +732,26 @@
         make.bottom.equalTo(self.view).offset(tabBarOffset);
     }];
     
+    // 添加导航栏透明度渐变效果
+    self.navigationBar.alpha = 1.0 - progress;
+    
+    // 确保tableView不超过顶部安全区
+    UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
+    if (@available(iOS 11.0, *)) {
+        safeAreaInsets = self.view.safeAreaInsets;
+    }
+    
+    // 调整tableView的顶部约束，确保不超过安全区
+    [self.tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(MAX(safeAreaInsets.top, NAVBAR_HEIGHT * (1.0 - progress)));
+    }];
+    
     // 更新状态
     self.isNavBarHidden = (progress >= 0.99);
     self.isToolbarHidden = (progress >= 0.99);
     
     if (animated) {
-        // 使用弹性动画效果，更接近 Apple News
+        // 使用弹性动画效果，更接近原生体验
         [UIView animateWithDuration:0.3
                               delay:0
              usingSpringWithDamping:0.8
@@ -730,24 +767,26 @@
 
 // 根据最终速度决定导航栏和底部工具栏的最终状态
 - (void)finishScrollingWithVelocity:(CGFloat)velocity {
-    // 获取当前导航栏的位置
+    // 获取当前进度
     CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
     
-    // 如果接近某个状态，直接设置为该状态
-    if (currentProgress < 0.1) {
-        NSLog(@"--> finishScrollingWithVelocity currentProgress < 0.1");
-        [self updateBarsPosition:0.0 animated:YES]; // 显示
+    // 快速滑动阈值
+    CGFloat fastScrollThreshold = 300.0;
+    
+    // 根据当前进度和速度决定最终状态
+    if (velocity > fastScrollThreshold) {
+        // 快速向下滑动，显示导航栏和工具栏
+        [self updateBarsPosition:0.0 animated:YES];
+    } else if (currentProgress < 0.1) {
+        [self updateBarsPosition:0.0 animated:YES];
     } else if (currentProgress > 0.9) {
-        NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.9");
-        [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+        [self updateBarsPosition:1.0 animated:YES];
     } else {
-        // 如果在中间状态，根据进度决定
+        // 根据当前进度决定
         if (currentProgress > 0.5) {
-            NSLog(@"--> finishScrollingWithVelocity currentProgress > 0.5");
-            [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+            [self updateBarsPosition:1.0 animated:YES];
         } else {
-            NSLog(@"--> finishScrollingWithVelocity currentProgress <= 0.5");
-            [self updateBarsPosition:0.0 animated:YES]; // 显示
+            [self updateBarsPosition:0.0 animated:YES];
         }
     }
 }

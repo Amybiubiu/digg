@@ -77,7 +77,7 @@
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(44);
         make.top.equalTo(self.contentView).offset(16);
-        make.size.mas_equalTo(CGSizeMake(30, 30)).priorityHigh;
+        make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -99,7 +99,7 @@
         make.left.equalTo(self.avatarImageView);
         make.top.equalTo(self.avatarImageView.mas_bottom).offset(8);
         make.right.equalTo(self.contentView).offset(-16);
-        make.height.mas_greaterThanOrEqualTo(0);
+//        make.height.mas_greaterThanOrEqualTo(0);
     }];
     
     [self.interactionBar mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -139,17 +139,35 @@
         self.contentLabel.text = comment.content;
     } else if (comment.replyToSecondComment) {
         if (comment.replyUsername.length > 0) {
-            self.contentLabel.text = [NSString stringWithFormat:@"回复:%@ : %@", comment.replyUsername, comment.content];
+            // 使用 NSAttributedString 设置不同部分的文本颜色
+            NSString *fullText = [NSString stringWithFormat:@"回复@%@ : %@", comment.replyUsername, comment.content];
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:fullText];
+            
+            // 设置整体文本颜色为默认颜色
+            [attributedString addAttribute:NSForegroundColorAttributeName 
+                                     value:Color16(0x313131) 
+                                     range:NSMakeRange(0, fullText.length)];
+            
+            // 计算用户名部分的范围
+            NSString *replyPrefix = @"回复";
+            NSRange usernameRange = NSMakeRange(replyPrefix.length, comment.replyUsername.length + 1);
+            
+            // 设置用户名部分的颜色为 0x666666
+            [attributedString addAttribute:NSForegroundColorAttributeName 
+                                     value:Color16(0x666666) 
+                                     range:usernameRange];
+            
+            // 设置字体
+            [attributedString addAttribute:NSFontAttributeName 
+                                     value:[UIFont pingFangRegularWithSize:14] 
+                                     range:NSMakeRange(0, fullText.length)];
+            
+            self.contentLabel.attributedText = attributedString;
         } else {
             self.contentLabel.text = comment.content;
         }
     }
     [self.contentLabel sizeToFit];
-    CGFloat contentHeight = [self heightForText:self.contentLabel.text
-                                       withFont:[UIFont pingFangRegularWithSize:14] width:width];
-    [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(contentHeight);
-    }];
     
     [self.interactionBar updateLikeNumber:comment.likeCount];
     [self.interactionBar updateDislikeNumber:comment.dislikeCount];
