@@ -56,7 +56,7 @@
             
             // 解析评论列表
             if (dict[@"comments"]) {
-                self.commentList = [NSArray yy_modelArrayWithClass:[SLCommentEntity class] json:dict[@"comments"]];
+                self.commentList = [NSMutableArray arrayWithArray:[NSArray yy_modelArrayWithClass:[SLCommentEntity class] json:dict[@"comments"]]];
             }
             
             // 解析用户信息

@@ -35,7 +35,6 @@
         self.contentView.backgroundColor = UIColor.clearColor;
         self.secondaryComments = [NSMutableArray array];
         self.displayedSecondaryComments = [NSMutableArray array];
-        self.expandCount = 1;
         [self setupUI];
         [self setupConstraints];
     }
@@ -220,6 +219,21 @@
     [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
     [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
     
+    // 根据 comment 中存储的展开数量初始化 displayedSecondaryComments
+    if (!self.displayedSecondaryComments) {
+        self.displayedSecondaryComments = [NSMutableArray array];
+    } else {
+        [self.displayedSecondaryComments removeAllObjects];
+    }
+    
+    // 如果有回复列表且展开数量大于0，则添加相应数量的回复到显示列表
+    if (comment.replyList && comment.replyList.count > 0 && comment.expandedRepliesCount > 0) {
+        NSInteger count = MIN(comment.expandedRepliesCount, comment.replyList.count);
+        for (NSInteger i = 0; i < count; i++) {
+            [self.displayedSecondaryComments addObject:comment.replyList[i]];
+        }
+    }
+
     // 处理二级评论
     if (comment.replyList && comment.replyList.count > 0) {
         self.secondaryCommentsTableView.hidden = NO;
@@ -258,7 +272,9 @@
         
         // 初始只显示第一条评论
         if (self.secondaryComments.count > 0) {
-            [self.displayedSecondaryComments addObject:self.secondaryComments[0]];
+            if (self.displayedSecondaryComments.count == 0) {
+                [self.displayedSecondaryComments addObject:self.secondaryComments[0]];
+            }
         }
         
         // 更新UI
@@ -339,7 +355,7 @@
                 [insertNodeRows addObject:[NSIndexPath indexPathForRow:startIndex + i inSection:0]];
             }
         }
-        self.expandCount = self.displayedSecondaryComments.count;
+
         // 如果所有评论都已加载，隐藏"展开更多评论"按钮
         if (self.displayedSecondaryComments.count >= self.secondaryComments.count) {
             self.showMoreButton.hidden = YES;
@@ -368,6 +384,12 @@
             }];
         } completion:^(BOOL finished) {
         }];
+        
+        // 更新 comment 中的展开数量
+        self.comment.expandedRepliesCount = self.displayedSecondaryComments.count;
+        if (self.expandHandler) {
+            self.expandHandler(self.comment, self.index);
+        }
     }
 }
 
@@ -435,12 +457,6 @@
 }
 
 #pragma mark - Actions
-
-- (void)expandButtonTapped {
-    if (self.expandHandler) {
-        self.expandHandler();
-    }
-}
 
 - (void)replyButtonTapped {
     if (self.replyHandler) {

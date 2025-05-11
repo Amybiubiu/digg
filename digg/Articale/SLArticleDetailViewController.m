@@ -577,10 +577,14 @@
     if (!cell) {
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
-    
+    cell.index = indexPath.section;
     [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
     
     __weak typeof(self) weakSelf = self;
+    cell.expandHandler = ^(SLCommentEntity * _Nonnull comment, NSInteger index) {
+        weakSelf.viewModel.commentList[index] = comment;
+    };
+    
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
         [weakSelf replyToComment:commentEntity];
     };

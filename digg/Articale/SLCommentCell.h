@@ -22,12 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) SLSimpleInteractionBar *interactionBar;
 @property (nonatomic, strong) SLHomeTagViewV2 *tagView;
 @property (nonatomic, strong) SLCommentEntity *comment;
-@property (nonatomic, assign) NSInteger expandCount; //TODO: 这里数据应该存储到comment中，并且保存到列表中，这样才不会出错
+@property (nonatomic, assign) NSInteger index;
 
 @property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
-@property (nonatomic, copy) void (^expandHandler)(void);
+@property (nonatomic, copy) void (^expandHandler)(SLCommentEntity *comment, NSInteger index);
 
 - (void)setupUI;
 

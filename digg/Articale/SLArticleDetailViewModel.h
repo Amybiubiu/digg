@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SLArticleDetailViewModel : NSObject
 
 @property (nonatomic, strong) SLArticleDetailEntity *articleEntity;
-@property (nonatomic, strong) NSArray<SLCommentEntity *> *commentList;
+@property (nonatomic, strong) NSMutableArray<SLCommentEntity *> *commentList;
 @property (nonatomic, strong) SLUserDetailEntity *userEntity;
 @property (nonatomic, strong) NSArray<SLReferEntity *> *referList;
 
