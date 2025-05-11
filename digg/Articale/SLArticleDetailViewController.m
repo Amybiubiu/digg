@@ -321,15 +321,49 @@
     if (!self.articleContentView.isHidden) {
         height += [self.articleContentView getContentHeight];
         height += margin;
+        
+        [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
+        }];
+    } else {
+        [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(0);
+        }];
     }
+
     if (!self.tagListView.isHidden) {
         height += [self.tagListView getContentHeight];
         height += margin;
-    }
-    if (self.viewModel.referList.count > 0) {
-        height += [self.relatedLinksView getContentHeight];
+        
+        [self.tagListView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.articleContentView.mas_bottom).offset(margin);
+        }];
+    } else {
+        [self.tagListView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.articleContentView.mas_bottom).offset(0);
+        }];
     }
     
+    if (self.viewModel.referList.count > 0) {
+        height += [self.relatedLinksView getContentHeight];
+        
+        [self.tagListView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.tagListView.mas_bottom).offset(margin);
+        }];
+    } else {
+        [self.tagListView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.tagListView.mas_bottom).offset(0);
+        }];
+    }
+    
+    if (self.articleContentView.isHidden && self.tagListView.isHidden && self.viewModel.referList.count == 0) {
+        height -= margin;
+        
+        [self.articleHeaderView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(self.headerView);
+        }];
+    }
+
     CGRect frame = self.headerView.frame;
     frame.size.height = height;
     self.headerView.frame = frame;
@@ -562,23 +596,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
-
-#pragma mark - 评论展开方法
-
-- (void)expandButtonTapped:(UIButton *)button {
-//    NSString *commentId = objc_getAssociatedObject(button, "commentId");
-//    if (!commentId) return;
-//    
-//    // 增加展开计数
-//    NSInteger currentExpandCount = [self.viewModel isCommentExpanded:commentId] ? 1 : 0;
-//    [self.viewModel setCommentExpanded:commentId expanded:(currentExpandCount + 1)];
-//    
-//    // 刷新对应的section
-//    NSInteger section = [self findSectionForCommentId:commentId];
-//    if (section != NSNotFound) {
-//        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationFade];
-//    }
 }
 
 - (NSInteger)findSectionForCommentId:(NSString *)commentId {
