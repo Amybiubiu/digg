@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width;
  
-- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount;
+- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList totalCount:(NSInteger)totalCount;
 
 @end
 

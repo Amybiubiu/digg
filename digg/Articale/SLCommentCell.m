@@ -12,6 +12,7 @@
 #import <SDWebImage/SDWebImage.h>
 #import "SLArticleEntity.h"
 #import "SLSecondCommentCell.h"
+#import "NSString+UXing.h"
 
 @interface SLCommentCell () <SLSimpleInteractionBarDelegate, UITableViewDelegate, UITableViewDataSource>
 
@@ -125,8 +126,8 @@
     }];
     
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.contentView).offset(16);
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
+        make.left.equalTo(self.contentView).offset(16);
         make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
@@ -141,21 +142,21 @@
     }];
     
     [self.timeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.usernameLabel);
+        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
         make.top.equalTo(self.usernameLabel.mas_bottom).offset(1);
     }];
     
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.avatarImageView);
         make.top.equalTo(self.avatarImageView.mas_bottom).offset(8);
+        make.left.equalTo(self.contentView).offset(16);
         make.right.equalTo(self.contentView).offset(-16);
-        make.height.mas_greaterThanOrEqualTo(0);
+        make.height.mas_equalTo(0);
     }];
     
     [self.interactionBar mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentLabel.mas_bottom).offset(12);
         make.height.mas_equalTo(16);
-        make.left.equalTo(self.avatarImageView);
+        make.left.equalTo(self.contentView).offset(16);
         make.right.equalTo(self.contentView).offset(-16);
     }];
     
@@ -205,42 +206,33 @@
     self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
     
     // 设置内容
-    self.contentLabel.text = comment.content;
-    [self.contentLabel sizeToFit];
-    CGFloat contentHeight = [self heightForText:self.contentLabel.text
-                                      withFont:[UIFont pingFangRegularWithSize:14]
-                                        width:width];
-    [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_greaterThanOrEqualTo(contentHeight);
-    }];
+    if (comment.content.length > 0) {
+        self.contentLabel.attributedText = [comment.content attributedStringFromHTML];
+        CGFloat contentHeight = [self heightForAttributedString:self.contentLabel.attributedText withWidth:width];
+        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(contentHeight);
+        }];
+//        [self.contentLabel sizeToFit];
+    } else { // 处理内容为空的情况，确保高度为0
+        self.contentLabel.text = nil; // 清空文本
+        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(0);
+        }];
+    }
     
     [self.interactionBar updateLikeNumber:comment.likeCount];
     [self.interactionBar updateDislikeNumber:comment.dislikeCount];
     [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
     [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
-    
-    // 根据 comment 中存储的展开数量初始化 displayedSecondaryComments
-    if (!self.displayedSecondaryComments) {
-        self.displayedSecondaryComments = [NSMutableArray array];
-    } else {
-        [self.displayedSecondaryComments removeAllObjects];
-    }
-    
-    // 如果有回复列表且展开数量大于0，则添加相应数量的回复到显示列表
-    if (comment.replyList && comment.replyList.count > 0 && comment.expandedRepliesCount > 0) {
-        NSInteger count = MIN(comment.expandedRepliesCount, comment.replyList.count);
-        for (NSInteger i = 0; i < count; i++) {
-            [self.displayedSecondaryComments addObject:comment.replyList[i]];
-        }
-    }
 
     // 处理二级评论
+    [self.secondaryComments removeAllObjects];
+    [self.displayedSecondaryComments removeAllObjects];
     if (comment.replyList && comment.replyList.count > 0) {
         self.secondaryCommentsTableView.hidden = NO;
         // 更新二级评论列表
         [self updateRepliesWithList:comment.replyList 
-                        isCollapsed:YES 
-                        totalCount:comment.replyList.count];
+                        expandCount:comment.expandedRepliesCount];
     } else {
         self.secondaryCommentsTableView.hidden = YES;
         self.showMoreButton.hidden = YES;
@@ -261,29 +253,30 @@
         }];
     }
 
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
+     [self setNeedsLayout];
+     [self layoutIfNeeded];
+     self.contentLabel.preferredMaxLayoutWidth = self.contentLabel.frame.size.width;
 }
 
-- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList isCollapsed:(BOOL)isCollapsed totalCount:(NSInteger)totalCount {
+- (void)updateRepliesWithList:(NSArray<SLCommentEntity *> *)replyList expandCount:(NSInteger)expandCount {
     // 保存所有二级评论
     if (replyList && replyList.count > 0) {
         [self.secondaryComments addObjectsFromArray:replyList];
         
         // 初始只显示第一条评论
-        if (self.secondaryComments.count > 0) {
-            if (self.displayedSecondaryComments.count == 0) {
-                [self.displayedSecondaryComments addObject:self.secondaryComments[0]];
-            }
+        NSInteger count = MIN(expandCount, replyList.count);
+        for (NSInteger i = 0; i < count; i++) {
+            [self.displayedSecondaryComments addObject:replyList[i]];
+        }
+        
+        if (self.displayedSecondaryComments.count == 0) {
+            [self.displayedSecondaryComments addObject:replyList[0]];
         }
         
         // 更新UI
         self.secondaryCommentsTableView.hidden = NO;
+        self.line.hidden = self.showMoreButton.hidden = (self.displayedSecondaryComments.count >= self.secondaryComments.count);
         [self.secondaryCommentsTableView reloadData];
-        
-        // 如果有更多评论可以展示，显示"展开更多评论"按钮
-        self.line.hidden = self.showMoreButton.hidden = (self.secondaryComments.count <= 1);
-        
         // 更新表格视图高度
         [self updateSecondaryCommentsTableViewHeight];
     } else {
@@ -309,9 +302,22 @@
 
 - (void)updateSecondaryCommentsTableViewHeight {
     // 计算表格视图的高度
+    // [self.secondaryCommentsTableView layoutIfNeeded];
     CGFloat totalHeight = 0;
-    for (NSInteger i = 0; i < self.displayedSecondaryComments.count; i++) {
-        CGFloat cellHeight = [self tableView:self.secondaryCommentsTableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+    // for (NSInteger i = 0; i < self.displayedSecondaryComments.count; i++) {
+    //     CGFloat cellHeight = [self tableView:self.secondaryCommentsTableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+    //     totalHeight += cellHeight;
+    // }
+    NSInteger numberOfRows = 0;
+    if (self.secondaryCommentsTableView.dataSource && [self.secondaryCommentsTableView.dataSource respondsToSelector:@selector(tableView:numberOfRowsInSection:)]) {
+        numberOfRows = [self.secondaryCommentsTableView.dataSource tableView:self.secondaryCommentsTableView numberOfRowsInSection:0];
+    }
+    for (NSInteger i = 0; i < numberOfRows; i++) {
+        CGFloat cellHeight = 0;
+        // 使用 delegate 获取准确的行高
+        if (self.secondaryCommentsTableView.delegate && [self.secondaryCommentsTableView.delegate respondsToSelector:@selector(tableView:heightForRowAtIndexPath:)]) {
+            cellHeight = [self.secondaryCommentsTableView.delegate tableView:self.secondaryCommentsTableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
+        }
         totalHeight += cellHeight;
     }
     
@@ -347,6 +353,8 @@
     
     NSMutableArray * insertNodeRows = [NSMutableArray array];
     if (commentsToAdd > 0) {
+        [self.secondaryCommentsTableView beginUpdates];
+
         // 添加下一批评论
         NSInteger startIndex = self.displayedSecondaryComments.count;
         for (NSInteger i = 0; i < commentsToAdd; i++) {
@@ -355,7 +363,12 @@
                 [insertNodeRows addObject:[NSIndexPath indexPathForRow:startIndex + i inSection:0]];
             }
         }
+        
+        // 使用 UITableViewRowAnimationAutomatic 以获得更平滑的视觉效果，如果需要无动画，则用 UITableViewRowAnimationNone
+        [self.secondaryCommentsTableView insertRowsAtIndexPaths:[NSArray arrayWithArray:insertNodeRows] withRowAnimation:UITableViewRowAnimationAutomatic];
 
+        [self.secondaryCommentsTableView endUpdates];
+        
         // 如果所有评论都已加载，隐藏"展开更多评论"按钮
         if (self.displayedSecondaryComments.count >= self.secondaryComments.count) {
             self.showMoreButton.hidden = YES;
@@ -366,23 +379,25 @@
                 make.height.mas_equalTo(0);
                 make.bottom.equalTo(self.contentView).offset(-8);
             }];
+        } else {
+            self.showMoreButton.hidden = NO;
+            self.line.hidden = NO;
+            [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.secondaryCommentsTableView.mas_bottom).offset(8);
+                make.left.equalTo(self.contentView).offset(44);
+                make.height.mas_equalTo(20);
+                make.bottom.equalTo(self.contentView).offset(-24);
+            }];
         }
         
-        // 更新表格视图高度（带动画效果）
+        // [self.secondaryCommentsTableView layoutIfNeeded];
         CGFloat totalHeight = 0;
         for (NSInteger i = 0; i < self.displayedSecondaryComments.count; i++) {
             CGFloat cellHeight = [self tableView:self.secondaryCommentsTableView heightForRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]];
             totalHeight += cellHeight;
         }
-        
-        // 获取父表格视图，用于后续更新
-        UITableView *parentTableView = [self findParentTableView];
-        [parentTableView performBatchUpdates:^{
-            [self.secondaryCommentsTableView insertRowsAtIndexPaths:[NSArray arrayWithArray:insertNodeRows] withRowAnimation:UITableViewRowAnimationNone];
-            [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.height.mas_equalTo(totalHeight).priorityHigh;
-            }];
-        } completion:^(BOOL finished) {
+        [self.secondaryCommentsTableView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(totalHeight);
         }];
         
         // 更新 comment 中的展开数量
@@ -390,6 +405,27 @@
         if (self.expandHandler) {
             self.expandHandler(self.comment, self.index);
         }
+
+//        // 强制 SLCommentCell 更新其布局以反映 secondaryCommentsTableView 的新高度
+//        // 这确保了当父 UITableView 请求此单元格的高度时，它是基于最新状态计算的。
+//        [self setNeedsLayout];
+//        [self layoutIfNeeded];
+//
+//        // 通知父表格视图更新
+//        UITableView *parentTableView = [self findParentTableView];
+//        if (parentTableView) {
+//            // 异步延迟父表格视图的更新，以允许当前单元格的动画和布局更改完成
+//            // 这有助于防止 UITableView 的内部不一致错误
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                // 添加一个检查，确保单元格仍在窗口中，以防它在异步块执行前被回收
+//                if (self.window) {
+//                    [parentTableView beginUpdates];
+//                    // 当父 UITableView 请求此单元格的新大小时 (通过 systemLayoutSizeFittingSize:)，
+//                    // Auto Layout 系统应根据更新后的 secondaryCommentsTableView 高度约束来计算正确的单元格总高度。
+//                    [parentTableView endUpdates];
+//                }
+//            });
+//        }
     }
 }
 
@@ -411,11 +447,15 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row >= self.displayedSecondaryComments.count) {
+        return nil;
+    }
     SLCommentEntity *secondaryComment = self.displayedSecondaryComments[indexPath.row];
     SLSecondCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SecondaryCommentCell"];
     if (!cell) {
         cell = [[SLSecondCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SecondaryCommentCell"];
     }
+    [cell prepareForReuse];
     // 配置二级评论单元格
     [cell updateWithComment:secondaryComment authorId:self.authorId contentWidth:tableView.frame.size.width - 60];
         
@@ -426,34 +466,67 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 根据内容动态计算高度
+    if (indexPath.row >= self.displayedSecondaryComments.count) {
+        return 0;
+    }
     SLCommentEntity *secondaryComment = self.displayedSecondaryComments[indexPath.row];
     
     CGFloat baseHeight = 16 + 30 + 8;
     CGFloat contentWidth = tableView.frame.size.width - 60;
-    NSString* content = @"";
+    
+    CGFloat contentHeight = 0;
     if (secondaryComment.replyToSecondComment && secondaryComment.replyUsername.length > 0) {
-        content = [NSString stringWithFormat:@"回复@%@ : %@", secondaryComment.replyUsername, secondaryComment.content];
+        NSAttributedString *htmlAttributedString = [secondaryComment.content attributedStringFromHTML];
+
+        NSString *prefixString = [NSString stringWithFormat:@"回复@%@ : ", secondaryComment.replyUsername];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:prefixString];
+
+        [attributedString addAttribute:NSForegroundColorAttributeName
+                                 value:Color16(0x313131)
+                                 range:NSMakeRange(0, prefixString.length)];
+
+        NSString *atString = [NSString stringWithFormat:@"@%@", secondaryComment.replyUsername];
+        NSRange atRange = [prefixString rangeOfString:atString];
+        if (atRange.location != NSNotFound) {
+            [attributedString addAttribute:NSForegroundColorAttributeName
+                                     value:Color16(0x666666)
+                                     range:atRange];
+        }
+        if (htmlAttributedString) {
+            [attributedString appendAttributedString:htmlAttributedString];
+        }
+
+        [attributedString addAttribute:NSFontAttributeName
+                                 value:[UIFont pingFangRegularWithSize:14]
+                                 range:NSMakeRange(0, attributedString.length)];
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:8.0];
+        [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+        [attributedString addAttribute:NSParagraphStyleAttributeName
+                                 value:paragraphStyle
+                                 range:NSMakeRange(0, attributedString.length)];
+        contentHeight = [self heightForAttributedString:attributedString withWidth:contentWidth];
     } else {
-        content = secondaryComment.content;
+        contentHeight = [self heightForAttributedString:[secondaryComment.content attributedStringFromHTML] withWidth:contentWidth];
     }
-    CGFloat contentHeight = [self heightForText:content
-                                       withFont:[UIFont pingFangRegularWithSize:14]
-                                          width:contentWidth];
-    NSLog(@"1--> content = %@, height = %.2f", content, contentHeight);
 
     return baseHeight + contentHeight + 12 + 16 + 8;
 }
 
-- (CGFloat)heightForText:(NSString *)text withFont:(UIFont *)font width:(CGFloat)width {
-    if (!text || text.length == 0) {
-        return 0;
-    }
+- (CGFloat)heightForAttributedString:(NSAttributedString *)attributedString
+                          withWidth:(CGFloat)width {
+    if (!attributedString) return 0;
     
-    CGRect rect = [text boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX)
-                                     options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                  attributes:@{NSFontAttributeName: font}
-                                     context:nil];
-    return ceil(rect.size.height);
+    // 计算尺寸的约束
+    CGSize constraintSize = CGSizeMake(width, CGFLOAT_MAX);
+    
+    // 计算矩形
+    CGRect boundingRect = [attributedString boundingRectWithSize:constraintSize
+                                                         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                         context:nil];
+    
+    // 返回向上取整的高度
+    return ceil(boundingRect.size.height);
 }
 
 #pragma mark - Actions

@@ -59,6 +59,7 @@
     [self.richTextView html2AttributedstringWithHtml:richContent];
     [self.richTextView hidePlaceHolder];
     
+//    [self.richTextView layoutIfNeeded];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self updateRichTextViewHeight];
     });

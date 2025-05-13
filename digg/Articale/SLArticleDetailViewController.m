@@ -125,7 +125,7 @@
     self.tableView.backgroundColor = UIColor.clearColor; //[SLColorManager primaryBackgroundColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
-    self.tableView.estimatedRowHeight = 44.0;
+    self.tableView.estimatedRowHeight = 100.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     [self.tableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"CommentCell"];
     self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -564,25 +564,42 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.viewModel.commentList.count;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 1;
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.viewModel.commentList.count;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
+    SLCommentEntity *comment = self.viewModel.commentList[indexPath.row];
     SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CommentCell"];
     if (!cell) {
         cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CommentCell"];
     }
-    cell.index = indexPath.section;
-    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
+    [cell prepareForReuse];
+    cell.index = indexPath.row;
     
     __weak typeof(self) weakSelf = self;
     cell.expandHandler = ^(SLCommentEntity * _Nonnull comment, NSInteger index) {
-        weakSelf.viewModel.commentList[index] = comment;
+//        weakSelf.viewModel.commentList[index] = comment;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // 更新数据模型
+            if (index < weakSelf.viewModel.commentList.count) { // 添加边界检查
+                weakSelf.viewModel.commentList[index] = comment;
+            }
+
+            // 通知 TableView 更新布局以反映 Cell 高度变化
+            // 这会使 UITableViewAutomaticDimension 重新计算高度
+            [weakSelf.tableView beginUpdates];
+            [weakSelf.tableView endUpdates];
+
+            // 或者，如果只想刷新特定行并带有动画（但 beginUpdates/endUpdates 通常对高度变化更稳妥）:
+            // NSIndexPath *currentIndexPath = [NSIndexPath indexPathForRow:index inSection:indexPath.section]; // 确保 indexPath 是最新的
+            // if ([weakSelf.tableView.indexPathsForVisibleRows containsObject:currentIndexPath]) {
+            //    [weakSelf.tableView reloadRowsAtIndexPaths:@[currentIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            // }
+        });
     };
     
     cell.replyHandler = ^(SLCommentEntity *commentEntity) {
@@ -592,6 +609,8 @@
     cell.likeHandler = ^(SLCommentEntity *commentEntity) {
         [weakSelf likeComment:commentEntity];
     };
+    
+    [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
     
     return cell;
 }
@@ -771,19 +790,19 @@
     self.isNavBarHidden = (progress >= 0.99);
     self.isToolbarHidden = (progress >= 0.99);
     
-    if (animated) {
-        // 使用弹性动画效果，更接近原生体验
-        [UIView animateWithDuration:0.3
-                              delay:0
-             usingSpringWithDamping:0.8
-              initialSpringVelocity:0.2
-                            options:UIViewAnimationOptionAllowUserInteraction
-                         animations:^{
-            [self.view layoutIfNeeded];
-        } completion:nil];
-    } else {
-        [self.view layoutIfNeeded];
-    }
+//    if (animated) {
+//        // 使用弹性动画效果，更接近原生体验
+//        [UIView animateWithDuration:0.3
+//                              delay:0
+//             usingSpringWithDamping:0.8
+//              initialSpringVelocity:0.2
+//                            options:UIViewAnimationOptionAllowUserInteraction
+//                         animations:^{
+//            [self.view layoutIfNeeded];
+//        } completion:nil];
+//    } else {
+//        [self.view layoutIfNeeded];
+//    }
 }
 
 // 根据最终速度决定导航栏和底部工具栏的最终状态

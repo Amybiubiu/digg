@@ -92,4 +92,7 @@
 - (CGFloat)heightForFont:(UIFont *)font width:(CGFloat)width;
 
 + (NSString *)timeStmpWith:(NSTimeInterval)gmtCreate;
+
+- (NSAttributedString *)attributedStringFromHTML;
+
 @end

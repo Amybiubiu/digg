@@ -11,6 +11,7 @@
 #import "SLColorManager.h"
 #import <SDWebImage/SDWebImage.h>
 #import "SLArticleEntity.h"
+#import "NSString+UXing.h"
 
 @interface SLSecondCommentCell () <SLSimpleInteractionBarDelegate>
 
@@ -99,7 +100,6 @@
         make.left.equalTo(self.avatarImageView);
         make.top.equalTo(self.avatarImageView.mas_bottom).offset(8);
         make.right.equalTo(self.contentView).offset(-16);
-//        make.height.mas_greaterThanOrEqualTo(0);
     }];
     
     [self.interactionBar mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -135,38 +135,52 @@
     self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
     
     // 设置内容
-    if (comment.replyToArticle || comment.replyToComment) {
-        self.contentLabel.text = comment.content;
-    } else if (comment.replyToSecondComment) {
-        if (comment.replyUsername.length > 0) {
-            // 使用 NSAttributedString 设置不同部分的文本颜色
-            NSString *fullText = [NSString stringWithFormat:@"回复@%@ : %@", comment.replyUsername, comment.content];
-            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:fullText];
-            
-            // 设置整体文本颜色为默认颜色
-            [attributedString addAttribute:NSForegroundColorAttributeName 
-                                     value:Color16(0x313131) 
-                                     range:NSMakeRange(0, fullText.length)];
-            
-            // 计算用户名部分的范围
-            NSString *replyPrefix = @"回复";
-            NSRange usernameRange = NSMakeRange(replyPrefix.length, comment.replyUsername.length + 1);
-            
-            // 设置用户名部分的颜色为 0x666666
-            [attributedString addAttribute:NSForegroundColorAttributeName 
-                                     value:Color16(0x666666) 
-                                     range:usernameRange];
-            
-            // 设置字体
-            [attributedString addAttribute:NSFontAttributeName 
-                                     value:[UIFont pingFangRegularWithSize:14] 
-                                     range:NSMakeRange(0, fullText.length)];
-            
-            self.contentLabel.attributedText = attributedString;
-        } else {
-            self.contentLabel.text = comment.content;
+    if (comment.replyToSecondComment && comment.replyUsername.length > 0) {
+        // 1. 转换 HTML 内容为富文本
+        NSAttributedString *htmlAttributedString = [comment.content attributedStringFromHTML];
+
+        // 2. 构建完整文本
+        NSString *prefixString = [NSString stringWithFormat:@"回复@%@ : ", comment.replyUsername];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:prefixString];
+
+        // 3. 设置前缀文本的样式
+        // 设置整体颜色
+        [attributedString addAttribute:NSForegroundColorAttributeName
+                                 value:Color16(0x313131)
+                                 range:NSMakeRange(0, prefixString.length)];
+
+        // 4. 设置 @username 的特殊颜色
+        NSString *atString = [NSString stringWithFormat:@"@%@", comment.replyUsername];
+        NSRange atRange = [prefixString rangeOfString:atString];
+        if (atRange.location != NSNotFound) {
+            [attributedString addAttribute:NSForegroundColorAttributeName
+                                     value:Color16(0x666666)
+                                     range:atRange];
         }
+
+        // 5. 拼接 HTML 内容
+        if (htmlAttributedString) {
+            [attributedString appendAttributedString:htmlAttributedString];
+        }
+
+        // 6. 设置统一字体（覆盖HTML可能携带的字体）
+        [attributedString addAttribute:NSFontAttributeName
+                                 value:[UIFont pingFangRegularWithSize:14]
+                                 range:NSMakeRange(0, attributedString.length)];
+
+        // 7. 设置行间距
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:4.0];
+        [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+        [attributedString addAttribute:NSParagraphStyleAttributeName 
+                                 value:paragraphStyle 
+                                 range:NSMakeRange(0, attributedString.length)];
+
+        self.contentLabel.attributedText = attributedString;        
+    } else {
+        self.contentLabel.attributedText = [comment.content attributedStringFromHTML];
     }
+    
     [self.contentLabel sizeToFit];
     
     [self.interactionBar updateLikeNumber:comment.likeCount];
@@ -174,8 +188,8 @@
     [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
     [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
 
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
+//    [self layoutIfNeeded];
+//    self.contentLabel.preferredMaxLayoutWidth = self.contentLabel.frame.size.width;
 }
 
 - (CGFloat)heightForText:(NSString *)text withFont:(UIFont *)font width:(CGFloat)width {
