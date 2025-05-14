@@ -28,6 +28,7 @@
 #import "SLArticleHeaderView.h"
 #import "SLArticleContentView.h"
 #import "SLRelatedLinksView.h"
+#import "EnvConfigHeader.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -378,8 +379,6 @@
 - (void)loadComments {
     if (self.viewModel.commentList.count > 0) {
         [self.tableView reloadData];
-    } else {
-        // TODO：这里可以添加一个空状态视图的实现
     }
 }
 
@@ -417,7 +416,7 @@
 
 - (void)likeButtonTapped {
     if (![SLUser defaultUser].isLogin) {
-        [self showLoginAlert];
+        [self gotoLoginPage];
         return;
     }
     
@@ -438,14 +437,14 @@
 
 - (void)commentButtonTapped {
     if (![SLUser defaultUser].isLogin) {
-        [self showLoginAlert];
+        [self gotoLoginPage];
         return;
     }
     
     __weak typeof(self) weakSelf = self;
-    self.commentVC.placeholder = @"写评论...";
+    self.commentVC.placeholder = @"写回复";
     self.commentVC.submitHandler = ^(NSString *text) {
-        [weakSelf submitComment:text];
+        [weakSelf submitCommentToArticle:text];
     };
     [self.commentVC showInViewController:self];
 }
@@ -456,7 +455,7 @@
 
 - (void)bookmarkButtonTapped {
     if (![SLUser defaultUser].isLogin) {
-        [self showLoginAlert];
+        [self gotoLoginPage];
         return;
     }
     
@@ -478,10 +477,17 @@
 
 #pragma mark - Helper Methods
 
-- (void)showLoginAlert {
-//    [SLAlertManager showAlertWithTitle:@"提示" message:@"请先登录后再操作" confirmTitle:@"去登录" cancelTitle:@"取消" confirmHandler:^{
-//        [self gotoLogin];
-//    } cancelHandler:nil fromViewController:self];
+- (void)gotoLoginPage {
+    SLWebViewController *dvc = [[SLWebViewController alloc] init];
+    [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
+    dvc.hidesBottomBarWhenPushed = YES;
+    dvc.isLoginPage = YES;
+    @weakobj(self)
+    dvc.loginSucessCallback = ^{
+        @strongobj(self)
+        
+    };
+    [self presentViewController:dvc animated:YES completion:nil];
 }
 
 - (void)gotoLogin {
@@ -491,28 +497,38 @@
 //    [self presentViewController:loginVC animated:YES completion:nil];
 }
 
-- (void)submitComment:(NSString *)comment {
+- (void)submitCommentToArticle:(NSString *)comment {
     if (comment.length == 0) {
         return;
     }
     
-//    [SVProgressHUD show];
-//    __weak typeof(self) weakSelf = self;
-//    
-//    [self.viewModel submitCommentWithArticleID:self.articleId content:comment completion:^(BOOL success, NSError *error) {
-//        [SVProgressHUD dismiss];
-//        
-//        if (success) {
-//            // 更新评论数
-//            NSInteger commentCount = [weakSelf.commentCountLabel.text integerValue] + 1;
-//            weakSelf.commentCountLabel.text = [NSString stringWithFormat:@"%ld", (long)commentCount];
-//            
-//            // 重新加载评论
-//            [weakSelf loadComments];
-//        } else {
-//            [SLAlertManager showAlertWithTitle:@"提示" message:@"评论发送失败，请稍后重试" confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil fromViewController:weakSelf];
-//        }
-//    }];
+    [SVProgressHUD show];
+    __weak typeof(self) weakSelf = self;
+    
+    // 获取文章作者ID
+    NSString *replyUserId = self.viewModel.articleEntity.userId;
+    
+    // 调用ViewModel中的一级评论接口
+    [self.viewModel replyToArticle:self.articleId 
+                       replyUserId:replyUserId 
+                          content:comment 
+                    resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
+        [SVProgressHUD dismiss];
+        
+        if (newComment) {
+            // 更新评论数
+            [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
+            weakSelf.viewModel.articleEntity.commentsCnt += 1;
+            
+            // 重新加载评论列表
+            [weakSelf.tableView reloadData];
+            
+            // 显示成功提示
+            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+        } else {
+            //todo: 评论失败
+        }
+    }];
 }
 
 - (void)reportArticle {
@@ -942,7 +958,7 @@
 
 - (void)replyToComment:(SLCommentEntity *)comment {
     if (![SLUser defaultUser].isLogin) {
-        [self showLoginAlert];
+        [self gotoLoginPage];
         return;
     }
     
@@ -976,7 +992,7 @@
 
 - (void)likeComment:(SLCommentEntity *)comment {
     if (![SLUser defaultUser].isLogin) {
-        [self showLoginAlert];
+        [self gotoLoginPage];
         return;
     }
     

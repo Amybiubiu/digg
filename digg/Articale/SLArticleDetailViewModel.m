@@ -14,7 +14,6 @@
 
 @interface SLArticleDetailViewModel()
 
-@property (nonatomic, strong) NSMutableSet *expandedCommentIds; // 存储已展开的评论ID
 
 @end
 
@@ -23,7 +22,6 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.expandedCommentIds = [NSMutableSet set];
     }
     return self;
 }
@@ -98,134 +96,205 @@
     }];
 }
 
-- (void)likeArticle:(NSString *)articleId isLike:(BOOL)isLike resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
-    if (articleId.length == 0) {
-        if (handler) {
-            handler(NO, [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"文章ID不能为空"}]);
-        }
-        return;
-    }
+#pragma mark - 评论相关方法
+
+- (void)replyToArticle:(NSString *)articleId 
+            replyUserId:(NSString *)replyUserId 
+               content:(NSString *)content 
+         resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler {
     
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"articleId": articleId,
+        @"replyUserId": replyUserId,
+        @"content": content
+    };
+    
+    // 创建AFHTTPSessionManager
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
     [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
     
-    NSString *urlString = [NSString stringWithFormat:@"%@/article/like", APPBaseUrl];
+    NSString *urlString = [NSString stringWithFormat:@"%@/comment/replyToArticle", APPBaseUrl];
     
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"articleId"] = articleId;
-    parameters[@"isLike"] = @(isLike);
-    
-    [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 解析返回的评论数据
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            SLCommentEntity *newComment = [SLCommentEntity yy_modelWithJSON:responseObject];
+            
+            // 将新评论添加到评论列表
+            if (newComment) {
+                if (!self.commentList) {
+                    self.commentList = [NSMutableArray array];
+                }
+                [self.commentList insertObject:newComment atIndex:0];
+                
+                // 回调成功
+                if (handler) {
+                    handler(newComment, nil);
+                }
+                return;
+            }
+        }
+        
+        // 解析失败
         if (handler) {
-            handler(YES, nil);
+            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
+                                                 code:1001 
+                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
+            handler(nil, error);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
+        // 请求失败
         if (handler) {
-            handler(NO, error);
+            handler(nil, error);
         }
     }];
 }
 
-- (void)addComment:(NSString *)articleId content:(NSString *)content replyId:(nullable NSString *)replyId replyType:(NSInteger)replyType resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
-    if (articleId.length == 0) {
-        if (handler) {
-            handler(NO, [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"文章ID不能为空"}]);
-        }
-        return;
-    }
+- (void)replyToComment:(NSString *)articleId 
+              commentId:(NSString *)commentId 
+            replyUserId:(NSString *)replyUserId 
+                content:(NSString *)content 
+          resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler {
     
-    if (content.length == 0) {
-        if (handler) {
-            handler(NO, [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"评论内容不能为空"}]);
-        }
-        return;
-    }
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"articleId": articleId,
+        @"commentId": commentId,
+        @"replyUserId": replyUserId,
+        @"content": content
+    };
     
+    // 创建AFHTTPSessionManager
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
     [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
     
-    NSString *urlString = [NSString stringWithFormat:@"%@/comment/add", APPBaseUrl];
+    NSString *urlString = [NSString stringWithFormat:@"%@/comment/replyToComment", APPBaseUrl];
     
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"articleId"] = articleId;
-    parameters[@"content"] = content;
-    
-    if (replyType == 0) {
-        parameters[@"replyToArticle"] = @YES;
-        parameters[@"replyToComment"] = @NO;
-        parameters[@"replyToSecondComment"] = @NO;
-    } else if (replyType == 1) {
-        parameters[@"replyToArticle"] = @NO;
-        parameters[@"replyToComment"] = @YES;
-        parameters[@"replyToSecondComment"] = @NO;
-    } else if (replyType == 2) {
-        parameters[@"replyToArticle"] = @NO;
-        parameters[@"replyToComment"] = @NO;
-        parameters[@"replyToSecondComment"] = @YES;
-    }
-    
-    if (replyId.length > 0) {
-        parameters[@"replyId"] = replyId;
-    }
-    
-    [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 解析返回的评论数据
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            SLCommentEntity *newComment = [SLCommentEntity yy_modelWithJSON:responseObject];
+            
+            // 将新评论添加到对应的一级评论的回复列表中
+            if (newComment) {
+                // 查找对应的一级评论
+                for (SLCommentEntity *comment in self.commentList) {
+                    if ([comment.commentId isEqualToString:commentId]) {
+                        // 初始化回复列表（如果为空）
+                        if (!comment.replyList) {
+                            comment.replyList = [NSMutableArray array];
+                        } else if (![comment.replyList isKindOfClass:[NSMutableArray class]]) {
+                            // 如果是不可变数组，转换为可变数组
+                            comment.replyList = [NSMutableArray arrayWithArray:comment.replyList];
+                        }
+                        // 添加新回复
+                        [(NSMutableArray *)comment.replyList addObject:newComment];
+                        break;
+                    }
+                }
+                
+                // 回调成功
+                if (handler) {
+                    handler(newComment, nil);
+                }
+                return;
+            }
+        }
+        
+        // 解析失败
         if (handler) {
-            handler(YES, nil);
+            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
+                                                 code:1002 
+                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
+            handler(nil, error);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
+        // 请求失败
         if (handler) {
-            handler(NO, error);
+            handler(nil, error);
         }
     }];
 }
 
-- (void)likeComment:(NSString *)commentId isLike:(BOOL)isLike resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
-    if (commentId.length == 0) {
-        if (handler) {
-            handler(NO, [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"评论ID不能为空"}]);
-        }
-        return;
-    }
+- (void)replyToSecondComment:(NSString *)articleId 
+                rootCommentId:(NSString *)rootCommentId 
+                   commentId:(NSString *)commentId 
+                 replyUserId:(NSString *)replyUserId 
+                     content:(NSString *)content 
+               resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler {
     
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"articleId": articleId,
+        @"rootCommentId": rootCommentId,
+        @"commentId": commentId,
+        @"replyUserId": replyUserId,
+        @"content": content
+    };
+    
+    // 创建AFHTTPSessionManager
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
     [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
     
-    NSString *urlString = [NSString stringWithFormat:@"%@/comment/like", APPBaseUrl];
+    NSString *urlString = [NSString stringWithFormat:@"%@/comment/replyToSecondComment", APPBaseUrl];
     
-    NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
-    parameters[@"commentId"] = commentId;
-    parameters[@"isLike"] = @(isLike);
-    
-    [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        // 解析返回的评论数据
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            SLCommentEntity *newComment = [SLCommentEntity yy_modelWithJSON:responseObject];
+            
+            // 将新评论添加到对应的一级评论的回复列表中
+            if (newComment) {
+                // 设置回复标志
+                newComment.replyToSecondComment = YES;
+                
+                // 查找对应的一级评论
+                for (SLCommentEntity *comment in self.commentList) {
+                    if ([comment.commentId isEqualToString:rootCommentId]) {
+                        // 初始化回复列表（如果为空）
+                        if (!comment.replyList) {
+                            comment.replyList = [NSMutableArray array];
+                        } else if (![comment.replyList isKindOfClass:[NSMutableArray class]]) {
+                            // 如果是不可变数组，转换为可变数组
+                            comment.replyList = [NSMutableArray arrayWithArray:comment.replyList];
+                        }
+                        // 添加新回复
+                        [(NSMutableArray *)comment.replyList addObject:newComment];
+                        break;
+                    }
+                }
+                
+                // 回调成功
+                if (handler) {
+                    handler(newComment, nil);
+                }
+                return;
+            }
+        }
+        
+        // 解析失败
         if (handler) {
-            handler(YES, nil);
+            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
+                                                 code:1003 
+                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
+            handler(nil, error);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
+        // 请求失败
         if (handler) {
-            handler(NO, error);
+            handler(nil, error);
         }
     }];
-}
-
-- (BOOL)isCommentExpanded:(NSString *)commentId {
-    return [self.expandedCommentIds containsObject:commentId];
-}
-
-- (void)setCommentExpanded:(NSString *)commentId expanded:(BOOL)expanded {
-    if (expanded) {
-        [self.expandedCommentIds addObject:commentId];
-    } else {
-        [self.expandedCommentIds removeObject:commentId];
-    }
 }
 
 @end

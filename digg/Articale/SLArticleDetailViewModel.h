@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) SLArticleDetailEntity *articleEntity;
 @property (nonatomic, strong) NSMutableArray<SLCommentEntity *> *commentList;
 @property (nonatomic, strong) SLUserDetailEntity *userEntity;
-@property (nonatomic, strong) NSArray<SLReferEntity *> *referList;
+@property (nonatomic, strong) NSMutableArray<SLReferEntity *> *referList;
 
 /**
  * 加载文章详情
@@ -25,36 +25,46 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadArticleDetail:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
 
 /**
- * 点赞/取消点赞文章
+ * 添加一级评论（回复文章）
  * @param articleId 文章ID
- * @param isLike 是否点赞
- * @param handler 结果回调
- */
-- (void)likeArticle:(NSString *)articleId isLike:(BOOL)isLike resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
-
-/**
- * 添加评论
- * @param articleId 文章ID
+ * @param replyUserId 要评论的用户ID
  * @param content 评论内容
- * @param replyId 回复ID（如果是回复评论）
- * @param replyType 回复类型（0:回复文章, 1:回复评论, 2:回复二级评论）
- * @param handler 结果回调
+ * @param handler 结果回调，成功时返回新创建的评论实体
  */
-- (void)addComment:(NSString *)articleId content:(NSString *)content replyId:(nullable NSString *)replyId replyType:(NSInteger)replyType resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+ - (void)replyToArticle:(NSString *)articleId 
+ replyUserId:(NSString *)replyUserId 
+    content:(NSString *)content 
+resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler;
 
 /**
- * 点赞/取消点赞评论
- * @param commentId 评论ID
- * @param isLike 是否点赞
- * @param handler 结果回调
- */
-- (void)likeComment:(NSString *)commentId isLike:(BOOL)isLike resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+* 添加二级评论（回复评论）
+* @param articleId 文章ID
+* @param commentId 要回复的评论ID
+* @param replyUserId 要回复的用户ID
+* @param content 评论内容
+* @param handler 结果回调，成功时返回新创建的评论实体
+*/
+- (void)replyToComment:(NSString *)articleId 
+   commentId:(NSString *)commentId 
+ replyUserId:(NSString *)replyUserId 
+     content:(NSString *)content 
+resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler;
 
-// 检查评论是否处于展开状态
-- (BOOL)isCommentExpanded:(NSString *)commentId;
-
-// 设置评论的展开状态
-- (void)setCommentExpanded:(NSString *)commentId expanded:(BOOL)expanded;
+/**
+* 添加三级评论（回复二级评论）
+* @param articleId 文章ID
+* @param rootCommentId 当前评论里的根评论ID
+* @param commentId 要回复的评论ID
+* @param replyUserId 要回复的用户ID
+* @param content 评论内容
+* @param handler 结果回调，成功时返回新创建的评论实体
+*/
+- (void)replyToSecondComment:(NSString *)articleId 
+     rootCommentId:(NSString *)rootCommentId 
+        commentId:(NSString *)commentId 
+      replyUserId:(NSString *)replyUserId 
+          content:(NSString *)content 
+    resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler;
 
 @end
 

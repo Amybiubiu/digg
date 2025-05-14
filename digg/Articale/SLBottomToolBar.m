@@ -33,6 +33,7 @@
         [self.button setImage:[UIImage imageNamed:normalImage] forState:UIControlStateNormal];
         [self.button setImage:[UIImage imageNamed:selectedImage] forState:UIControlStateSelected];
         self.button.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        self.button.userInteractionEnabled = YES; // 确保按钮可以交
         [self.button addTarget:self action:@selector(buttonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:self.button];
         
@@ -122,6 +123,9 @@
         [weakSelf likeButtonTapped];
     };
     [self.stackView addArrangedSubview:self.likeView];
+    [self.likeView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(self.stackView);
+    }];
     
     // 创建评论按钮和计数视图
     self.commentView = [[SLButtonWithCountView alloc] initWithImage:@"comment_icon" selectedImage:@"comment_icon"];
@@ -129,6 +133,9 @@
         [weakSelf commentButtonTapped];
     };
     [self.stackView addArrangedSubview:self.commentView];
+    [self.commentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(self.stackView);
+    }];
     
     // 创建AI按钮视图
     self.aiView = [[SLButtonWithCountView alloc] initWithImage:@"ai_icon" selectedImage:@"ai_icon"];
@@ -136,6 +143,9 @@
         [weakSelf aiButtonTapped];
     };
     [self.stackView addArrangedSubview:self.aiView];
+    [self.aiView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(self.stackView);
+    }];
     
     // 创建分享按钮和计数视图
     self.shareView = [[SLButtonWithCountView alloc] initWithImage:@"share_icon" selectedImage:@"share_icon"];
@@ -143,6 +153,9 @@
         [weakSelf shareButtonTapped];
     };
     [self.stackView addArrangedSubview:self.shareView];
+    [self.shareView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(self.stackView);
+    }];
     
     [self.stackView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self);
