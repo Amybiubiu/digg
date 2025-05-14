@@ -643,28 +643,34 @@
 }
 
 - (void)loadMoreRepliesForComment:(SLCommentEntity *)comment atSection:(NSInteger)section {
-    // 计算还有多少评论可以加载
     NSInteger currentCount = comment.expandedRepliesCount;
     NSInteger totalReplies = comment.replyList.count;
-    
-    // 这里假设一次加载5条
     NSInteger batchSize = 5;
     NSInteger newCount = MIN(currentCount + batchSize, totalReplies);
-    
-    // 先更新数据模型
+
     comment.expandedRepliesCount = newCount;
-    
-    // 更新hasMore状态
+    NSMutableArray *indexPathsToInsert = [NSMutableArray array];
+    for (NSInteger i = currentCount + 1; i <= newCount; i++) {
+        [indexPathsToInsert addObject:[NSIndexPath indexPathForRow:i inSection:section]];
+    }
+
+    [self.tableView beginUpdates];
+    [self.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
+    [self.tableView endUpdates];
+
     BOOL hasMore = (newCount < totalReplies);
     comment.hasMore = hasMore;
-    
-    // 保存到viewModel中对应的索引
     if (section < self.viewModel.commentList.count) {
         self.viewModel.commentList[section] = comment;
     }
-    
-    // 简化处理：直接刷新整个section，避免批量更新不一致问题
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (!hasMore) {
+        NSInteger showMoreRow = newCount + 1;
+        if ([self.tableView numberOfRowsInSection:section] > showMoreRow) {
+            [self.tableView beginUpdates];
+            [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:showMoreRow inSection:section]] withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView endUpdates];
+        }
+    }
 }
 
 - (NSInteger)findSectionForCommentId:(NSString *)commentId {

@@ -136,9 +136,7 @@
 		3478D6CB2DC3A743007D366B /* SLArticleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C12DC3A743007D366B /* SLArticleEntity.m */; };
 		3478D6CC2DC3A743007D366B /* SLCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C52DC3A743007D366B /* SLCustomNavigationBar.m */; };
 		3478D6CD2DC3A743007D366B /* SLArticleDetailViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */; };
-		3478D6CE2DC3A743007D366B /* SLArticleDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */; };
 		3478D6D32DC3A884007D366B /* SLArticleTagCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D02DC3A884007D366B /* SLArticleTagCell.m */; };
-		3478D6D42DC3A884007D366B /* SLCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D22DC3A884007D366B /* SLCommentCell.m */; };
 		3478D6D72DC474B5007D366B /* SLArticleHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */; };
 		3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D92DC47C91007D366B /* SLArticleContentView.m */; };
 		3478D6DD2DC4A003007D366B /* SLRelatedLinksView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */; };
@@ -412,8 +410,6 @@
 		346B7EB32DD39AD8000525F7 /* SLCommentCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentCellV2.m; sourceTree = "<group>"; };
 		346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLShowMoreCell.h; sourceTree = "<group>"; };
 		346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLShowMoreCell.m; sourceTree = "<group>"; };
-		3478D6BC2DC3A743007D366B /* SLArticleDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewController.h; sourceTree = "<group>"; };
-		3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewController.m; sourceTree = "<group>"; };
 		3478D6BE2DC3A743007D366B /* SLArticleDetailViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewModel.h; sourceTree = "<group>"; };
 		3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewModel.m; sourceTree = "<group>"; };
 		3478D6C02DC3A743007D366B /* SLArticleEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleEntity.h; sourceTree = "<group>"; };
@@ -426,8 +422,6 @@
 		3478D6C72DC3A743007D366B /* SLTagListView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagListView.m; sourceTree = "<group>"; };
 		3478D6CF2DC3A884007D366B /* SLArticleTagCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleTagCell.h; sourceTree = "<group>"; };
 		3478D6D02DC3A884007D366B /* SLArticleTagCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleTagCell.m; sourceTree = "<group>"; };
-		3478D6D12DC3A884007D366B /* SLCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCommentCell.h; sourceTree = "<group>"; };
-		3478D6D22DC3A884007D366B /* SLCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentCell.m; sourceTree = "<group>"; };
 		3478D6D52DC474B5007D366B /* SLArticleHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleHeaderView.h; sourceTree = "<group>"; };
 		3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleHeaderView.m; sourceTree = "<group>"; };
 		3478D6D82DC47C91007D366B /* SLArticleContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleContentView.h; sourceTree = "<group>"; };
@@ -1031,10 +1025,6 @@
 				3478D6D62DC474B5007D366B /* SLArticleHeaderView.m */,
 				3478D6CF2DC3A884007D366B /* SLArticleTagCell.h */,
 				3478D6D02DC3A884007D366B /* SLArticleTagCell.m */,
-				3478D6D12DC3A884007D366B /* SLCommentCell.h */,
-				3478D6D22DC3A884007D366B /* SLCommentCell.m */,
-				3478D6BC2DC3A743007D366B /* SLArticleDetailViewController.h */,
-				3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */,
 				3478D6BE2DC3A743007D366B /* SLArticleDetailViewModel.h */,
 				3478D6BF2DC3A743007D366B /* SLArticleDetailViewModel.m */,
 				3478D6C02DC3A743007D366B /* SLArticleEntity.h */,
@@ -1739,7 +1729,6 @@
 				3478D6CB2DC3A743007D366B /* SLArticleEntity.m in Sources */,
 				3478D6CC2DC3A743007D366B /* SLCustomNavigationBar.m in Sources */,
 				3478D6CD2DC3A743007D366B /* SLArticleDetailViewModel.m in Sources */,
-				3478D6CE2DC3A743007D366B /* SLArticleDetailViewController.m in Sources */,
 				34A071082D72D999006BC583 /* Swizzler.m in Sources */,
 				3478D6D72DC474B5007D366B /* SLArticleHeaderView.m in Sources */,
 				34A071092D72D999006BC583 /* TMEventManager.m in Sources */,
@@ -1869,7 +1858,6 @@
 				346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */,
 				E76A45BC2CB8C08D008B2746 /* UIView+CommonKit.m in Sources */,
 				3478D6D32DC3A884007D366B /* SLArticleTagCell.m in Sources */,
-				3478D6D42DC3A884007D366B /* SLCommentCell.m in Sources */,
 				E7C1393C2CF33C8800C5053A /* SLHomeTagView.m in Sources */,
 				34933F842D2E780E009F781A /* SLProfileDynamicTableViewCell.m in Sources */,
 				E76A45B92CB8C06F008B2746 /* CaocaoButton.m in Sources */,
