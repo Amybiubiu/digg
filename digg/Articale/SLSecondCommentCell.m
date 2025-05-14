@@ -61,10 +61,6 @@
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
-    // self.contentLabel = [[UILabel alloc] init];
-    // self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
-    // self.contentLabel.textColor = Color16(0x313131);
-    // self.contentLabel.numberOfLines = 0;
     self.contentLabel = [[UITextView alloc] init];
     self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
     self.contentLabel.textColor = Color16(0x313131);
@@ -191,7 +187,6 @@
         self.contentLabel.attributedText = [comment.content attributedStringFromHTML];
     }
     
-    // [self.contentLabel sizeToFit];
     // 调整 UITextView 的大小
     CGSize contentSize = [self.contentLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {

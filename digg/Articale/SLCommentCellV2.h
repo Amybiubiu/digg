@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIImageView *avatarImageView;
 @property (nonatomic, strong) UILabel *usernameLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
-@property (nonatomic, strong) UILabel *contentLabel;
+@property (nonatomic, strong) UITextView *contentLabel;
 @property (nonatomic, strong) SLSimpleInteractionBar *interactionBar;
 @property (nonatomic, strong) SLHomeTagViewV2 *tagView;
 @property (nonatomic, strong) SLCommentEntity *comment;
@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
+@property (nonatomic, copy) void (^linkTapHandler)(NSURL *url);
 
 - (void)setupUI;
 

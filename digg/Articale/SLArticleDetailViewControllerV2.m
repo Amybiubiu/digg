@@ -594,6 +594,12 @@
             [weakSelf likeComment:commentEntity];
         };
         
+        cell.linkTapHandler = ^(NSURL *url) {
+            SLWebViewController *webVC = [[SLWebViewController alloc] init];
+            [webVC startLoadRequestWithUrl:url.absoluteString];
+            [self.navigationController pushViewController:webVC animated:YES];
+        };
+        
         [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
         return cell;
     } else if (indexPath.row <= comment.expandedRepliesCount) { 

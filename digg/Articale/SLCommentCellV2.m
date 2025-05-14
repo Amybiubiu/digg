@@ -13,7 +13,7 @@
 #import "SLArticleEntity.h"
 #import "NSString+UXing.h"
 
-@interface SLCommentCellV2 () <SLSimpleInteractionBarDelegate>
+@interface SLCommentCellV2 () <SLSimpleInteractionBarDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) UIView *sectionSegment;
 @property (nonatomic, strong) NSString* authorId;
@@ -67,10 +67,16 @@
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
-    self.contentLabel = [[UILabel alloc] init];
+    self.contentLabel = [[UITextView alloc] init];
     self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
     self.contentLabel.textColor = Color16(0x313131);
-    self.contentLabel.numberOfLines = 0;
+    self.contentLabel.editable = NO; // 设置为不可编辑
+    self.contentLabel.scrollEnabled = NO; // 禁用滚动
+    self.contentLabel.backgroundColor = [UIColor clearColor]; // 背景透明
+    self.contentLabel.textContainerInset = UIEdgeInsetsZero; // 移除内边距
+    self.contentLabel.textContainer.lineFragmentPadding = 0; // 移除行间距内边距
+    self.contentLabel.delegate = self; // 设置代理
+    self.contentLabel.dataDetectorTypes = UIDataDetectorTypeLink; // 启用链接检测
     [self.contentView addSubview:self.contentLabel];
     
     // 创建交互栏
@@ -149,10 +155,10 @@
     // 设置内容
     if (comment.content.length > 0) {
         self.contentLabel.attributedText = [comment.content attributedStringFromHTML];
-       CGFloat contentHeight = [self heightForAttributedString:self.contentLabel.attributedText withWidth:width];
-       [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-           make.height.mas_equalTo(contentHeight);
-       }];
+        CGSize contentSize = [self.contentLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)];
+        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(contentSize.height);
+        }];
     } else { // 处理内容为空的情况，确保高度为0
         self.contentLabel.text = nil; // 清空文本
        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -167,24 +173,24 @@
 
     [self setNeedsLayout];
     [self layoutIfNeeded];
-    self.contentLabel.preferredMaxLayoutWidth = self.contentLabel.frame.size.width;
-    [self.contentLabel sizeToFit];
 }
 
-- (CGFloat)heightForAttributedString:(NSAttributedString *)attributedString
-                          withWidth:(CGFloat)width {
-    if (!attributedString) return 0;
-    
-    // 计算尺寸的约束
-    CGSize constraintSize = CGSizeMake(width, CGFLOAT_MAX);
-    
-    // 计算矩形
-    CGRect boundingRect = [attributedString boundingRectWithSize:constraintSize
-                                                         options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                                         context:nil];
-    
-    // 返回向上取整的高度
-    return ceil(boundingRect.size.height);
+#pragma mark - UITextViewDelegate
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+    // 处理链接点击事件
+    if (URL) {
+        // 可以在这里添加自定义处理逻辑，例如打开内部浏览器
+        // 如果有专门的处理方法，可以调用它
+        if (self.linkTapHandler) {
+            self.linkTapHandler(URL);
+            return NO; // 返回 NO 表示我们自己处理，不使用系统默认行为
+        }
+        
+        // 如果没有自定义处理，使用系统默认行为打开链接
+        return YES;
+    }
+    return YES;
 }
 
 #pragma mark - Actions
