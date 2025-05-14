@@ -111,6 +111,7 @@
         make.top.equalTo(self.avatarImageView.mas_bottom).offset(8);
         make.left.equalTo(self.contentView).offset(16);
         make.right.equalTo(self.contentView).offset(-16);
+        make.height.mas_equalTo(0);
     }];
     
     [self.interactionBar mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -148,16 +149,15 @@
     // 设置内容
     if (comment.content.length > 0) {
         self.contentLabel.attributedText = [comment.content attributedStringFromHTML];
-//        CGFloat contentHeight = [self heightForAttributedString:self.contentLabel.attributedText withWidth:width];
-//        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-//            make.height.mas_equalTo(contentHeight);
-//        }];
-        [self.contentLabel sizeToFit];
+       CGFloat contentHeight = [self heightForAttributedString:self.contentLabel.attributedText withWidth:width];
+       [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+           make.height.mas_equalTo(contentHeight);
+       }];
     } else { // 处理内容为空的情况，确保高度为0
         self.contentLabel.text = nil; // 清空文本
-//        [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-//            make.height.mas_equalTo(0);
-//        }];
+       [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+           make.height.mas_equalTo(0);
+       }];
     }
     
     [self.interactionBar updateLikeNumber:comment.likeCount];
@@ -168,6 +168,7 @@
     [self setNeedsLayout];
     [self layoutIfNeeded];
     self.contentLabel.preferredMaxLayoutWidth = self.contentLabel.frame.size.width;
+    [self.contentLabel sizeToFit];
 }
 
 - (CGFloat)heightForAttributedString:(NSAttributedString *)attributedString
