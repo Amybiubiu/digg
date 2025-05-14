@@ -365,7 +365,7 @@
         }
         
         // 使用 UITableViewRowAnimationAutomatic 以获得更平滑的视觉效果，如果需要无动画，则用 UITableViewRowAnimationNone
-        [self.secondaryCommentsTableView insertRowsAtIndexPaths:[NSArray arrayWithArray:insertNodeRows] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.secondaryCommentsTableView insertRowsAtIndexPaths:[NSArray arrayWithArray:insertNodeRows] withRowAnimation:UITableViewRowAnimationBottom];
 
         [self.secondaryCommentsTableView endUpdates];
         
@@ -405,27 +405,6 @@
         if (self.expandHandler) {
             self.expandHandler(self.comment, self.index);
         }
-
-//        // 强制 SLCommentCell 更新其布局以反映 secondaryCommentsTableView 的新高度
-//        // 这确保了当父 UITableView 请求此单元格的高度时，它是基于最新状态计算的。
-//        [self setNeedsLayout];
-//        [self layoutIfNeeded];
-//
-//        // 通知父表格视图更新
-//        UITableView *parentTableView = [self findParentTableView];
-//        if (parentTableView) {
-//            // 异步延迟父表格视图的更新，以允许当前单元格的动画和布局更改完成
-//            // 这有助于防止 UITableView 的内部不一致错误
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                // 添加一个检查，确保单元格仍在窗口中，以防它在异步块执行前被回收
-//                if (self.window) {
-//                    [parentTableView beginUpdates];
-//                    // 当父 UITableView 请求此单元格的新大小时 (通过 systemLayoutSizeFittingSize:)，
-//                    // Auto Layout 系统应根据更新后的 secondaryCommentsTableView 高度约束来计算正确的单元格总高度。
-//                    [parentTableView endUpdates];
-//                }
-//            });
-//        }
     }
 }
 

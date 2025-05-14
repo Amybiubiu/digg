@@ -128,6 +128,9 @@
 		345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */; };
 		346485FE2D4284960084A3BF /* SLConcernedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 346485FD2D4284960084A3BF /* SLConcernedViewController.m */; };
 		346486012D4286050084A3BF /* SLConcernedViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 346486002D4286050084A3BF /* SLConcernedViewModel.m */; };
+		346B7EB42DD39AD8000525F7 /* SLCommentCellV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 346B7EB32DD39AD8000525F7 /* SLCommentCellV2.m */; };
+		346B7EB52DD39AD8000525F7 /* SLArticleDetailViewControllerV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 346B7EB12DD39AD8000525F7 /* SLArticleDetailViewControllerV2.m */; };
+		346B7EB82DD39C7B000525F7 /* SLShowMoreCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */; };
 		3478D6C92DC3A743007D366B /* SLTagListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C72DC3A743007D366B /* SLTagListView.m */; };
 		3478D6CA2DC3A743007D366B /* SLBottomToolBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C32DC3A743007D366B /* SLBottomToolBar.m */; };
 		3478D6CB2DC3A743007D366B /* SLArticleEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6C12DC3A743007D366B /* SLArticleEntity.m */; };
@@ -403,6 +406,12 @@
 		346485FD2D4284960084A3BF /* SLConcernedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewController.m; sourceTree = "<group>"; };
 		346485FF2D4286050084A3BF /* SLConcernedViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLConcernedViewModel.h; sourceTree = "<group>"; };
 		346486002D4286050084A3BF /* SLConcernedViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLConcernedViewModel.m; sourceTree = "<group>"; };
+		346B7EB02DD39AD8000525F7 /* SLArticleDetailViewControllerV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewControllerV2.h; sourceTree = "<group>"; };
+		346B7EB12DD39AD8000525F7 /* SLArticleDetailViewControllerV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewControllerV2.m; sourceTree = "<group>"; };
+		346B7EB22DD39AD8000525F7 /* SLCommentCellV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCommentCellV2.h; sourceTree = "<group>"; };
+		346B7EB32DD39AD8000525F7 /* SLCommentCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCommentCellV2.m; sourceTree = "<group>"; };
+		346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLShowMoreCell.h; sourceTree = "<group>"; };
+		346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLShowMoreCell.m; sourceTree = "<group>"; };
 		3478D6BC2DC3A743007D366B /* SLArticleDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewController.h; sourceTree = "<group>"; };
 		3478D6BD2DC3A743007D366B /* SLArticleDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLArticleDetailViewController.m; sourceTree = "<group>"; };
 		3478D6BE2DC3A743007D366B /* SLArticleDetailViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLArticleDetailViewModel.h; sourceTree = "<group>"; };
@@ -1004,6 +1013,12 @@
 		3478D6C82DC3A743007D366B /* Articale */ = {
 			isa = PBXGroup;
 			children = (
+				346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */,
+				346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */,
+				346B7EB02DD39AD8000525F7 /* SLArticleDetailViewControllerV2.h */,
+				346B7EB12DD39AD8000525F7 /* SLArticleDetailViewControllerV2.m */,
+				346B7EB22DD39AD8000525F7 /* SLCommentCellV2.h */,
+				346B7EB32DD39AD8000525F7 /* SLCommentCellV2.m */,
 				34287B2C2DCF87820042D6FC /* SLSecondCommentCell.h */,
 				34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */,
 				3478EC602DC869D1007D366B /* SLSimpleInteractionBar.h */,
@@ -1716,6 +1731,8 @@
 				E7769E9B2CA4F9BC00AE84F4 /* SLHomePageNewsViewController.m in Sources */,
 				E76A45CC2CB93827008B2746 /* CaocaoRefreshCircleView.m in Sources */,
 				34A071062D72D999006BC583 /* ViewTrackerProxy.m in Sources */,
+				346B7EB42DD39AD8000525F7 /* SLCommentCellV2.m in Sources */,
+				346B7EB52DD39AD8000525F7 /* SLArticleDetailViewControllerV2.m in Sources */,
 				34A071072D72D999006BC583 /* CALayer+TMViewExposure.m in Sources */,
 				3478D6C92DC3A743007D366B /* SLTagListView.m in Sources */,
 				3478D6CA2DC3A743007D366B /* SLBottomToolBar.m in Sources */,
@@ -1755,6 +1772,7 @@
 				345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */,
 				345C11E82DABD7DF005FCCDB /* SLNumberIconView.m in Sources */,
 				348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */,
+				346B7EB82DD39C7B000525F7 /* SLShowMoreCell.m in Sources */,
 				345C121B2DAC95AB005FCCDB /* QAlertViewController.swift in Sources */,
 				345C121C2DAC95AB005FCCDB /* QTableViewHelper.swift in Sources */,
 				345C121D2DAC95AB005FCCDB /* QuicklyCollectionView.swift in Sources */,

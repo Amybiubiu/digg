@@ -57,6 +57,19 @@
             // 解析评论列表
             if (dict[@"comments"]) {
                 self.commentList = [NSMutableArray arrayWithArray:[NSArray yy_modelArrayWithClass:[SLCommentEntity class] json:dict[@"comments"]]];
+                NSMutableArray<SLCommentEntity *>* comments = [NSMutableArray new];
+                for (SLCommentEntity* comment in self.commentList) {
+                    if (comment.replyList.count > 0) {
+                        comment.expandedRepliesCount = 1;
+                    }
+                    if (comment.expandedRepliesCount < comment.replyList.count) {
+                        comment.hasMore = YES;
+                    } else {
+                        comment.hasMore = NO;
+                    }
+                    [comments addObject:comment];
+                }
+                self.commentList = comments;
             }
             
             // 解析用户信息

@@ -19,7 +19,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
-#import "SLArticleDetailViewController.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
@@ -114,7 +114,7 @@
 }
 
 - (void)gotoArticaleDetail:(NSString *)articaleId {
-    SLArticleDetailViewController* vc = [SLArticleDetailViewController new];
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
     vc.articleId = articaleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
