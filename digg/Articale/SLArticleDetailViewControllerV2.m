@@ -986,6 +986,10 @@
         [SVProgressHUD dismiss];
         weakSelf.commentVC.textView.text = @"";
         if (newComment) {
+            // 更新评论数
+            [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
+            weakSelf.viewModel.articleEntity.commentsCnt += 1;
+
             NSInteger currentCount = comment.expandedRepliesCount;
             comment.expandedRepliesCount = currentCount + 1;
             NSMutableArray *indexPathsToInsert = [NSMutableArray array];
@@ -1035,6 +1039,10 @@
         [SVProgressHUD dismiss];
         weakSelf.commentVC.textView.text = @"";
         if (newComment) {
+            // 更新评论数
+            [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
+            weakSelf.viewModel.articleEntity.commentsCnt += 1;
+
             NSInteger currentCount = rootComment.expandedRepliesCount;
             rootComment.expandedRepliesCount = currentCount + 1;
             NSMutableArray *indexPathsToInsert = [NSMutableArray array];
