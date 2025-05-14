@@ -29,6 +29,7 @@
 #import "SLArticleContentView.h"
 #import "SLRelatedLinksView.h"
 #import "EnvConfigHeader.h"
+#import "UIView+SLToast.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -406,7 +407,6 @@
     }]];
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"分享" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self shareArticle];
     }]];
     
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
@@ -447,10 +447,6 @@
         [weakSelf submitCommentToArticle:text];
     };
     [self.commentVC showInViewController:self];
-}
-
-- (void)shareButtonTapped {
-    [self shareArticle];
 }
 
 - (void)bookmarkButtonTapped {
@@ -537,13 +533,6 @@
 //    } cancelHandler:nil fromViewController:self];
 }
 
-- (void)shareArticle {
-//    NSString *shareUrl = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, self.articleId];
-//    
-//    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.articleEntity.title ?: @"", shareUrl] applicationActivities:nil];
-//    [self presentViewController:activityVC animated:YES completion:nil];
-}
-
 #pragma mark - SLBottomToolBarDelegate
 
 - (void)toolBar:(SLBottomToolBar *)toolBar didClickLikeButton:(UIButton *)button {
@@ -555,12 +544,16 @@
 }
 
 - (void)toolBar:(SLBottomToolBar *)toolBar didClickAIButton:(UIButton *)button {
-    // 实现AI功能
-    [self aiButtonTapped];
+    //TODO: 实现AI功能
 }
 
 - (void)toolBar:(SLBottomToolBar *)toolBar didClickShareButton:(UIButton *)button {
-    [self shareButtonTapped];
+    NSString *shareUrl = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, self.articleId];
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = shareUrl;
+    [self.view sl_showToast:@"链接已复制"];
+    self.viewModel.articleEntity.share += 1;
+    [self.toolbarView updateShareCount:self.viewModel.articleEntity.share];
 }
 
 // 添加AI按钮点击方法
