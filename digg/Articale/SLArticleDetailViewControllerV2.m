@@ -419,20 +419,7 @@
         [self gotoLoginPage];
         return;
     }
-    
-//    __weak typeof(self) weakSelf = self;
-//    [self.viewModel likeArticleWithID:self.articleId isLike:!self.likeButton.selected completion:^(BOOL success, NSError *error) {
-//        if (success) {
-//            weakSelf.likeButton.selected = !weakSelf.likeButton.selected;
-//            NSInteger likeCount = [weakSelf.likeCountLabel.text integerValue];
-//            if (weakSelf.likeButton.selected) {
-//                likeCount++;
-//            } else {
-//                likeCount = MAX(0, likeCount - 1);
-//            }
-//            weakSelf.likeCountLabel.text = [NSString stringWithFormat:@"%ld", (long)likeCount];
-//        }
-//    }];
+    //点赞和取消点赞
 }
 
 - (void)commentButtonTapped {
@@ -447,20 +434,6 @@
         [weakSelf submitCommentToArticle:text];
     };
     [self.commentVC showInViewController:self];
-}
-
-- (void)bookmarkButtonTapped {
-    if (![SLUser defaultUser].isLogin) {
-        [self gotoLoginPage];
-        return;
-    }
-    
-//    __weak typeof(self) weakSelf = self;
-//    [self.viewModel collectArticleWithID:self.articleId isCollect:!self.bookmarkButton.selected completion:^(BOOL success, NSError *error) {
-//        if (success) {
-//            weakSelf.bookmarkButton.selected = !weakSelf.bookmarkButton.selected;
-//        }
-//    }];
 }
 
 - (void)handleTagClick:(NSString *)tag {
@@ -478,19 +451,7 @@
     [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
     dvc.hidesBottomBarWhenPushed = YES;
     dvc.isLoginPage = YES;
-    @weakobj(self)
-    dvc.loginSucessCallback = ^{
-        @strongobj(self)
-        
-    };
     [self presentViewController:dvc animated:YES completion:nil];
-}
-
-- (void)gotoLogin {
-//    SLWebViewController *loginVC = [[SLWebViewController alloc] init];
-//    [loginVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
-//    loginVC.isLoginPage = YES;
-//    [self presentViewController:loginVC animated:YES completion:nil];
 }
 
 - (void)submitCommentToArticle:(NSString *)comment {
@@ -554,24 +515,6 @@
     [self.view sl_showToast:@"链接已复制"];
     self.viewModel.articleEntity.share += 1;
     [self.toolbarView updateShareCount:self.viewModel.articleEntity.share];
-}
-
-// 添加AI按钮点击方法
-- (void)aiButtonTapped {
-//    // 这里实现AI功能
-//    if (![SLUser isLogin]) {
-//        [SLAlertManager showLoginAlert];
-//        return;
-//    }
-//    
-//    // 实现AI分析文章内容的功能
-//    [SVProgressHUD showWithStatus:@"AI正在分析文章..."];
-//    // 这里添加AI分析的实际代码
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [SVProgressHUD dismiss];
-//        // 显示AI分析结果
-//        [SLAlertManager showAlertWithTitle:@"AI分析" message:@"这篇文章主要讨论了...(AI分析结果)" confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil];
-//    });
 }
 
 #pragma mark - UITableViewDataSource
@@ -1079,10 +1022,6 @@
 //            /*[SLAlertManager showAlertWithTitle:@"举报失败" message:@"请稍后重试" confirmTitle:@"确定" cance*/lTitle:nil confirmHandler:nil cancelHandler:nil fromViewController:weakSelf];
 //        }
 //    }];
-}
-
-- (void)navigateToLogin {
-    // 跳转到登录页面的逻辑
 }
 
 @end
