@@ -151,6 +151,10 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)setPlaceholder:(NSString *)placeholder {
+    _placeholder = placeholder;
+}
+
 #pragma mark - Public Methods
 
 - (void)showInViewController:(UIViewController *)viewController {

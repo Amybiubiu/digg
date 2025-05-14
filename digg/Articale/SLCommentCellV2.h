@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) SLCommentEntity *comment;
 @property (nonatomic, assign) NSInteger index;
 
-@property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
+@property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment, NSInteger section);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^linkTapHandler)(NSURL *url);

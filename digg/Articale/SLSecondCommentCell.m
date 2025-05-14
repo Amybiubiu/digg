@@ -231,12 +231,6 @@
 
 #pragma mark - Actions
 
-- (void)replyButtonTapped {
-    if (self.replyHandler) {
-        self.replyHandler(self.comment);
-    }
-}
-
 - (void)likeButtonTapped {
     if (self.likeHandler) {
         self.likeHandler(self.comment);
@@ -254,7 +248,9 @@
 }
 
 - (void)interactionBarDidTapReply:(SLSimpleInteractionBar *)interactionBar {
-    // 处理回复事件
+    if (self.replyHandler) {
+        self.replyHandler(self.comment, self.section, self.row);
+    }
 }
 
 @end

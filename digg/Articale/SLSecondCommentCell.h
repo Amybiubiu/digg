@@ -22,8 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) SLSimpleInteractionBar *interactionBar;
 @property (nonatomic, strong) SLHomeTagViewV2 *tagView;
 @property (nonatomic, strong) SLCommentEntity *comment;
+@property (nonatomic, assign) NSInteger section;
+@property (nonatomic, assign) NSInteger row;
 
-@property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment);
+@property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row);
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
 @property (nonatomic, copy) void (^linkTapHandler)(NSURL *url);

@@ -514,7 +514,7 @@
                           content:comment 
                     resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
         [SVProgressHUD dismiss];
-        
+        weakSelf.commentVC.textView.text = @"";
         if (newComment) {
             // 更新评论数
             [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
@@ -599,11 +599,11 @@
         if (!cell) {
             cell = [[SLCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCellV2"];
         }
-        cell.index = indexPath.row;
+        cell.index = indexPath.section;
         
         __weak typeof(self) weakSelf = self;
-        cell.replyHandler = ^(SLCommentEntity *commentEntity) {
-            [weakSelf replyToComment:commentEntity];
+        cell.replyHandler = ^(SLCommentEntity *commentEntity, NSInteger section) {
+            [weakSelf replyToComment:commentEntity index:section];
         };
         
         cell.likeHandler = ^(SLCommentEntity *commentEntity) {
@@ -624,13 +624,13 @@
         if (!cell) {
             cell = [[SLSecondCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLSecondCommentCell"];
         }
-        
+        cell.section = indexPath.section;
+        cell.row = indexPath.row;
         // 获取对应的回复评论
         SLCommentEntity *replyComment = comment.replyList[indexPath.row - 1];
-        
         __weak typeof(self) weakSelf = self;
-        cell.replyHandler = ^(SLCommentEntity *commentEntity) {
-            [weakSelf replyToComment:commentEntity];
+        cell.replyHandler = ^(SLCommentEntity *commentEntity, NSInteger section, NSInteger row) {
+            [weakSelf replyToSecondComment:commentEntity section:section row:row];
         };
         
         cell.likeHandler = ^(SLCommentEntity *commentEntity) {
@@ -939,7 +939,6 @@
 
 - (void)showNavigationBarTitle:(BOOL)show {
     self.isNavBarHidden = !show;
-//    [self.navigationBar setTitleVisible:show];
 }
 
 - (void)showToolbar:(BOOL)show {
@@ -956,38 +955,100 @@
     }];
 }
 
-- (void)replyToComment:(SLCommentEntity *)comment {
+- (void)replyToComment:(SLCommentEntity *)comment index:(NSInteger)section {
     if (![SLUser defaultUser].isLogin) {
         [self gotoLoginPage];
         return;
     }
     
     __weak typeof(self) weakSelf = self;
-    NSString *placeholder = [NSString stringWithFormat:@"回复 %@", comment.username];
+    NSString *contentPreview = @"";
+    if (comment.content.length > 0) {
+        NSString *content = comment.content;
+        contentPreview = content.length > 10 ? [content substringToIndex:10] : content;
+    }
+    NSString *placeholder = [NSString stringWithFormat:@"回复@%@|%@", comment.username, contentPreview];
     self.commentVC.placeholder = placeholder;
     self.commentVC.submitHandler = ^(NSString *text) {
-        [weakSelf submitReplyToComment:comment content:text];
+        [weakSelf submitReplyToComment:comment index:section content:text];
     };
     [self.commentVC showInViewController:self];
 }
 
-- (void)submitReplyToComment:(SLCommentEntity *)comment content:(NSString *)content {
+- (void)submitReplyToComment:(SLCommentEntity *)comment index:(NSInteger)section content:(NSString *)content {
     if (content.length == 0) {
         return;
     }
     
-//    __weak typeof(self) weakSelf = self;
-//    [SVProgressHUD show];
-//    
-//    [self.viewModel submitReplyWithArticleID:self.articleId commentID:comment.commentId content:content completion:^(BOOL success, NSError *error) {
-//        [SVProgressHUD dismiss];
-//        
-//        if (success) {
-//            [weakSelf loadComments];
-//        } else {
-//            /*[SLAlertManager showAlertWithTitle:@"回复失败" message:@"请稍后重试" confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil fromVi*/ewController:weakSelf];
-//        }
-//    }];
+    __weak typeof(self) weakSelf = self;
+    [SVProgressHUD show];
+    [self.viewModel replyToComment:self.viewModel.articleEntity.articleId commentId:comment.commentId replyUserId:comment.userId content:content resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
+        [SVProgressHUD dismiss];
+        weakSelf.commentVC.textView.text = @"";
+        if (newComment) {
+            NSInteger currentCount = comment.expandedRepliesCount;
+            comment.expandedRepliesCount = currentCount + 1;
+            NSMutableArray *indexPathsToInsert = [NSMutableArray array];
+            [indexPathsToInsert addObject:[NSIndexPath indexPathForRow:1 inSection:section]];
+
+            [weakSelf.tableView beginUpdates];
+            [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
+            [weakSelf.tableView endUpdates];
+
+            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+        } else {
+            //todo: 评论失败
+        }
+    }];
+}
+
+- (void)replyToSecondComment:(SLCommentEntity *)comment section:(NSInteger)section row:(NSInteger)row {
+    if (![SLUser defaultUser].isLogin) {
+        [self gotoLoginPage];
+        return;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    NSString *contentPreview = @"";
+    if (comment.content.length > 0) {
+        NSString *content = comment.content;
+        contentPreview = content.length > 10 ? [content substringToIndex:10] : content;
+    }
+    NSString *placeholder = [NSString stringWithFormat:@"回复@%@|%@", comment.username, contentPreview];
+    self.commentVC.placeholder = placeholder;
+    self.commentVC.submitHandler = ^(NSString *text) {
+        [weakSelf submitReplyToSecondComment:comment section:section row:row content:text];
+    };
+    [self.commentVC showInViewController:self];
+}
+
+- (void)submitReplyToSecondComment:(SLCommentEntity *)comment section:(NSInteger)section row:(NSInteger)row content:(NSString *)content {
+    if (content.length == 0) {
+        return;
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    [SVProgressHUD show];
+    SLCommentEntity* rootComment = self.viewModel.commentList[section];
+    SLCommentEntity* secondComment = rootComment.replyList[row];
+    [self.viewModel replyToSecondComment:self.viewModel.articleEntity.articleId rootCommentId:rootComment.commentId commentId:secondComment.commentId replyUserId:secondComment.userId content:content resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
+        [SVProgressHUD dismiss];
+        weakSelf.commentVC.textView.text = @"";
+        if (newComment) {
+            NSInteger currentCount = rootComment.expandedRepliesCount;
+            rootComment.expandedRepliesCount = currentCount + 1;
+            NSMutableArray *indexPathsToInsert = [NSMutableArray array];
+            [indexPathsToInsert addObject:[NSIndexPath indexPathForRow:row + 1 inSection:section]];
+
+            [weakSelf.tableView beginUpdates];
+            [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
+            [weakSelf.tableView endUpdates];
+
+            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+        } else {
+            //todo: 评论失败
+        }
+    }];
 }
 
 - (void)likeComment:(SLCommentEntity *)comment {

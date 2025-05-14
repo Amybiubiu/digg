@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *disliked;
 @property (nonatomic, assign) NSInteger likeCount;
 @property (nonatomic, assign) NSInteger dislikeCount;
-@property (nonatomic, strong) NSArray<SLCommentEntity *> *replyList;
+@property (nonatomic, strong) NSMutableArray<SLCommentEntity *> *replyList;
 @property (nonatomic, assign) NSInteger expandedRepliesCount; // 存储展开的回复数量
 @property (nonatomic, assign) BOOL hasMore; //是否可以展开更多
 

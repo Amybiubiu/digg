@@ -180,7 +180,7 @@
         // 解析返回的评论数据
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             SLCommentEntity *newComment = [SLCommentEntity yy_modelWithJSON:responseObject];
-            
+
             // 将新评论添加到对应的一级评论的回复列表中
             if (newComment) {
                 // 查找对应的一级评论
@@ -194,7 +194,7 @@
                             comment.replyList = [NSMutableArray arrayWithArray:comment.replyList];
                         }
                         // 添加新回复
-                        [(NSMutableArray *)comment.replyList addObject:newComment];
+                        [(NSMutableArray *)comment.replyList insertObject:newComment atIndex:0];
                         break;
                     }
                 }
@@ -267,8 +267,19 @@
                             // 如果是不可变数组，转换为可变数组
                             comment.replyList = [NSMutableArray arrayWithArray:comment.replyList];
                         }
-                        // 添加新回复
-                        [(NSMutableArray *)comment.replyList addObject:newComment];
+                        
+                        // 查找二级评论在回复列表中的位置
+                        NSInteger insertIndex = 0;
+                        for (NSInteger i = 0; i < comment.replyList.count; i++) {
+                            SLCommentEntity *reply = comment.replyList[i];
+                            if ([reply.commentId isEqualToString:commentId]) {
+                                insertIndex = i; // 在找到的二级评论后面插入
+                                break;
+                            }
+                        }
+                        
+                        // 在指定位置插入新回复
+                        [(NSMutableArray *)comment.replyList insertObject:newComment atIndex:insertIndex];
                         break;
                     }
                 }
