@@ -615,7 +615,13 @@
             [weakSelf likeComment:commentEntity];
         };
         
-        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
+        cell.linkTapHandler = ^(NSURL *url) {
+            SLWebViewController *webVC = [[SLWebViewController alloc] init];
+            [webVC startLoadRequestWithUrl:url.absoluteString];
+            [self.navigationController pushViewController:webVC animated:YES];
+        };
+        
+        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 60];
         return cell;
     } else { 
         // 最后一个 SLShowMoreCell
