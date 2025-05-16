@@ -30,6 +30,7 @@
 #import "SLRelatedLinksView.h"
 #import "EnvConfigHeader.h"
 #import "UIView+SLToast.h"
+#import "SLHomePageViewModel.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -46,6 +47,7 @@
 @property (nonatomic, strong) SLTagListView *tagListView;
 @property (nonatomic, strong) SLRelatedLinksView *relatedLinksView;
 // 数据
+@property (nonatomic, strong) SLHomePageViewModel *homeViewModel;
 @property (nonatomic, strong) SLArticleDetailViewModel *viewModel;
 @property (nonatomic, strong) SLArticleTodayEntity *articleEntity;
 @property (nonatomic, strong) NSArray<NSString *> *tags;
@@ -69,7 +71,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.homeViewModel = [[SLHomePageViewModel alloc] init];
     [self setupUI];
     [self setupGestures];
     [self loadData];
@@ -419,7 +421,25 @@
         [self gotoLoginPage];
         return;
     }
-    //点赞和取消点赞
+    if (self.viewModel.articleEntity.liked) {
+        // 如果已经点赞，则取消点赞
+        [self.homeViewModel cancelLikeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                self.viewModel.articleEntity.liked = NO;
+                self.viewModel.articleEntity.likeCnt -= 1;
+                [self.toolbarView updateLikeStatus:NO count:self.viewModel.articleEntity.likeCnt];
+            }
+        }];
+    } else {
+        // 如果未点赞，则点赞
+        [self.homeViewModel likeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                self.viewModel.articleEntity.liked = YES;
+                self.viewModel.articleEntity.likeCnt += 1;
+                [self.toolbarView updateLikeStatus:YES count:self.viewModel.articleEntity.likeCnt];
+            }
+        }];
+    }
 }
 
 - (void)commentButtonTapped {
