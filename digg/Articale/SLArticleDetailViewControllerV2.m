@@ -535,17 +535,22 @@
         if (!cell) {
             cell = [[SLCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCellV2"];
         }
-        cell.index = indexPath.section;
+        cell.section = indexPath.section;
+        cell.row = indexPath.row;
         
         __weak typeof(self) weakSelf = self;
         cell.replyHandler = ^(SLCommentEntity *commentEntity, NSInteger section) {
             [weakSelf replyToComment:commentEntity index:section];
         };
         
-        cell.likeHandler = ^(SLCommentEntity *commentEntity) {
-            [weakSelf likeComment:commentEntity];
+        cell.likeHandler = ^(SLCommentEntity *commentEntity, NSInteger section, NSInteger row, BOOL selected) {
+            [weakSelf likeComment:commentEntity section:section row:row selected:selected];
         };
         
+        cell.dislikeHandler = ^(SLCommentEntity *commentEntity, NSInteger section, NSInteger row, BOOL selected) {
+            [weakSelf dislikeComment:commentEntity section:section row:row selected:selected];
+        };
+
         cell.linkTapHandler = ^(NSURL *url) {
             SLWebViewController *webVC = [[SLWebViewController alloc] init];
             [webVC startLoadRequestWithUrl:url.absoluteString];
@@ -569,8 +574,12 @@
             [weakSelf replyToSecondComment:commentEntity section:section row:row];
         };
         
-        cell.likeHandler = ^(SLCommentEntity *commentEntity) {
-            [weakSelf likeComment:commentEntity];
+        cell.likeHandler = ^(SLCommentEntity *commentEntity, NSInteger section, NSInteger row, BOOL selected) {
+            [weakSelf likeComment:commentEntity section:indexPath.section row:indexPath.row selected:selected];
+        };
+        
+        cell.dislikeHandler = ^(SLCommentEntity *commentEntity, NSInteger section, NSInteger row, BOOL selected) {
+            [weakSelf dislikeComment:commentEntity section:section row:row selected:selected];
         };
         
         cell.linkTapHandler = ^(NSURL *url) {
@@ -592,10 +601,6 @@
         cell.showMoreButtonTappedHandler = ^(SLCommentEntity * _Nonnull entity) {
             [weakSelf loadMoreRepliesForComment:entity atSection:indexPath.section];
         };
-        
-        // NSInteger totalReplies = comment.replyList.count;
-        // NSInteger remainingReplies = totalReplies - comment.expandedRepliesCount;
-        // [cell updateWithRemainingCount:remainingReplies];
         return cell;
     }
 }
@@ -995,33 +1000,106 @@
     }];
 }
 
-- (void)likeComment:(SLCommentEntity *)comment {
+#pragma mark - Comment Actions
+
+- (void)likeComment:(SLCommentEntity *)commentEntity section:(NSInteger)section row:(NSInteger)row selected:(BOOL)selected {
+    if (![SLUser defaultUser].isLogin) {
+        [self gotoLoginPage];
+        return;
+    }
+    if (!selected) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                commentEntity.disliked = nil;
+                commentEntity.likeCount = MAX(0, commentEntity.likeCount - 1);
+                
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+            }
+        }];
+    } else {
+        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                if ([commentEntity.disliked isEqualToString:@"false"]) {
+                    commentEntity.dislikeCount -= 1;
+                }
+                commentEntity.disliked = @"true";
+                commentEntity.likeCount += 1;
+
+                
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+            }
+        }];
+    }
+}
+
+- (void)dislikeComment:(SLCommentEntity *)commentEntity section:(NSInteger)section row:(NSInteger)row selected:(BOOL)selected {
     if (![SLUser defaultUser].isLogin) {
         [self gotoLoginPage];
         return;
     }
     
-//    __weak typeof(self) weakSelf = self;
-//    [self.viewModel likeCommentWithID:comment.commentId isLike:!comment.liked completion:^(BOOL success, NSError *error) {
-//        if (success) {
-//            [weakSelf loadComments];
-//        }
-//    }];
+    if (!selected) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                commentEntity.disliked = nil;
+                commentEntity.dislikeCount = MAX(0, commentEntity.dislikeCount - 1);
+                
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+            }
+        }];
+    } else {
+        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess) {
+                if ([commentEntity.disliked isEqualToString:@"true"]) {
+                    commentEntity.likeCount -= 1;
+                }
+                commentEntity.disliked = @"false";
+                commentEntity.dislikeCount += 1;
+                
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+            }
+        }];
+    }
 }
 
 - (void)submitReportWithReason:(NSString *)reason {
-//    __weak typeof(self) weakSelf = self;
-//    [SVProgressHUD show];
-//    
-//    [self.viewModel reportArticleWithID:self.articleId reason:reason completion:^(BOOL success, NSError *error) {
-//        [SVProgressHUD dismiss];
-//        
-//        if (success) {
-//            /*[SLAlertManager showAlertWithTitle:@"举报成功" message:@"感谢您的反馈，我们会尽快处理" confirmTitle:@"确定" cancelTitle:nil confirmHandler:nil cancelHandler:nil fromVi*/ewController:weakSelf];
-//        } else {
-//            /*[SLAlertManager showAlertWithTitle:@"举报失败" message:@"请稍后重试" confirmTitle:@"确定" cance*/lTitle:nil confirmHandler:nil cancelHandler:nil fromViewController:weakSelf];
-//        }
-//    }];
+
 }
 
 @end

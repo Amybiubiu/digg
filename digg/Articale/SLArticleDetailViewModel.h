@@ -66,6 +66,18 @@ resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable 
           content:(NSString *)content 
     resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable error))handler;
 
+// 对评论点赞
+- (void)likeComment:(NSString *)commentId
+resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+// 对评论点踩
+- (void)dislikeComment:(NSString *)commentId
+   resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+// 取消对评论的点赞或点踩
+- (void)cancelCommentLike:(NSString *)commentId
+      resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
 @end
 
 NS_ASSUME_NONNULL_END

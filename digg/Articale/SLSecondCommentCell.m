@@ -199,6 +199,13 @@
     [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
 }
 
+- (void)updateLikeStatus:(SLCommentEntity *)comment {
+    [self.interactionBar updateLikeNumber:comment.likeCount];
+    [self.interactionBar updateDislikeNumber:comment.dislikeCount];
+    [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
+    [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
+}
+
 - (CGFloat)heightForText:(NSString *)text withFont:(UIFont *)font width:(CGFloat)width {
     if (!text || text.length == 0) {
         return 0;
@@ -229,22 +236,18 @@
     return YES;
 }
 
-#pragma mark - Actions
-
-- (void)likeButtonTapped {
-    if (self.likeHandler) {
-        self.likeHandler(self.comment);
-    }
-}
-
 #pragma mark - SLSimpleInteractionBarDelegate
 
 - (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapLikeWithSelected:(BOOL)selected {
-    // 处理点赞事件
+    if (self.likeHandler) {
+        self.likeHandler(self.comment, self.section, self.row, selected);
+    }
 }
 
 - (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapDislikeWithSelected:(BOOL)selected {
-    // 处理不喜欢事件
+    if (self.dislikeHandler) {
+        self.dislikeHandler(self.comment, self.section, self.row, selected);
+    }
 }
 
 - (void)interactionBarDidTapReply:(SLSimpleInteractionBar *)interactionBar {

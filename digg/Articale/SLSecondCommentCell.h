@@ -26,8 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger row;
 
 @property (nonatomic, copy) void (^replyHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row);
-@property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment);
-@property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment);
+@property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row, BOOL selected);
+@property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row, BOOL selected);
 @property (nonatomic, copy) void (^linkTapHandler)(NSURL *url);
 
 
@@ -38,6 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @param comment 评论实体
  */
 - (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width;
+
+/**
+ * 更新点赞/点踩单元格
+ * @param comment 评论实体
+ */
+- (void)updateLikeStatus:(SLCommentEntity *)comment;
 
 @end
 

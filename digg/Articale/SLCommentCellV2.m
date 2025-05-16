@@ -175,6 +175,13 @@
     [self layoutIfNeeded];
 }
 
+- (void)updateLikeStatus:(SLCommentEntity *)comment {
+    [self.interactionBar updateLikeNumber:comment.likeCount];
+    [self.interactionBar updateDislikeNumber:comment.dislikeCount];
+    [self.interactionBar setLikeSelected:[comment.disliked isEqualToString:@"true"]];
+    [self.interactionBar setDislikeSelected:[comment.disliked isEqualToString:@"false"]];
+}
+
 #pragma mark - UITextViewDelegate
 
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
@@ -193,27 +200,23 @@
     return YES;
 }
 
-#pragma mark - Actions
-
-- (void)likeButtonTapped {
-    if (self.likeHandler) {
-        self.likeHandler(self.comment);
-    }
-}
-
 #pragma mark - SLSimpleInteractionBarDelegate
 
 - (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapLikeWithSelected:(BOOL)selected {
-    // 处理点赞事件
+    if (self.likeHandler) {
+        self.likeHandler(self.comment, self.section, self.row, selected);
+    }
 }
 
 - (void)interactionBar:(SLSimpleInteractionBar *)interactionBar didTapDislikeWithSelected:(BOOL)selected {
-    // 处理不喜欢事件
+    if (self.dislikeHandler) {
+        self.dislikeHandler(self.comment, self.section, self.row, selected);
+    }
 }
 
 - (void)interactionBarDidTapReply:(SLSimpleInteractionBar *)interactionBar {
     if (self.replyHandler) {
-        self.replyHandler(self.comment, self.index);
+        self.replyHandler(self.comment, self.section);
     }
 }
 

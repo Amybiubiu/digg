@@ -308,4 +308,98 @@
     }];
 }
 
+#pragma mark - 评论点赞相关方法
+
+// 对评论点赞
+- (void)likeComment:(NSString *)commentId
+      resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/likeComment", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    NSDictionary *params = @{@"commentId": commentId};
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"点赞评论失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
+// 对评论点踩
+- (void)dislikeComment:(NSString *)commentId
+         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/dislikeComment", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    NSDictionary *params = @{@"commentId": commentId};
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"点踩评论失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
+// 取消对评论的点赞或点踩
+- (void)cancelCommentLike:(NSString *)commentId
+            resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/cancelForComment", APPBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    NSDictionary *params = @{@"commentId": commentId};
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"取消评论点赞/点踩失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
 @end
