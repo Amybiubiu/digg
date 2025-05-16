@@ -122,6 +122,11 @@ public extension RZRichTextView {
         }
         self.textStorage.setAttributedString(attr)
         self.selectedRange = .init(location: self.textStorage.length, length: 0)
+        
+        if let d = self.delegate {
+            self.layoutIfNeeded()
+            (d as? RZRichTextViewDelegate)?.richTextView?(self, contentHeightDidChange: self.contentTextHeight)
+        }
     }
 }
 public extension NSAttributedString {

@@ -28,7 +28,8 @@
     NSMutableDictionary* parameters = [NSMutableDictionary new];
     parameters[@"title"] = title;
     parameters[@"url"] = url;
-    parameters[@"content"] = content;
+    NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    parameters[@"content"] = trimmedContent;
     parameters[@"htmlContent"] = htmlContent;
     parameters[@"labels"] = labels;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -59,7 +60,8 @@
     parameters[@"articleId"] = articleId;
     parameters[@"title"] = title;
     parameters[@"url"] = url;
-    parameters[@"content"] = content;
+     NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    parameters[@"content"] = trimmedContent;
     parameters[@"htmlContent"] = htmlContent;
     parameters[@"labels"] = labels;
     parameters[@"userId"] = [SLUser defaultUser].userEntity.userId;
