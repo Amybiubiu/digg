@@ -22,6 +22,7 @@
 #import "SLArticleTodayEntity.h"
 #import "UIView+SLToast.h"
 #import "SLColorManager.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 
 @interface SLTagListContainerViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -240,10 +241,18 @@
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
+- (void)gotoArticaleDetail:(NSString *)articleId {
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     SLArticleTodayEntity *entity = self.viewModel.dataArray[indexPath.row];
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

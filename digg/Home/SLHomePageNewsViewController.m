@@ -113,9 +113,9 @@
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
-- (void)gotoArticaleDetail:(NSString *)articaleId {
+- (void)gotoArticaleDetail:(NSString *)articleId {
     SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
-    vc.articleId = articaleId;
+    vc.articleId = articleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
 }

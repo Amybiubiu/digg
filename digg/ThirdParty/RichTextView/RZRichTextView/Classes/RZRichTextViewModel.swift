@@ -140,6 +140,9 @@ open class RZRichTextViewModel: NSObject {
 
     public override init() {
         super.init()
+        if attachmentMaxWidth < 0 {
+            attachmentMaxWidth = UIScreen.main.bounds.size.width - 20
+        }
         /// 默认居左
         let p = NSMutableParagraphStyle.init()
         p.alignment = .left

@@ -16,6 +16,7 @@
 #import "SLColorManager.h"
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 #define FIELD_DEFAULT_HEIGHT 48
 #define TAG_DEFAULT_HEIGHT 24
@@ -321,12 +322,16 @@
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
-    SLWebViewController *vc = [[SLWebViewController alloc] init];
-    vc.isShowProgress = NO;
-    [vc startLoadRequestWithUrl:url];
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
+//    SLWebViewController *vc = [[SLWebViewController alloc] init];
+//    vc.isShowProgress = NO;
+//    [vc startLoadRequestWithUrl:url];
+//    vc.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Actions
@@ -352,8 +357,9 @@
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
-                [self gotoH5Page:articleId];
-                [self clearAll];
+                [self backPage];
+//                [self gotoH5Page:articleId];
+//                [self clearAll];
             } else {
                 [SVProgressHUD showErrorWithStatus:@"提交失败"];
             }
