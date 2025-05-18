@@ -12,8 +12,6 @@
 
 @interface SLHomeTagView ()
 
-@property (nonatomic, strong) UILabel *tagLabel;
-
 @end
 
 @implementation SLHomeTagView

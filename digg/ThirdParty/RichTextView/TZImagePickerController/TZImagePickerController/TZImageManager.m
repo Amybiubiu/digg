@@ -257,6 +257,7 @@ static dispatch_once_t onceToken;
     if (!allowPickingVideo && type == TZAssetModelMediaTypeVideo) return nil;
     if (!allowPickingImage && type == TZAssetModelMediaTypePhoto) return nil;
     if (!allowPickingImage && type == TZAssetModelMediaTypePhotoGif) return nil;
+    if (!allowPickingImage && type == TZAssetModelMediaTypeLivePhoto) return nil;
     
     PHAsset *phAsset = (PHAsset *)asset;
     if (self.hideWhenCanNotSelect) {
@@ -278,7 +279,7 @@ static dispatch_once_t onceToken;
     else if (phAsset.mediaType == PHAssetMediaTypeAudio) type = TZAssetModelMediaTypeAudio;
     else if (phAsset.mediaType == PHAssetMediaTypeImage) {
         if (@available(iOS 9.1, *)) {
-            // if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) type = TZAssetModelMediaTypeLivePhoto;
+             if (asset.mediaSubtypes == PHAssetMediaSubtypePhotoLive) type = TZAssetModelMediaTypeLivePhoto;
         }
         // Gif
         if ([[phAsset valueForKey:@"filename"] hasSuffix:@"GIF"]) {

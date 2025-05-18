@@ -248,4 +248,39 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     }
 }
 
+- (NSAttributedString *)attributedStringFromHTML {
+    if (!self) return nil;
+    
+    NSData *htmlData = [self dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSDictionary *options = @{
+        NSDocumentTypeDocumentOption: NSHTMLTextDocumentType,
+        NSCharacterEncodingDocumentOption: @(NSUTF8StringEncoding)
+    };
+    
+    NSError *error = nil;
+    NSAttributedString *attributedString = [[NSAttributedString alloc]
+        initWithData: htmlData
+            options: options
+            documentAttributes: nil
+            error: &error];
+    
+    if (error) {
+        NSLog(@"HTML 转换错误: %@", error.localizedDescription);
+        return nil;
+    }
+    
+    // 增加行间距处理
+    NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:4.0];
+    [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+    
+    [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 
+                                    value:paragraphStyle 
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+    
+    return mutableAttributedString;
+}
+
 @end

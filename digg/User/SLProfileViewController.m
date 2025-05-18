@@ -31,6 +31,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 
 @interface SLProfileViewController () <SLSegmentControlDelegate, UITableViewDelegate, UITableViewDataSource, SLEmptyWithLoginButtonViewDelegate, UIScrollViewDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, SLEmptyWithLoginButtonViewDelegate, SLProfileHeaderViewDelegate>
@@ -406,7 +407,7 @@
            url = [NSString stringWithFormat:@"https://%@", url];
        }
        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-       webVC.isShowProgress = YES;
+       webVC.isShowProgress = NO;
        [webVC startLoadRequestWithUrl:url];
        webVC.hidesBottomBarWhenPushed = YES;
        [self.navigationController pushViewController:webVC animated:YES];
@@ -442,6 +443,13 @@
     }];
 }
 
+- (void)gotoArticaleDetail:(NSString *)articleId {
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 #pragma mark - UITableViewDataSource
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     SLArticleTodayEntity *entity;
@@ -452,8 +460,9 @@
     } else if (self.segmentControl.selectedIndex == 2) {
         entity = [self.viewModel.entity.submitList objectAtIndex:indexPath.row];
     }
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -667,6 +676,8 @@
                     vc.hidesBottomBarWhenPushed = YES;
                     vc.label = entity.label;
                     vc.entity = entity;
+                    vc.source = @"self";
+                    vc.articleId = entity.articleId;
                     [self.navigationController pushViewController:vc animated:YES];
                 }
             };
@@ -699,6 +710,17 @@
 
 - (CGFloat)verticalOffsetForEmptyDataSet:(UIScrollView *)scrollView {
     return 98.0/2.0;
+}
+
+#pragma mark - SLProfileHeaderViewDelegate
+
+- (void)profileHeaderView:(SLProfileHeaderView *)headerView didSelectTag:(NSString *)tag atIndex:(NSInteger)index {
+    SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
+    vc.label = tag;
+    vc.source = @"self";
+    vc.articleId = @"";
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma makr - UI Elements

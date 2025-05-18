@@ -55,6 +55,8 @@
 - (void)loadMessageListWithRefreshType:(CaocaoCarMessageListRefreshType)refreshType
                          withPageStyle:(NSInteger)index
                              withLabel:(NSString *)label
+                                 souce:(NSString *)source
+                              articleId:(NSString *)articleId
                         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler{
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
@@ -65,7 +67,16 @@
         self.curPage++;
     }
     @weakobj(self);
-    [manager GET:urlString parameters:@{@"label": label, @"pageNo": @(self.curPage), @"pageSize": @(self.pageSize)} headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    NSMutableDictionary* params = [NSMutableDictionary new];
+    params[@"label"] = label;
+    params[@"pageNo"] = @(self.curPage);
+    params[@"pageSize"] = @(self.pageSize);
+    params[@"source"] = source;
+    if (articleId.length > 0) {
+        params[@"articleId"] = articleId;
+    }
+    
+    [manager GET:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
             @strongobj(self);
             if ([responseObject isKindOfClass:[NSArray class]]) {

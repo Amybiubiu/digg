@@ -116,19 +116,46 @@ public extension RZRichTextViewModel {
                     }
                 case .upload(let info): // 上传 以及点击重新上传时，将会执行
                     // FIXME: 此处自行实现上传功能，通过info获取里边的image、asset、filePath， 上传的进度需要设置到info.uploadStatus
-                    UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
-                        if progress < 1 {
-                            info?.uploadStatus.accept(.uploading(progress: progress))
-                        } else {
-                            info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
-                            switch info?.type ?? .image {
-                            case .image:
-                                info?.src = url
-                            case .audio:
-                                info?.src = ""
-                            case .video:
-                                info?.src = ""
-                                info?.poster = ""
+                    print("--> upload")
+                    if info.image == nil && info.asset != nil {
+                        // 确保有图片数据
+                        let options = PHImageRequestOptions()
+                        options.isNetworkAccessAllowed = true
+                        options.deliveryMode = .highQualityFormat
+                        PHImageManager.default().requestImage(for: info.asset!, targetSize: PHImageManagerMaximumSize, contentMode: .default, options: options) { image, _ in
+                            info.image = image
+                            UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
+                                if progress < 1 {
+                                    info?.uploadStatus.accept(.uploading(progress: progress))
+                                } else {
+                                    info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
+                                    switch info?.type ?? .image {
+                                    case .image:
+                                        info?.src = url
+                                    case .audio:
+                                        info?.src = ""
+                                    case .video:
+                                        info?.src = ""
+                                        info?.poster = ""
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        UploadTaskTest.uploadFile(id: info, testVM: info) { [weak info] progress, url in
+                            if progress < 1 {
+                                info?.uploadStatus.accept(.uploading(progress: progress))
+                            } else {
+                                info?.uploadStatus.accept(.complete(success: true, info: "上传完成"))
+                                switch info?.type ?? .image {
+                                case .image:
+                                    info?.src = url
+                                case .audio:
+                                    info?.src = ""
+                                case .video:
+                                    info?.src = ""
+                                    info?.poster = ""
+                                }
                             }
                         }
                     }
@@ -144,15 +171,21 @@ public extension RZRichTextViewModel {
                     return true
                 }
                 // FIXME: 此处自行实现选择音视频、图片的功能，将数据写入到RZAttachmentInfo，并调用viewModel.textView?.insetAttachment(info)即可
-                let vc = TZImagePickerController.init(maxImagesCount: 1, delegate: nil)
+                let vc = TZImagePickerController.init(maxImagesCount: 9, delegate: nil)
                 vc?.allowPickingImage = true
+                vc?.allowPickingVideo = false
+                vc?.allowPickingOriginalPhoto = false
                 vc?.allowTakeVideo = false
                 vc?.allowTakePicture = false
                 vc?.allowCrop = false
                 vc?.didFinishPickingPhotosHandle = { [weak viewModel] (photos, assets, _) in
-                    if let image = photos?.first, let asset = assets?.first as? PHAsset, let viewModel = viewModel {
+                    guard let photos = photos, let assets = assets, let viewModel = viewModel else { return }
+                    for i in 0..<min(photos.count, assets.count) {
+                        guard let asset = assets[i] as? PHAsset else { continue }
+                        let image = photos[i]
+                        
                         let info = RZAttachmentInfo.init(type: .image, image: image, asset: asset, filePath: nil, maxWidth: viewModel.attachmentMaxWidth, audioHeight: viewModel.audioAttachmentHeight)
-                        /// 插入图片
+                        // 插入图片
                         viewModel.textView?.insetAttachment(info)
                     }
                 }
@@ -164,6 +197,7 @@ public extension RZRichTextViewModel {
                     }
                 }
                 if let vc = vc {
+                    vc.modalPresentationStyle = .fullScreen
                     qAppFrame.present(vc, animated: true, completion: nil)
                 }
 //                QActionSheetController.show(options: .init(options: [.action("图片"), .cancel("取消")])) { [weak viewModel] index in

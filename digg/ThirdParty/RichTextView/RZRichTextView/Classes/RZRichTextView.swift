@@ -8,6 +8,15 @@
 import UIKit
 //import QuicklySwift
 
+@objc public protocol RZRichTextViewDelegate: UITextViewDelegate {
+    
+    @objc optional func richTextViewDidInsertAttachment(_ textView: RZRichTextView)
+    
+    @objc optional func richTextView(_ textView: RZRichTextView, contentHeightDidChange height: CGFloat)
+    
+    @objc optional func richTextView(_ textView: RZRichTextView, attachmentUploadStatusChanged info: RZAttachmentInfo, isUploading: Bool)
+}
+
 /// 初始化TextView时，一定要设置frame.size.width，内部附件以frame的宽度来做最宽显示处理
 /// 如何使用以及配置？ 请查看demo的HowToUseDemo，直接复制代码，填充选择资源、预览资源的方法就可以了
 /// https://github.com/rztime/RZRichTextView/blob/master/Example/RZRichTextView/HowToUseDemo.swift
@@ -79,7 +88,7 @@ open class RZRichTextView: UITextView {
         super.init(frame: frame, textContainer: nil)
         self.layoutManager.allowsNonContiguousLayout = false
         isInit = false
-//        self.qplaceholder("添加内容")
+
         let placeholder = "添加内容"
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.placeholderText,
@@ -87,6 +96,7 @@ open class RZRichTextView: UITextView {
         ]
         let placeholderAttrString = NSAttributedString(string: placeholder, attributes: attributes)
         self.qattributedPlaceholder(placeholderAttrString)
+        
         self.viewModel.textView = self
         self.isEditable = self.viewModel.canEdit
         if self.isEditable {
@@ -406,13 +416,22 @@ public extension RZRichTextView {
         let attachment = NSTextAttachment.createWithinfo(attachmentinfo)
         let attr = NSMutableAttributedString.init(attachment: attachment)
         attr.addAttributes(self.typingAttributes, range: .init(location: 0, length: attr.length))
+
+        // 添加换行符
+        let newlineAttr = NSAttributedString(string: "\n\n", attributes: self.typingAttributes)
+        attr.append(newlineAttr)
+
         self.textStorage.replaceCharacters(in: self.selectedRange, with: attr)
         self.selectedRange = NSRange.init(location: self.selectedRange.lowerBound + attr.length, length: 0)
         if let d = self.delegate {
             d.textViewDidChange?(self)
+            // 添加自定义通知
+            (d as? RZRichTextViewDelegate)?.richTextViewDidInsertAttachment?(self)
         } else {
             self.contentTextChanged()
         }
+        
+        self.becomeFirstResponder()
     }
     /// 删除附件
     func removeAttachment(_ attachmentInfo: RZAttachmentInfo?) {
@@ -516,6 +535,11 @@ public extension RZRichTextView {
         DispatchQueue.main.async {
             let show = self.textStorage.length == 0 && self.subviews.filter({$0.isKind(of: RZTextListView.self)}).count == 0
             self.qtextViewHelper.placeHolderLabel?.isHidden = !show
+        }
+    }
+    func hidePlaceHolder() {
+        DispatchQueue.main.async {
+            self.qtextViewHelper.placeHolderLabel?.isHidden = true
         }
     }
     /// 清空所有内容，包括富文本内容
@@ -648,6 +672,14 @@ extension RZRichTextView {
             }
         } else {
             self.textStorage.addAttributes([:], range: .init(location: 0, length: 1))
+        }
+        //插入html
+        if let d = self.delegate {
+            d.textViewDidChange?(self)
+            // 添加自定义通知
+            (d as? RZRichTextViewDelegate)?.richTextViewDidInsertAttachment?(self)
+        } else {
+            self.contentTextChanged()
         }
     }
     /// 更新 附件、序列号等等

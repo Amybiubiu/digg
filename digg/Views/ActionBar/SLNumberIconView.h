@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIColor *iconColor;                // 图标颜色
 @property (nonatomic, assign) BOOL isSelected;                   // 是否选中状态
 @property (nonatomic, copy, nullable) NSString *customText;      // 自定义文本，用于"查看"等没有图标的项                 // 是否选中状态
+@property (nonatomic, assign) BOOL hidden;
 
 /**
  * 创建数字图标项
@@ -88,6 +89,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @return 是否选中
  */
 - (BOOL)isSelectedAtIndex:(NSInteger)index;
+
+- (void)setItemHidden:(BOOL)hidden atIndex:(NSInteger)index;
 
 @end
 

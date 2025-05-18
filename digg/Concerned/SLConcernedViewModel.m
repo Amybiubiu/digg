@@ -65,12 +65,10 @@
         [self.dataArray addObjectsFromArray:list];
     }
     
-    if (refreshType == CaocaoCarMessageListRefreshTypeLoadMore) {
-        if (resArray.count < self.pageSize) {
-            self.hasToEnd = YES;
-        } else {
-            self.hasToEnd = NO;
-        }
+    if (resArray.count < self.pageSize) {
+        self.hasToEnd = YES;
+    } else {
+        self.hasToEnd = NO;
     }
 }
 

@@ -39,7 +39,7 @@
       duration:(NSUInteger)duration
           args:(NSDictionary *)args
 {
-    NSLog(@"module on Page(%@), controlName(%@), duration(%lu), with args(%@)", pageName, moduleName, (unsigned long)duration, args);
+//    NSLog(@"module on Page(%@), controlName(%@), duration(%lu), with args(%@)", pageName, moduleName, (unsigned long)duration, args);
     [[SLTrackingManager sharedInstance] trackViewExposure:pageName duration:duration parameters:args];
 }
 @end

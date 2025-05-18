@@ -41,6 +41,9 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
             guard let info = info else { return }
             imageContent.isHidden = info.type == .audio
             audioContent.isHidden = info.type != .audio
+            // 根据类型调整删除按钮位置
+            updateDeleteButtonPosition(for: info.type)
+
             switch info.type {
             case .image, .video:
                 if let asset = info.asset {
@@ -121,7 +124,7 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
     }
     /// 图片视频相关view
     // 显示的图片
-    public var imageView: UIImageView = AnimatedImageView().qcontentMode(.scaleAspectFit).qcornerRadius(3, true)
+    public var imageView: UIImageView = AnimatedImageView().qcontentMode(.scaleAspectFit).qcornerRadius(5, true)
         .qimage(RZRichTextViewConfigure.shared.loadingImage)
     /// 播放按钮
     var playBtn: UIButton = .init(type: .custom)
@@ -253,5 +256,25 @@ open class RZAttachmentInfoLayerView: UIView, RZAttachmentInfoLayerProtocol {
             make.height.equalTo(self.imageView.snp.width).multipliedBy(size.height / size.width).priority(.high)
         }
         self.playBtn.isHidden = info?.type != .video
+    }
+
+    private func updateDeleteButtonPosition(for type: RZAttachmentInfo.AttachmentType) {
+        // 移除之前的约束
+        deleteBtn.snp.removeConstraints()
+        
+        // 根据类型设置不同的位置
+        if type == .image {
+            // 图片类型时，删除按钮放在右下角
+            deleteBtn.snp.makeConstraints { make in
+                make.bottom.right.equalTo(imageContent).inset(5)
+                make.size.equalTo(30)
+            }
+        } else {
+            // 其他类型（视频、音频等）保持在右上角
+            deleteBtn.snp.makeConstraints { make in
+                make.top.right.equalToSuperview()
+                make.size.equalTo(30)
+            }
+        }
     }
 }

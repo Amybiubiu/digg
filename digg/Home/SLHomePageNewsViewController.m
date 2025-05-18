@@ -11,7 +11,7 @@
 #import "CaocaoRefresh.h"
 #import "SLGeneralMacro.h"
 #import "SLColorManager.h"
-#import "SLHomePageNewsTableViewCellV2.h"
+#import "SLHomePageNewsTableViewCellV3.h"
 #import "SLTagListContainerViewController.h"
 #import "SLWebViewController.h"
 #import "SLUser.h"
@@ -19,6 +19,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
@@ -107,10 +108,16 @@
 
 - (void)jumpToH5WithUrl:(NSString *)url andShowProgress:(BOOL)show {
     SLWebViewController *dvc = [[SLWebViewController alloc] init];
-    dvc.isShowProgress = show;
     [dvc startLoadRequestWithUrl:url];
     dvc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:dvc animated:YES];
+}
+
+- (void)gotoArticaleDetail:(NSString *)articleId {
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)endRefresh
@@ -126,8 +133,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@",H5BaseUrl,entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -139,7 +147,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    SLHomePageNewsTableViewCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
+    SLHomePageNewsTableViewCellV3 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
@@ -220,6 +228,8 @@
                 SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                 vc.label = entity.label;
                 vc.entity = entity;
+                vc.articleId = entity.articleId;
+                vc.source = self.pageStyle == HomePageStyleToday ? @"today" : @"news";
                 vc.hidesBottomBarWhenPushed = YES;
                 [self.navigationController pushViewController:vc animated:YES];
             }
@@ -239,7 +249,7 @@
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tableView registerClass:[SLHomePageNewsTableViewCellV2 class] forCellReuseIdentifier:kSLHomePageNewsTableViewCellID];
+        [_tableView registerClass:[SLHomePageNewsTableViewCellV3 class] forCellReuseIdentifier:kSLHomePageNewsTableViewCellID];
         _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         if (@available(iOS 15.0, *)) {
             _tableView.sectionHeaderTopPadding = 0;

@@ -10,24 +10,25 @@
 #import "EnvConfigHeader.h"
 #import "Masonry.h"
 #import "SLHomeTagView.h"
-#import "SLCustomFlowLayout.h"
 #import "SLRecordViewModel.h"
 #import "SVProgressHUD.h"
 #import "SLWebViewController.h"
 #import "SLColorManager.h"
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 #define FIELD_DEFAULT_HEIGHT 48
 #define TAG_DEFAULT_HEIGHT 24
 
-@interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate>
+@interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate, RZRichTextViewDelegate>
 
 @property (nonatomic, strong) UIView* navigationView;
 @property (nonatomic, strong) UIButton *leftBackButton;
 @property (nonatomic, strong) UIButton *commitButton;
 
-@property (nonatomic, strong) UIView* contentView;
+@property (nonatomic, strong) UIScrollView* contentView;
+@property (nonatomic, strong) UIView *containerView;
 @property (nonatomic, strong) SLHomeTagView *tagView;
 @property (nonatomic, strong) UITextView *titleField; // 标题输入框
 @property (nonatomic, strong) UITextView *linkField;  // 链接输入框
@@ -40,13 +41,14 @@
 @property (nonatomic, strong) NSIndexPath *editingIndexPath;    // 正在编辑的标签的 IndexPath
 @property (nonatomic, assign) BOOL isEditing;                   // 是否处于编辑状态
 
-@property (nonatomic, strong) UIScrollView *tagScrollView;
 @property (nonatomic, strong) UIView *tagContainerView;
 @property (nonatomic, strong) UITextField *tagInputField;
 @property (nonatomic, strong) UIButton *addTagButton;
 
 @property (nonatomic, strong) SLRecordViewModel *viewModel;
 @property (nonatomic, assign) BOOL isUpdateUrl;
+
+@property (nonatomic, assign) CGFloat textViewContentHeight; // 记录文本视图高度
 
 @end
 
@@ -59,6 +61,7 @@
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self.leftBackButton setHidden:NO];
     self.tags = [NSMutableArray array];
+     self.textViewContentHeight = 300;
     [self setupUI];
     
     self.isUpdateUrl = NO;
@@ -99,14 +102,14 @@
     
     [self.navigationView addSubview:self.leftBackButton];
     [self.leftBackButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.navigationView).offset(27);
+        make.left.equalTo(self.navigationView).offset(17);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
     
     [self.navigationView addSubview:self.commitButton];
     [self.commitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.navigationView).offset(-27);
+        make.right.equalTo(self.navigationView).offset(-17);
         make.top.equalTo(self.navigationView).offset(5 + STATUSBAR_HEIGHT);
         make.height.mas_equalTo(32);
     }];
@@ -117,69 +120,66 @@
         make.left.right.equalTo(self.view);
         make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
     }];
+    [self.contentView addSubview:self.containerView];
+    [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self.contentView);
+            make.width.equalTo(self.contentView);
+    }];
     
-    [self.contentView addSubview:self.tagView];
-    [self.contentView addSubview:self.titleField];
+    [self.containerView addSubview:self.tagView];
+    [self.containerView addSubview:self.titleField];
     [self.titleField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView);
-        make.left.equalTo(self.contentView).offset(22);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.top.equalTo(self.containerView);
+        make.left.equalTo(self.containerView).offset(12);
+        make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
     [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self.titleField);
-        make.left.equalTo(self.contentView).offset(23);
+        make.left.equalTo(self.containerView).offset(13);
     }];
-    [self.contentView addSubview:self.line1View];
+    [self.containerView addSubview:self.line1View];
     [self.line1View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.titleField.mas_bottom);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.containerView).offset(10);
+        make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(0.5);
     }];
-    [self.contentView addSubview:self.linkField];
+    [self.containerView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line1View.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(23);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.containerView).offset(13);
+        make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
 
-    [self.contentView addSubview:self.line2View];
+    [self.containerView addSubview:self.line2View];
     [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.linkField.mas_bottom);
-        make.left.equalTo(self.contentView).offset(20);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.containerView).offset(10);
+        make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(0.5);
     }];
-    [self.contentView addSubview:self.textView];
+    [self.containerView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.line2View.mas_bottom).offset(10);
-        make.left.equalTo(self.contentView).offset(22);
-        make.right.equalTo(self.contentView).offset(-16);
+        make.left.equalTo(self.containerView).offset(12);
+        make.right.equalTo(self.containerView).offset(-12);
         make.height.mas_equalTo(300);
     }];
-    [self.contentView addSubview:self.line3View];
+    [self.containerView addSubview:self.line3View];
     [self.line3View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textView.mas_bottom);
-        make.left.equalTo(self.contentView).offset(16);
-        make.right.equalTo(self.contentView).offset(-16);
+        make.left.equalTo(self.containerView).offset(12);
+        make.right.equalTo(self.containerView).offset(-12);
         make.height.mas_equalTo(0.5);
     }];
-    [self.contentView addSubview:self.tagScrollView];
-    [self.tagScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line3View.mas_bottom).offset(16);
-        make.left.equalTo(self.contentView).offset(27);
-        make.right.equalTo(self.contentView).offset(-16);
-        make.bottom.equalTo(self.contentView).offset(-16);
-    }];
-
-    [self.tagScrollView addSubview:self.tagContainerView];
+    [self.containerView addSubview:self.tagContainerView];
     [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.tagScrollView);
-        make.width.equalTo(self.tagScrollView);
+        make.top.equalTo(self.line3View.mas_bottom).offset(16);
+        make.left.equalTo(self.containerView).offset(17);
+        make.right.equalTo(self.containerView).offset(-16);
     }];
-
     // 添加"+ 标签"按钮
     [self.tagContainerView addSubview:self.addTagButton];
     [self.addTagButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -187,6 +187,10 @@
         make.centerY.equalTo(self.tagContainerView);
         make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
         make.width.mas_equalTo(100);
+    }];
+    
+    [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.tagContainerView.mas_bottom).offset(16);
     }];
 }
 
@@ -233,6 +237,7 @@
     [self updateLinkFieldHeight];
 
     [self.textView clearContent];
+    [self updateTextViewHeight];
 
     [self.tags removeAllObjects];
     [self refreshTagsDisplay];
@@ -241,8 +246,8 @@
     [self.tagView setHidden:YES];
     [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView);
-        make.left.equalTo(self.contentView).offset(23);
-        make.right.equalTo(self.contentView).offset(-20);
+        make.left.equalTo(self.contentView).offset(12);
+        make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
 }
@@ -257,16 +262,16 @@
         [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.contentView);
             make.left.equalTo(self.tagView.mas_right).offset(5);
-            make.right.equalTo(self.contentView).offset(-20);
+            make.right.equalTo(self.contentView).offset(-10);
             make.height.mas_equalTo(titleHeight);
         }];
     } else {
         [self.tagView setHidden:YES];
         [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.contentView);
-            make.left.equalTo(self.contentView).offset(23);
-            make.right.equalTo(self.contentView).offset(-20);
-            make.height.mas_equalTo(titleHeight); // 使用计算后的高度
+            make.left.equalTo(self.contentView).offset(12);
+            make.right.equalTo(self.contentView).offset(-10);
+            make.height.mas_equalTo(titleHeight);
         }];
     }
     [self performSelector:@selector(updateTitleFieldHeight) withObject:nil afterDelay:0.1];
@@ -317,12 +322,16 @@
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
-    SLWebViewController *vc = [[SLWebViewController alloc] init];
-    vc.isShowProgress = NO;
-    [vc startLoadRequestWithUrl:url];
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
+//    SLWebViewController *vc = [[SLWebViewController alloc] init];
+//    vc.isShowProgress = NO;
+//    [vc startLoadRequestWithUrl:url];
+//    vc.hidesBottomBarWhenPushed = YES;
+//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Actions
@@ -348,8 +357,9 @@
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
-                [self gotoH5Page:articleId];
-                [self clearAll];
+                [self backPage];
+//                [self gotoH5Page:articleId];
+//                [self clearAll];
             } else {
                 [SVProgressHUD showErrorWithStatus:@"提交失败"];
             }
@@ -375,7 +385,7 @@
     [placeholderLabel sizeToFit];
     
     // 设置标签位置
-    placeholderLabel.frame = CGRectMake(5, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.frame = CGRectMake(3, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
     placeholderLabel.tag = 999;
     
     [self.titleField addSubview:placeholderLabel];
@@ -588,20 +598,9 @@
 // 更新标签布局
 - (void)updateTagsLayout {
     [self.tagContainerView layoutIfNeeded];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        // 设置内容大小，确保可以正常滚动
-        CGSize contentSize = CGSizeMake(self.tagContainerView.bounds.size.width, self.tagContainerView.bounds.size.height);
-        [self.tagScrollView setContentSize:contentSize];
-
-        if (contentSize.height >= self.tagScrollView.bounds.size.height) {
-            self.tagScrollView.scrollEnabled = YES;
-        } else {
-            self.tagScrollView.scrollEnabled = NO;
-        }
-    });
 }
 
-// 实现 UITextViewDelegate 方法来处理占位文本的显示和隐藏
+#pragma mark - UITextViewDelegate
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == self.titleField) {
         UILabel *placeholderLabel = [textView viewWithTag:999];
@@ -653,6 +652,9 @@
         [textView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(newHeight);
         }];
+    } else if (textView == self.textView) {
+        [self updateTextViewHeight];
+        [self.textView contentTextChanged];
     }
 }
 
@@ -756,6 +758,44 @@
     [self.tagInputField becomeFirstResponder];
 }
 
+// 更新 textView 高度的方法
+- (void)updateTextViewHeight {
+    // 计算内容高度
+    CGSize contentSize = [self.textView sizeThatFits:CGSizeMake(self.textView.frame.size.width, MAXFLOAT)];
+    CGFloat newHeight = MAX(300, contentSize.height); // 最小高度为300
+    
+    // 只有当高度变化时才更新约束
+    if (newHeight != self.textViewContentHeight) {
+        self.textViewContentHeight = newHeight;
+        
+        [self.textView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(newHeight);
+        }];
+        
+        // 更新line3View的位置
+        [self.line3View mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.textView.mas_bottom);
+        }];
+        
+        // 更新tagContainerView的位置
+        [self.tagContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.line3View.mas_bottom).offset(16);
+        }];
+        
+        // 更新containerView的底部约束
+        [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(self.tagContainerView.mas_bottom).offset(16);
+        }];
+        
+        // 强制布局更新
+        [self.view layoutIfNeeded];
+    }
+}
+
+- (void)richTextViewDidInsertAttachment:(RZRichTextView *)textView {
+    [self updateTextViewHeight];
+}
+
 #pragma mark - UI Elements
 - (UIView *)navigationView {
     if (!_navigationView) {
@@ -787,12 +827,23 @@
     return _commitButton;
 }
 
-- (UIView *)contentView {
+- (UIScrollView *)contentView {
     if (!_contentView) {
-        _contentView = [UIView new];
-        _contentView.backgroundColor = [SLColorManager primaryBackgroundColor];
+        _contentView = [[UIScrollView alloc] init];
+        _contentView.backgroundColor = UIColor.clearColor;
+        _contentView.showsVerticalScrollIndicator = YES;
+        _contentView.showsHorizontalScrollIndicator = NO;
+        _contentView.bounces = YES;
     }
     return _contentView;
+}
+
+- (UIView *)containerView {
+    if (!_containerView) {
+        _containerView = [[UIView alloc] init];
+        _containerView.backgroundColor = [SLColorManager primaryBackgroundColor];
+    }
+    return _containerView;
 }
 
 - (SLHomeTagView *)tagView {
@@ -812,7 +863,7 @@
         _titleField.textColor = [SLColorManager recorderTextColor];
         _titleField.backgroundColor = [UIColor clearColor];
         _titleField.delegate = self;
-        _titleField.scrollEnabled = YES;
+        _titleField.scrollEnabled = NO;
         _titleField.returnKeyType = UIReturnKeyDefault; // 允许换行
         _titleField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
@@ -843,7 +894,7 @@
         _linkField.textColor = [SLColorManager lineTextColor];
         _linkField.backgroundColor = [UIColor clearColor];
         _linkField.delegate = self;
-        _linkField.scrollEnabled = YES;
+        _linkField.scrollEnabled = NO;
         _linkField.returnKeyType = UIReturnKeyDefault; // 允许换行
         _linkField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
@@ -877,6 +928,8 @@
         _textView.font = [UIFont pingFangRegularWithSize:16];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
+       _textView.delegate = self;
+       _textView.scrollEnabled = NO;
     }
     return _textView;
 }
@@ -903,17 +956,6 @@
         _line3View.backgroundColor = [SLColorManager cellDivideLineColor];
     }
     return _line3View;
-}
-
-- (UIScrollView *)tagScrollView {
-    if (!_tagScrollView) {
-        _tagScrollView = [[UIScrollView alloc] init];
-        _tagScrollView.showsHorizontalScrollIndicator = NO;
-        _tagScrollView.showsVerticalScrollIndicator = NO;
-        _tagScrollView.backgroundColor = [UIColor clearColor];
-        _tagScrollView.scrollEnabled = NO;
-    }
-    return _tagScrollView;
 }
 
 - (UIView *)tagContainerView {

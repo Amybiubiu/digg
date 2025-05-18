@@ -20,6 +20,7 @@
 #import "SLTrackingManager.h"
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 
 @interface SLConcernedViewController () <UITableViewDelegate, UITableViewDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate>
@@ -80,7 +81,7 @@
         @strongobj(self);
         if (isSuccess) {
             if ([self.viewModel.dataArray count] == 0) {
-                self.dataState = CaocaoDataLoadStateEmpty;
+//                self.dataState = CaocaoDataLoadStateEmpty;
             } else {
                 self.dataState = CaocaoDataLoadStateNormal;
             }
@@ -130,11 +131,19 @@
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
+- (void)gotoArticaleDetail:(NSString *)articleId {
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 #pragma mark - UITableViewDataSource
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -247,6 +256,10 @@
 
 - (CGFloat)verticalOffsetForEmptyDataSet:(UIScrollView *)scrollView {
     return 98.0/2.0;
+}
+
+- (void)emptyDataSet:(UIScrollView *)scrollView didTapView:(UIView *)view {
+    [self dataLoadActionCallback];
 }
 
 #pragma mark - UI Element

@@ -22,6 +22,7 @@
 #import "SLTrackingManager.h"
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
+#import "SLTagListContainerViewController.h"
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
 @property (nonatomic, strong) WebViewJavascriptBridge* bridge;
@@ -43,8 +44,6 @@
     [self.view addSubview:self.wkwebView];
 
     if (self.isShowProgress) {
-//        self.navigationController.navigationBar.barTintColor = UIColor.whiteColor;
-//        self.navigationController.navigationBar.hidden = NO;
         [self.wkwebView addObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress)) options:NSKeyValueObservingOptionNew context:NULL];
         self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
         [self.view addSubview:self.progressView];
@@ -309,6 +308,23 @@
         responseCallback(data);
     }];
     
+    [self.bridge registerHandler:@"openTagDetail" handler:^(id data, WVJBResponseCallback responseCallback) {
+        if ([data isKindOfClass:[NSDictionary class]]) {
+            @strongobj(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary *dic = (NSDictionary *)data;
+                NSString *tag = [[dic objectForKey:@"tag"] stringValue];
+                NSString *url = [[dic objectForKey:@"url"] stringValue];
+                SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
+                vc.label = tag;
+                vc.articleId = url;
+                vc.source = @"article";
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            });
+        }
+        responseCallback(data);
+    }];
 }
 - (void)setupDefailUA{
     if (self.isSetUA) {

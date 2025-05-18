@@ -78,9 +78,21 @@
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
++ (UIColor *)tagV2BackgroundTextColor {
+    UIColor *lightColor = Color16A(0x14932A, 0.1);
+    UIColor *darkColor = Color16A(0x14932A, 0.1);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
 + (UIColor *)tagTextColor {
     UIColor *lightColor = Color16(0xFF1852);
     UIColor *darkColor = Color16(0xFF3468);
+    return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)tagV2TextColor {
+    UIColor *lightColor = Color16(0x14932A);
+    UIColor *darkColor = Color16(0x14932A);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
@@ -179,6 +191,16 @@
     UIColor *lightColor = Color16(0x333333);
     UIColor *darkColor = Color16(0xd5d7dc);
     return [self colorForLightMode:lightColor darkMode:darkColor];
+}
+
++ (UIColor *)tagBackgroundColor {
+    return [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull traitCollection) {
+            if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                return [UIColor colorWithRed:0.25 green:0.25 blue:0.25 alpha:1.0];
+            } else {
+                return [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.0];
+            }
+        }];
 }
 
 @end

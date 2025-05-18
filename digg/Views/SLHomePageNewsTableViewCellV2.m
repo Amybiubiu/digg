@@ -39,7 +39,7 @@
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy{
     self.entity = entiy;
     self.titleLabel.text = entiy.title;
-    CGFloat lineSpacing = 3;
+    CGFloat lineSpacing = 4;
     CGFloat offset = 16;
     
     // 判断内容是否为空

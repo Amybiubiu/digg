@@ -22,6 +22,7 @@
 #import "SLArticleTodayEntity.h"
 #import "UIView+SLToast.h"
 #import "SLColorManager.h"
+#import "SLArticleDetailViewControllerV2.h"
 
 
 @interface SLTagListContainerViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -113,7 +114,7 @@
 
 - (void)shareBtnClick {
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = _entity.url;
+    pasteboard.string = [NSString stringWithFormat:@"http://39.106.147.0/label?name=%@", self.label];
     
     [self.view sl_showToast:@"链接已复制到粘贴板"];
 }
@@ -196,7 +197,7 @@
 
 - (void)loadMessagesList:(CaocaoCarMessageListRefreshType)type {
     @weakobj(self);
-    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:0 withLabel:self.label resultHandler:^(BOOL isSuccess, NSError *error) {
+    [self.viewModel loadMessageListWithRefreshType:type withPageStyle:0 withLabel:self.label souce:self.source articleId:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
         @strongobj(self);
         if (isSuccess) {
             if ([self.viewModel.dataArray count] == 0) {
@@ -240,10 +241,18 @@
     [self.navigationController pushViewController:dvc animated:YES];
 }
 
+- (void)gotoArticaleDetail:(NSString *)articleId {
+    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+    vc.articleId = articleId;
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     SLArticleTodayEntity *entity = self.viewModel.dataArray[indexPath.row];
-    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
-    [self jumpToH5WithUrl:url andShowProgress:NO];
+    [self gotoArticaleDetail: entity.articleId];
+//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, entity.articleId];
+//    [self jumpToH5WithUrl:url andShowProgress:NO];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {

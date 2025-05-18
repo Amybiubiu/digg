@@ -151,6 +151,10 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)setPlaceholder:(NSString *)placeholder {
+    _placeholder = placeholder;
+}
+
 #pragma mark - Public Methods
 
 - (void)showInViewController:(UIViewController *)viewController {
@@ -167,7 +171,8 @@
 
 - (void)submitButtonTapped {
     if (self.submitHandler) {
-        self.submitHandler(self.textView.text);
+        NSString *trimmedText = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        self.submitHandler(trimmedText);
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
