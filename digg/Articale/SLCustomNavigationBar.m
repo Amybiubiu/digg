@@ -13,7 +13,6 @@
 @interface SLCustomNavigationBar ()
 
 @property (nonatomic, strong) UIButton *backButton;
-@property (nonatomic, strong) UIButton *moreButton;
 
 @end
 

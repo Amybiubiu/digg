@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SLCustomNavigationBar : UIView
 
 @property (nonatomic, weak) id<SLCustomNavigationBarDelegate> delegate;
+@property (nonatomic, strong) UIButton *moreButton;
 
 @end
 

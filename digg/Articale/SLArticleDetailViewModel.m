@@ -402,4 +402,160 @@
     }];
 }
 
+- (void)deleteArticle:(NSString *)articleId
+       resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/article/delete", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    NSDictionary *params = @{@"articleId": articleId};
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"取消评论点赞/点踩失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
+- (void)addLink:(NSString *)articleId
+          title:(NSString *)title
+            url:(NSString *)url
+  resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    // 参数验证
+    if (articleId.length == 0 || title.length == 0 || url.length == 0) {
+        NSError *error = [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"参数不能为空"}];
+        if (handler) {
+            handler(NO, error);
+        }
+        return;
+    }
+    
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"articleId": articleId,
+        @"title": title,
+        @"url": url
+    };
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/refer/add", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"添加链接失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
+- (void)reportContent:(NSString *)type
+               itemId:(NSString *)itemId
+        resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    // 参数验证
+    if (type.length == 0 || itemId.length == 0) {
+        NSError *error = [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"参数不能为空"}];
+        if (handler) {
+            handler(NO, error);
+        }
+        return;
+    }
+    
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"type": type,
+        @"itemId": itemId
+    };
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/feedback/report", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"举报失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
+- (void)dislikeContent:(NSString *)type
+              itemId:(NSString *)itemId
+         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+    // 参数验证
+    if (type.length == 0 || itemId.length == 0) {
+        NSError *error = [NSError errorWithDomain:@"com.digg.error" code:400 userInfo:@{NSLocalizedDescriptionKey: @"参数不能为空"}];
+        if (handler) {
+            handler(NO, error);
+        }
+        return;
+    }
+    
+    // 构建请求参数
+    NSDictionary *params = @{
+        @"type": type,
+        @"itemId": itemId
+    };
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    NSString *urlString = [NSString stringWithFormat:@"%@/api/feedback/reduce", ApiBaseUrl];
+    NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
+    [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if (handler) {
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"不喜欢失败: %@", error);
+        if (handler) {
+            handler(NO, error);
+        }
+    }];
+}
+
 @end

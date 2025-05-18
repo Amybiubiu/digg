@@ -78,6 +78,47 @@ resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
 - (void)cancelCommentLike:(NSString *)commentId
       resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
 
+/**
+ * 删除文章
+ * @param articleId 要删除的文章ID
+ * @param handler 结果回调
+ */
+ - (void)deleteArticle:(NSString *)articleId
+         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+/**
+ * 添加链接
+ * @param articleId 文章ID
+ * @param title 链接标题
+ * @param url 链接URL
+ * @param handler 结果回调
+ */
+ - (void)addLink:(NSString *)articleId
+ title:(NSString *)title
+   url:(NSString *)url
+resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+/**
+ * 举报内容
+ * @param type 举报类型，例如"article"
+ * @param itemId 被举报项目的ID
+ * @param handler 结果回调
+ */
+ - (void)reportContent:(NSString *)type
+               itemId:(NSString *)itemId
+               resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+/**
+ * 不喜欢
+ * @param type 类型，例如"article"
+ * @param itemId 项目的ID
+ * @param handler 结果回调
+ */
+ - (void)dislikeContent:(NSString *)type
+               itemId:(NSString *)itemId
+               resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

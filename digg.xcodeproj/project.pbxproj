@@ -141,6 +141,7 @@
 		3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6D92DC47C91007D366B /* SLArticleContentView.m */; };
 		3478D6DD2DC4A003007D366B /* SLRelatedLinksView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */; };
 		3478EC622DC869D1007D366B /* SLSimpleInteractionBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 3478EC612DC869D1007D366B /* SLSimpleInteractionBar.m */; };
+		3486060C2DD9B96A00040009 /* SLAddLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486060B2DD9B96A00040009 /* SLAddLinkViewController.m */; };
 		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
 		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
 		348685692DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m in Sources */ = {isa = PBXBuildFile; fileRef = 348685682DBDD83C00CB341C /* SLHomePageNewsTableViewCellV3.m */; };
@@ -430,6 +431,8 @@
 		3478D6DC2DC4A003007D366B /* SLRelatedLinksView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRelatedLinksView.m; sourceTree = "<group>"; };
 		3478EC602DC869D1007D366B /* SLSimpleInteractionBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLSimpleInteractionBar.h; sourceTree = "<group>"; };
 		3478EC612DC869D1007D366B /* SLSimpleInteractionBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLSimpleInteractionBar.m; sourceTree = "<group>"; };
+		3486060A2DD9B96A00040009 /* SLAddLinkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLAddLinkViewController.h; sourceTree = "<group>"; };
+		3486060B2DD9B96A00040009 /* SLAddLinkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLAddLinkViewController.m; sourceTree = "<group>"; };
 		348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLEmpty.h"; sourceTree = "<group>"; };
 		348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SLEmpty.m"; sourceTree = "<group>"; };
 		348628F52DB3CCB600CB341C /* UIView+SLToast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+SLToast.h"; sourceTree = "<group>"; };
@@ -1155,6 +1158,8 @@
 		34A071192D732F9E006BC583 /* Alert */ = {
 			isa = PBXGroup;
 			children = (
+				3486060A2DD9B96A00040009 /* SLAddLinkViewController.h */,
+				3486060B2DD9B96A00040009 /* SLAddLinkViewController.m */,
 				345C18A72DADEF36005FCCDB /* SLCustomAlertView.h */,
 				345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */,
 				34A0711A2D732FBC006BC583 /* SLAlertManager.h */,
@@ -1770,6 +1775,7 @@
 				345C12202DAC95AB005FCCDB /* QuicklyFileBrowser.swift in Sources */,
 				345C12212DAC95AB005FCCDB /* QuicklyPHAsset.swift in Sources */,
 				345C12222DAC95AB005FCCDB /* QuicklyView.swift in Sources */,
+				3486060C2DD9B96A00040009 /* SLAddLinkViewController.m in Sources */,
 				345C12232DAC95AB005FCCDB /* QuicklyHelper.swift in Sources */,
 				345C12242DAC95AB005FCCDB /* QDatePicker.swift in Sources */,
 				345C12252DAC95AB005FCCDB /* QPublish.swift in Sources */,

@@ -31,6 +31,8 @@
 #import "EnvConfigHeader.h"
 #import "UIView+SLToast.h"
 #import "SLHomePageViewModel.h"
+#import "SLRecordViewController.h"
+#import "SLAddLinkViewController.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -74,7 +76,6 @@
     self.homeViewModel = [[SLHomePageViewModel alloc] init];
     [self setupUI];
     [self setupGestures];
-    [self loadData];
     
     // 初始化评论输入控制器
     self.commentVC = [[SLCommentInputViewController alloc] init];
@@ -83,6 +84,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.hidden = YES;
+    
+    [self loadData];
 }
 
 #pragma mark - Private Methods
@@ -396,24 +399,53 @@
     }
 }
 
-- (void)navigationBarBackButtonTapped {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
 - (void)navigationBarMoreButtonTapped {
-    // 显示更多选项菜单
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"举报" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self reportArticle];
-    }]];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"分享" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-    }]];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    
-    [self presentViewController:actionSheet animated:YES completion:nil];
+        UIButton *moreButton = self.navigationBar.moreButton;
+
+        NSMutableArray *actions = [NSMutableArray array];
+        
+        if (self.viewModel.userEntity.isSelf) {
+            // 自己发布的文章
+            [actions addObject:[UIAction actionWithTitle:@"编辑" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理编辑逻辑
+                [self editArticle];
+            }]];
+            
+            [actions addObject:[UIAction actionWithTitle:@"删除" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理删除逻辑
+                [self deleteArticle];
+            }]];
+            
+            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理添加链接逻辑
+                [self addLink];
+            }]];
+        } else {
+            // 他人发布的文章
+            [actions addObject:[UIAction actionWithTitle:@"反馈" image:[UIImage systemImageNamed:@"exclamationmark.bubble"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理反馈逻辑
+                [self provideFeedback];
+            }]];
+            
+            [actions addObject:[UIAction actionWithTitle:@"举报" image:[UIImage systemImageNamed:@"flag"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理举报逻辑
+                [self reportArticle];
+            }]];
+            
+            [actions addObject:[UIAction actionWithTitle:@"不喜欢" image:[UIImage systemImageNamed:@"hand.thumbsdown"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理不喜欢逻辑
+                [self dislikeArticle];
+            }]];
+            
+            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+                // 处理添加链接逻辑
+                [self addLink];
+            }]];
+        }
+        
+        UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
+        moreButton.menu = menu;
+        moreButton.showsMenuAsPrimaryAction = YES;
 }
 
 - (void)likeButtonTapped {
@@ -506,12 +538,6 @@
             //todo: 评论失败
         }
     }];
-}
-
-- (void)reportArticle {
-//    [SLAlertManager showAlertWithTitle:@"举报" message:@"确定要举报该文章吗？" confirmTitle:@"确定" cancelTitle:@"取消" confirmHandler:^{
-//        [SVProgressHUD showSuccessWithStatus:@"举报已提交"];
-//    } cancelHandler:nil fromViewController:self];
 }
 
 #pragma mark - SLBottomToolBarDelegate
@@ -1118,8 +1144,88 @@
     }
 }
 
-- (void)submitReportWithReason:(NSString *)reason {
+#pragma mark - More Menu Actions
 
+- (void)editArticle {
+    SLRecordViewController *dvc = [[SLRecordViewController alloc] init];
+    dvc.articleId = self.viewModel.articleEntity.articleId;
+    dvc.titleText = self.viewModel.articleEntity.title;
+    dvc.url = self.viewModel.articleEntity.url;
+    dvc.content = self.viewModel.articleEntity.content;
+    dvc.htmlContent = self.viewModel.articleEntity.richContent;
+    dvc.labels = self.viewModel.articleEntity.labels;
+    dvc.isEdit = YES;
+    [self.navigationController pushViewController:dvc animated:YES];
+}
+
+- (void)deleteArticle {
+    [SVProgressHUD show];
+    [self.viewModel deleteArticle:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+        if (isSuccess) {
+            [SVProgressHUD showSuccessWithStatus:@"删除成功"];
+            [self.navigationController popViewControllerAnimated:YES];
+        } else {
+            [SVProgressHUD showErrorWithStatus:@"删除失败"];
+        }
+    }];
+}
+
+- (void)addLink {
+    // 添加链接的实现
+    SLAddLinkViewController *addLinkVC = [[SLAddLinkViewController alloc] init];
+    __weak typeof(self) weakSelf = self;
+    addLinkVC.submitHandler = ^(NSString *title, NSString *link) {
+        // 处理添加链接的逻辑
+        [weakSelf submitLink:title url:link];
+    };
+    [addLinkVC showInViewController:self];
+}
+
+- (void)provideFeedback {
+    // 反馈的实现
+    [self.view sl_showToast:@"反馈功能暂未实现"];
+}
+
+- (void)reportArticle {
+    [SVProgressHUD show];
+    [self.viewModel reportContent:@"article" 
+                            itemId:self.articleId 
+                    resultHandler:^(BOOL isSuccess, NSError *error) {
+        if (isSuccess) {
+            [SVProgressHUD showSuccessWithStatus:@"举报成功"];
+        } else {
+            [SVProgressHUD showErrorWithStatus:@"举报失败"];
+        }
+    }];
+}
+
+- (void)dislikeArticle {
+    // 不喜欢的实现
+    [SVProgressHUD show];
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel reportContent:@"article"
+                            itemId:self.articleId
+                    resultHandler:^(BOOL isSuccess, NSError *error) {
+        [SVProgressHUD dismiss];
+        if (isSuccess) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+        }
+    }];
+}
+
+- (void)submitLink:(NSString *)title url:(NSString *)url {
+    [SVProgressHUD show];
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel addLink:self.articleId
+                      title:title
+                        url:url
+              resultHandler:^(BOOL isSuccess, NSError *error) {
+        if (isSuccess) {
+            [weakSelf loadData];
+        } else {
+            [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"添加失败：%@", error.localizedDescription]];
+        }
+    }];
 }
 
 @end
