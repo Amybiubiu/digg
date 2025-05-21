@@ -82,13 +82,13 @@
 - (void)setupConstraints {
     // 设置约束
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.contentView).offset(44);
         make.top.equalTo(self.contentView).offset(16);
+        make.left.equalTo(self.contentView).offset(44);
         make.size.mas_equalTo(CGSizeMake(30, 30));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(18);
+        make.top.equalTo(self.contentView).offset(16);
         make.left.equalTo(self.avatarImageView.mas_right).offset(12);
     }];
     

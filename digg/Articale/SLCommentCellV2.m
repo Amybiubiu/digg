@@ -99,8 +99,8 @@
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.avatarImageView.mas_right).offset(12);
-        make.top.equalTo(self.contentView).offset(18);
     }];
     
     [self.tagView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -109,8 +109,8 @@
     }];
     
     [self.timeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
         make.top.equalTo(self.usernameLabel.mas_bottom).offset(1);
+        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
     }];
     
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
