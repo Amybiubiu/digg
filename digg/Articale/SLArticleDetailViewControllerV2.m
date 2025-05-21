@@ -258,11 +258,11 @@
         self.viewModel = [[SLArticleDetailViewModel alloc] init];
     }
     
-    [SVProgressHUD show];
+//    [SVProgressHUD show];
     __weak typeof(self) weakSelf = self;
     
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+//        [SVProgressHUD dismiss];
         if (isSuccess) {
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
             if (articleEntity) {
