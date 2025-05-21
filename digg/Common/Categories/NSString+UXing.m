@@ -9,6 +9,7 @@
 #import "NSString+UXing.h"
 #import <sys/xattr.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "SLGeneralMacro.h"
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -278,6 +279,15 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
     [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 
                                     value:paragraphStyle 
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+
+    // 设置字体和颜色
+    [mutableAttributedString addAttribute:NSFontAttributeName
+                                    value:[UIFont pingFangRegularWithSize:14]
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+    
+    [mutableAttributedString addAttribute:NSForegroundColorAttributeName
+                                    value:Color16(0x313131)
                                     range:NSMakeRange(0, mutableAttributedString.length)];
     
     return mutableAttributedString;
