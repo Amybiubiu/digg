@@ -33,6 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^readOriginalHandler)(void);
 
 /**
+ * 头像点击回调
+ */
+ @property (nonatomic, copy) void (^avatarClickHandler)(void);
+
+/**
  * 获取内容高度
  */
  - (CGFloat)getContentHeight;

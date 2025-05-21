@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^likeHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row, BOOL selected);
 @property (nonatomic, copy) void (^dislikeHandler)(SLCommentEntity *comment, NSInteger section, NSInteger row, BOOL selected);
 @property (nonatomic, copy) void (^linkTapHandler)(NSURL *url);
+@property (nonatomic, copy) void (^avatarClickHandler)(SLCommentEntity *comment);
 
 
 - (void)setupUI;

@@ -46,6 +46,9 @@
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
+     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
+    [self.avatarImageView addGestureRecognizer:tapGesture];
     [self.contentView addSubview:self.avatarImageView];
     
     // 用户名
@@ -127,6 +130,12 @@
         make.right.equalTo(self.contentView).offset(-16);
         make.bottom.equalTo(self.contentView).offset(-8);
     }];
+}
+
+- (void)avatarImageTapped {
+    if (self.avatarClickHandler) {
+        self.avatarClickHandler(self.comment);
+    }
 }
 
 - (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width {

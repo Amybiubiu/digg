@@ -65,6 +65,9 @@
     self.avatarImageView.layer.cornerRadius = 15;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
+     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
+    [self.avatarImageView addGestureRecognizer:tapGesture];
     [self addSubview:self.avatarImageView];
     
     // 作者名称
@@ -145,6 +148,12 @@
 - (void)readOriginalButtonTapped {
     if (self.readOriginalHandler) {
         self.readOriginalHandler();
+    }
+}
+
+- (void)avatarImageTapped {
+    if (self.avatarClickHandler) {
+        self.avatarClickHandler();
     }
 }
 

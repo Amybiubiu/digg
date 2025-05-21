@@ -33,6 +33,7 @@
 #import "SLHomePageViewModel.h"
 #import "SLRecordViewController.h"
 #import "SLAddLinkViewController.h"
+#import "SLProfileViewController.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -167,6 +168,9 @@
     self.articleHeaderView.readOriginalHandler = ^{
         [weakSelf readOriginalArticle];
     };
+    self.articleHeaderView.avatarClickHandler = ^{
+        [weakSelf gotoProfilePage:weakSelf.viewModel.userEntity.userId];
+    };
     [self.headerView addSubview:self.articleHeaderView];
     
     // 2. 内容区域 - 富文本内容
@@ -238,6 +242,15 @@
         [webVC startLoadRequestWithUrl:self.viewModel.articleEntity.url];
         [self.navigationController pushViewController:webVC animated:YES];
     }
+}
+
+// 跳转到profile页面
+- (void)gotoProfilePage:(NSString *)userId {
+    SLProfileViewController *dvc = [[SLProfileViewController alloc] init];
+    dvc.userId = userId;
+    dvc.fromWeb = YES;
+    [self.navigationController pushViewController:dvc animated:YES];
+
 }
 
 - (void)loadData {
@@ -552,6 +565,9 @@
             [webVC startLoadRequestWithUrl:url.absoluteString];
             [self.navigationController pushViewController:webVC animated:YES];
         };
+        cell.avatarClickHandler = ^(SLCommentEntity *commentEntity) {
+            [weakSelf gotoProfilePage:commentEntity.userId];
+        };
         
         [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
         return cell;
@@ -582,6 +598,9 @@
             SLWebViewController *webVC = [[SLWebViewController alloc] init];
             [webVC startLoadRequestWithUrl:url.absoluteString];
             [self.navigationController pushViewController:webVC animated:YES];
+        };
+        cell.avatarClickHandler = ^(SLCommentEntity *commentEntity) {
+            [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
         [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 60];
