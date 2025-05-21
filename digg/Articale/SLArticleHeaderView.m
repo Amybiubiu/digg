@@ -49,6 +49,7 @@
     [self.readOriginalButton setTitleColor:Color16(0x2592DB) forState:UIControlStateNormal]; //TODO: 暗黑模式
     self.readOriginalButton.titleLabel.font = [UIFont pingFangSemiboldWithSize:10];
     [self.readOriginalButton addTarget:self action:@selector(readOriginalButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    self.readOriginalButton.hidden = YES;
     [self addSubview:self.readOriginalButton];
     
     // 文章标题
@@ -130,12 +131,14 @@
                 source:(NSString *)source
            avatarImage:(NSString *)avatarImage
             authorName:(NSString *)authorName
-           publishTime:(NSString *)publishTime {
+           publishTime:(NSString *)publishTime
+                 url:(NSString *)url {
     self.titleLabel.text = title;
     self.sourceUrlLabel.text = source;
     [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:avatarImage] placeholderImage:[UIImage imageNamed:@"avatar_default_icon"]];
     self.authorNameLabel.text = authorName ?: source;
     self.publishTimeLabel.text = publishTime;
+    self.readOriginalButton.hidden = url.length == 0 ? YES : NO;
 }
 
 - (void)readOriginalButtonTapped {

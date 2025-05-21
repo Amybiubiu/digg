@@ -18,12 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @param avatarImage 作者头像
  * @param authorName 作者名称
  * @param publishTime 发布时间
+ * @param url 原文url
  */
 - (void)setupWithTitle:(NSString *)title
                 source:(NSString *)source
            avatarImage:(NSString *)avatarImage
             authorName:(NSString *)authorName
-           publishTime:(NSString *)publishTime;
+           publishTime:(NSString *)publishTime
+                   url:(NSString *)url;
 
 /**
  * 阅读原文点击回调

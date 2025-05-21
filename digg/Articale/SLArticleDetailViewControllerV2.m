@@ -276,7 +276,8 @@
                                     source:entity.source
                                avatarImage:self.viewModel.userEntity.avatar
                                 authorName:self.viewModel.userEntity.userName
-                               publishTime:publishTimeStr];
+                               publishTime:publishTimeStr
+                                     url:entity.url];
     
     // 更新内容区域
     NSString* content = entity.richContent ?: entity.content;
