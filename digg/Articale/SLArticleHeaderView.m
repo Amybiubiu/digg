@@ -54,9 +54,10 @@
     
     // 文章标题
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.font = [UIFont pingFangRegularWithSize:24];
+    self.titleLabel.font = [UIFont pingFangBoldWithSize:24];
     self.titleLabel.textColor = Color16(0x222222); //TODO: 暗黑模式
     self.titleLabel.numberOfLines = 0;
+    self.titleLabel.preferredMaxLayoutWidth = kScreenWidth - (16 * 2);
     [self addSubview:self.titleLabel];
     
     // 作者头像
@@ -149,11 +150,8 @@
 
 - (CGFloat)getContentHeight {
     // 计算标题实际高度
-    CGFloat titleWidth = self.titleLabel.frame.size.width;
-    CGFloat titleHeight = [self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
-                                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                                          attributes:@{NSFontAttributeName: self.titleLabel.font}
-                                                             context:nil].size.height;
+    CGFloat titleWidth = kScreenWidth - 32; // 左右各16点边距
+    CGFloat titleHeight = [self.titleLabel sizeThatFits:CGSizeMake(titleWidth, CGFLOAT_MAX)].height;
     
     CGFloat sourceHeight = [self.sourceUrlLabel sizeThatFits:CGSizeZero].height;
     

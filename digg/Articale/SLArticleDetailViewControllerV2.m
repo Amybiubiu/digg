@@ -400,55 +400,6 @@
     }
 }
 
-- (void)navigationBarMoreButtonTapped {
-        UIButton *moreButton = self.navigationBar.moreButton;
-
-        NSMutableArray *actions = [NSMutableArray array];
-        
-        if (self.viewModel.userEntity.isSelf) {
-            // 自己发布的文章
-            [actions addObject:[UIAction actionWithTitle:@"编辑" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理编辑逻辑
-                [self editArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"删除" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理删除逻辑
-                [self deleteArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理添加链接逻辑
-                [self addLink];
-            }]];
-        } else {
-            // 他人发布的文章
-            [actions addObject:[UIAction actionWithTitle:@"反馈" image:[UIImage systemImageNamed:@"exclamationmark.bubble"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理反馈逻辑
-                [self provideFeedback];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"举报" image:[UIImage systemImageNamed:@"flag"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理举报逻辑
-                [self reportArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"不喜欢" image:[UIImage systemImageNamed:@"hand.thumbsdown"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理不喜欢逻辑
-                [self dislikeArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理添加链接逻辑
-                [self addLink];
-            }]];
-        }
-        
-        UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
-        moreButton.menu = menu;
-        moreButton.showsMenuAsPrimaryAction = YES;
-}
-
 - (void)likeButtonTapped {
     if (![SLUser defaultUser].isLogin) {
         [self gotoLoginPage];
@@ -915,12 +866,57 @@
 
 #pragma mark - SLCustomNavigationBarDelegate
 
-- (void)navigationBarDidTapBackButton:(SLCustomNavigationBar *)navigationBar {
+- (void)navigationBarBackButtonTapped {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)navigationBarDidTapMoreButton:(SLCustomNavigationBar *)navigationBar {
-    [self navigationBarMoreButtonTapped];
+- (void)navigationBarMoreButtonTapped {
+    UIButton *moreButton = self.navigationBar.moreButton;
+
+    NSMutableArray *actions = [NSMutableArray array];
+    
+    if (self.viewModel.userEntity.isSelf) {
+        // 自己发布的文章
+        [actions addObject:[UIAction actionWithTitle:@"编辑" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理编辑逻辑
+            [self editArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"删除" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理删除逻辑
+            [self deleteArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理添加链接逻辑
+            [self addLink];
+        }]];
+    } else {
+        // 他人发布的文章
+        [actions addObject:[UIAction actionWithTitle:@"反馈" image:[UIImage systemImageNamed:@"exclamationmark.bubble"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理反馈逻辑
+            [self provideFeedback];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"举报" image:[UIImage systemImageNamed:@"flag"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理举报逻辑
+            [self reportArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"不喜欢" image:[UIImage systemImageNamed:@"hand.thumbsdown"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理不喜欢逻辑
+            [self dislikeArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理添加链接逻辑
+            [self addLink];
+        }]];
+    }
+    
+    UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
+    moreButton.menu = menu;
+    moreButton.showsMenuAsPrimaryAction = YES;
 }
 
 #pragma mark - Helper Methods

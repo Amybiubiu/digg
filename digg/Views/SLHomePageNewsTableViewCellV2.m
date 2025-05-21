@@ -53,7 +53,7 @@
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:[UIFont pingFangLightWithSize:14] forKey:NSFontAttributeName];
+        [attributes setObject:[UIFont systemFontOfSize:14 weight:UIFontWeightLight] forKey:NSFontAttributeName];
         [attributes setObject:[SLColorManager cellContentColor] forKey:NSForegroundColorAttributeName];
         [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
@@ -235,7 +235,7 @@
 - (UILabel *)contentLabel {
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont pingFangLightWithSize:14];
+        _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
         _contentLabel.numberOfLines = 3;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
