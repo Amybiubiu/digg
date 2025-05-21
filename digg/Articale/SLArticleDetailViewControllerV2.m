@@ -394,9 +394,7 @@
 // 添加处理相关链接点击的方法
 - (void)handleReferClick:(SLReferEntity *)refer {
     if (refer.url.length > 0) {
-        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-        [webVC startLoadRequestWithUrl:refer.url];
-        [self.navigationController pushViewController:webVC animated:YES];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:refer.url] options:@{} completionHandler:nil];
     }
 }
 
