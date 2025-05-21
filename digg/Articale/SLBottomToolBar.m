@@ -158,7 +158,8 @@
     }];
     
     [self.stackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self);
+        make.top.left.right.equalTo(self);
+        make.bottom.equalTo(self).offset(-kiPhoneXBottomMargin);
     }];
 }
 
