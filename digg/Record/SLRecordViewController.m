@@ -18,7 +18,7 @@
 #import "digg-Swift.h"
 #import "SLArticleDetailViewControllerV2.h"
 
-#define FIELD_DEFAULT_HEIGHT 48
+#define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
 
 @interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate, RZRichTextViewDelegate>
@@ -122,8 +122,8 @@
     }];
     [self.contentView addSubview:self.containerView];
     [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self.contentView);
-            make.width.equalTo(self.contentView);
+        make.edges.equalTo(self.contentView);
+        make.width.equalTo(self.contentView);
     }];
     
     [self.containerView addSubview:self.tagView];
@@ -143,12 +143,12 @@
         make.top.equalTo(self.titleField.mas_bottom);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(0.5);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom).offset(10);
-        make.left.equalTo(self.containerView).offset(13);
+        make.top.equalTo(self.line1View.mas_bottom);
+        make.left.equalTo(self.containerView).offset(12);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
@@ -158,7 +158,7 @@
         make.top.equalTo(self.linkField.mas_bottom);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(0.5);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -170,9 +170,9 @@
     [self.containerView addSubview:self.line3View];
     [self.line3View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textView.mas_bottom);
-        make.left.equalTo(self.containerView).offset(12);
-        make.right.equalTo(self.containerView).offset(-12);
-        make.height.mas_equalTo(0.5);
+        make.left.equalTo(self.containerView).offset(10);
+        make.right.equalTo(self.containerView).offset(-10);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.tagContainerView];
     [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -295,11 +295,6 @@
         frame.origin.y = (self.titleField.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
     }
-    
-    // 确保 line1View 与 titleField 底部保持适当距离
-    [self.line1View mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleField.mas_bottom);
-    }];
 }
 
 - (void)updateLinkFieldHeight {
@@ -315,7 +310,7 @@
     UIButton *clearButton = [self.linkField associatedObjectForKey:@"clearButton"];
     if (clearButton) {
         CGRect frame = clearButton.frame;
-        frame.origin.x = self.linkField.bounds.size.width - frame.size.width;
+        frame.origin.x = self.linkField.bounds.size.width - frame.size.width - 5;
         frame.origin.y = (self.linkField.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
     }
@@ -326,12 +321,6 @@
     vc.articleId = articleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
-//    SLWebViewController *vc = [[SLWebViewController alloc] init];
-//    vc.isShowProgress = NO;
-//    [vc startLoadRequestWithUrl:url];
-//    vc.hidesBottomBarWhenPushed = YES;
-//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Actions
@@ -400,7 +389,7 @@
     [placeholderLabel sizeToFit];
     
     // 设置标签位置
-    placeholderLabel.frame = CGRectMake(5, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.frame = CGRectMake(3, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
     placeholderLabel.tag = 998;
     
     [self.linkField addSubview:placeholderLabel];
@@ -647,7 +636,7 @@
         // 根据内容自动调整高度
         CGFloat fixedWidth = textView.frame.size.width;
         CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-        CGFloat newHeight = MAX(30, newSize.height); // 最小高度为30
+        CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height); // 最小高度为30
         
         [textView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(newHeight);
@@ -859,13 +848,13 @@
 - (UITextView *)titleField {
     if (!_titleField) {
         _titleField = [[UITextView alloc] init];
-        _titleField.font = [UIFont pingFangRegularWithSize:18];
+        _titleField.font = [UIFont pingFangBoldWithSize:18];
         _titleField.textColor = [SLColorManager recorderTextColor];
         _titleField.backgroundColor = [UIColor clearColor];
         _titleField.delegate = self;
         _titleField.scrollEnabled = NO;
         _titleField.returnKeyType = UIReturnKeyDefault; // 允许换行
-        _titleField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        _titleField.textContainerInset = UIEdgeInsetsMake(17.35, 0, 17.35, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
         // 添加占位文本
         [self setupTitlePlaceholder];
@@ -896,7 +885,7 @@
         _linkField.delegate = self;
         _linkField.scrollEnabled = NO;
         _linkField.returnKeyType = UIReturnKeyDefault; // 允许换行
-        _linkField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        _linkField.textContainerInset = UIEdgeInsetsMake(18.7, 0, 18.7, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
         // 添加占位文本
         [self setupLinkPlaceholder];
@@ -916,8 +905,8 @@
         [_linkField setAssociatedObject:clearButton forKey:@"clearButton"];
         
         // 设置内容优先级，确保不会挤压其他视图
-        [_linkField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-        [_linkField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
+//        [_linkField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+//        [_linkField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
     }
     return _linkField;
 }
@@ -938,6 +927,7 @@
     if (!_line1View) {
         _line1View = [[UIView alloc] init];
         _line1View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line1View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line1View;
 }
@@ -946,6 +936,7 @@
     if (!_line2View) {
         _line2View = [[UIView alloc] init];
         _line2View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line2View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line2View;
 }
@@ -954,6 +945,7 @@
     if (!_line3View) {
         _line3View = [[UIView alloc] init];
         _line3View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line3View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line3View;
 }
