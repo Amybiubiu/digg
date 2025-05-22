@@ -156,6 +156,7 @@
 		3486EFEB2D2B80EB00A55258 /* SLProfileEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFEA2D2B80EB00A55258 /* SLProfileEntity.m */; };
 		34933F842D2E780E009F781A /* SLProfileDynamicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */; };
 		34933F872D2E9951009F781A /* SLTagsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F862D2E9951009F781A /* SLTagsView.m */; };
+		3499166F2DDEC1ED00C9A866 /* SLEmptyCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */; };
 		34A071062D72D999006BC583 /* ViewTrackerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A071032D72D999006BC583 /* ViewTrackerProxy.m */; };
 		34A071072D72D999006BC583 /* CALayer+TMViewExposure.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070E52D72D999006BC583 /* CALayer+TMViewExposure.m */; };
 		34A071082D72D999006BC583 /* Swizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070E22D72D999006BC583 /* Swizzler.m */; };
@@ -462,6 +463,8 @@
 		34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfileDynamicTableViewCell.m; sourceTree = "<group>"; };
 		34933F852D2E9951009F781A /* SLTagsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagsView.h; sourceTree = "<group>"; };
 		34933F862D2E9951009F781A /* SLTagsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagsView.m; sourceTree = "<group>"; };
+		3499166D2DDEC1ED00C9A866 /* SLEmptyCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEmptyCommentCell.h; sourceTree = "<group>"; };
+		3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEmptyCommentCell.m; sourceTree = "<group>"; };
 		34A070DA2D72D999006BC583 /* UIView+PageName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+PageName.h"; sourceTree = "<group>"; };
 		34A070DB2D72D999006BC583 /* UIView+PageName.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+PageName.m"; sourceTree = "<group>"; };
 		34A070DC2D72D999006BC583 /* UIView+TMViewTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+TMViewTracker.h"; sourceTree = "<group>"; };
@@ -1007,6 +1010,8 @@
 		3478D6C82DC3A743007D366B /* Articale */ = {
 			isa = PBXGroup;
 			children = (
+				3499166D2DDEC1ED00C9A866 /* SLEmptyCommentCell.h */,
+				3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */,
 				346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */,
 				346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */,
 				346B7EB02DD39AD8000525F7 /* SLArticleDetailViewControllerV2.h */,
@@ -1793,6 +1798,7 @@
 				345C12362DAC95AB005FCCDB /* QPlayer.swift in Sources */,
 				345C12372DAC95AB005FCCDB /* QuicklyLabel.swift in Sources */,
 				348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */,
+				3499166F2DDEC1ED00C9A866 /* SLEmptyCommentCell.m in Sources */,
 				345C12382DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift in Sources */,
 				345C12392DAC95AB005FCCDB /* QuicklyArray.swift in Sources */,
 				345C123A2DAC95AB005FCCDB /* QDispatch.swift in Sources */,

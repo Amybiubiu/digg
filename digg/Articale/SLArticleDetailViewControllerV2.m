@@ -34,6 +34,7 @@
 #import "SLRecordViewController.h"
 #import "SLAddLinkViewController.h"
 #import "SLProfileViewController.h"
+#import "SLEmptyCommentCell.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -140,6 +141,7 @@
     [self.tableView registerClass:[SLCommentCellV2 class] forCellReuseIdentifier:@"SLCommentCellV2"];
     [self.tableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SLSecondCommentCell"];
     [self.tableView registerClass:[SLShowMoreCell class] forCellReuseIdentifier:@"SLShowMoreCell"];
+    [self.tableView registerClass:[SLEmptyCommentCell class] forCellReuseIdentifier:@"SLEmptyCommentCell"];
     self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     if (@available(iOS 15.0, *)) {
         self.tableView.sectionHeaderTopPadding = 0;
@@ -529,15 +531,28 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.viewModel.commentList.count;
+    // 如果没有评论，返回1个section用于显示空白提示
+    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
+    // 如果没有评论，返回1行用于显示空白提示
+    if (self.viewModel.commentList.count == 0) {
+        return 1;
+    }
     return 1 + self.viewModel.commentList[section].expandedRepliesCount + (self.viewModel.commentList[section].hasMore ? 1 : 0);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 如果没有评论，显示空白提示Cell
+    if (self.viewModel.commentList.count == 0) {
+        SLEmptyCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLEmptyCommentCell"];
+        __weak typeof(self) weakSelf = self;
+        cell.commentButtonTapHandler = ^{
+            [weakSelf commentButtonTapped];
+        };
+        return cell;
+    }
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     if (indexPath.row == 0) {
         SLCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCellV2"];
@@ -618,6 +633,16 @@
         };
         return cell;
     }
+}
+
+// 添加UITableViewDelegate方法设置Cell高度
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 如果没有评论，设置空白提示Cell的高度
+    if (self.viewModel.commentList.count == 0) {
+        return 200; // 调整为合适的高度
+    }
+    
+    return UITableViewAutomaticDimension;
 }
 
 #pragma mark - UITableViewDelegate
@@ -934,6 +959,26 @@
     UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
     moreButton.menu = menu;
     moreButton.showsMenuAsPrimaryAction = YES;
+}
+
+#pragma mark - DZNEmptyDataSetDelegate
+
+- (BOOL)emptyDataSetShouldDisplay:(UIScrollView *)scrollView {
+    // 只有在评论列表为空时显示
+    return self.viewModel.commentList.count == 0;
+}
+
+- (BOOL)emptyDataSetShouldAllowTouch:(UIScrollView *)scrollView {
+    return YES;
+}
+
+- (BOOL)emptyDataSetShouldAllowScroll:(UIScrollView *)scrollView {
+    return YES;
+}
+
+- (void)emptyDataSet:(UIScrollView *)scrollView didTapButton:(UIButton *)button {
+    // 点击"立即评论"按钮的处理
+    [self commentButtonTapped];
 }
 
 #pragma mark - Helper Methods
