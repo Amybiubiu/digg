@@ -63,6 +63,7 @@
     self.commentButton.backgroundColor = Color16(0x14932A);
     self.commentButton.layer.cornerRadius = 4;
     [self.commentButton addTarget:self action:@selector(commentButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    self.commentButton.hidden = YES;
     [self.contentView addSubview:self.commentButton];
     
     [self.sectionSegment mas_updateConstraints:^(MASConstraintMaker *make) {

@@ -195,11 +195,11 @@
     [self.likeView setButtonSelected:isLiked];
     [self.likeView updateCount:count];
     
-    if (isLiked) {
-        [self.likeView updateCountColor:[UIColor redColor]];
-    } else {
-        [self.likeView updateCountColor:[UIColor darkGrayColor]];
-    }
+//    if (isLiked) {
+//        [self.likeView updateCountColor:[UIColor redColor]];
+//    } else {
+//        [self.likeView updateCountColor:[UIColor darkGrayColor]];
+//    }
 }
 
 - (void)updateCommentCount:(NSInteger)count {

@@ -45,8 +45,8 @@
             filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1019"
-            endingLineNumber = "1019"
+            startingLineNumber = "1022"
+            endingLineNumber = "1022"
             landmarkName = "-replyToComment:index:"
             landmarkType = "7">
          </BreakpointContent>

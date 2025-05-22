@@ -66,6 +66,7 @@
 @property (nonatomic, assign) NSTimeInterval lastScrollTime;
 @property (nonatomic, assign) CGFloat scrollVelocity;
 @property (nonatomic, assign) BOOL isAtBottomState;
+@property (nonatomic, assign) BOOL isLoadData;
 
 @end
 
@@ -75,6 +76,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.isLoadData = NO;
     self.homeViewModel = [[SLHomePageViewModel alloc] init];
     [self setupUI];
     [self setupGestures];
@@ -266,6 +268,7 @@
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
 //        [SVProgressHUD dismiss];
         if (isSuccess) {
+            self.isLoadData = YES;
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
             if (articleEntity) {
                 // 更新UI
@@ -537,7 +540,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // 如果没有评论，返回1个section用于显示空白提示
-    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count : 1;
+    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count : self.isLoadData ? 1 : 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
