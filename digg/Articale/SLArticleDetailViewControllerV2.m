@@ -338,7 +338,7 @@
     [self updateTableHeaderViewHeight];
     
     // 加载评论数据
-    [self loadComments];
+    [self.tableView reloadData];
 }
 
 - (void)updateTableHeaderViewHeight {    
@@ -399,12 +399,6 @@
     self.headerView.frame = frame;
     
     self.tableView.tableHeaderView = self.headerView;
-}
-
-- (void)loadComments {
-    if (self.viewModel.commentList.count > 0) {
-        [self.tableView reloadData];
-    }
 }
 
 #pragma mark - Action Methods
