@@ -29,7 +29,13 @@
             fontName = @"PingFangSC-Semibold";
             break;
         case PingFangFontWeightBold:
-            fontName = @"PingFangSC-Semibold"; // 苹方没有Bold，使用Semibold代替
+            fontName = @"SFPro-Bold"; // 苹方没有Bold，使用SFPro-Bold代替
+            break;
+        case PingFangFontWeightBoldItalic:
+            fontName = @"SFPro-BoldItalic"; // 苹方没有BoldItalic，使用SFPro-Bold代替
+            break;
+        case PingFangFontWeightRegularItalic:
+            fontName = @"SFPro-RegularItalic"; // 苹方没有Italic，使用SFPro-RegularItalic代替
             break;
         default:
             fontName = @"PingFangSC-Regular";
@@ -58,6 +64,12 @@
                 break;
             case PingFangFontWeightBold:
                 font = [UIFont systemFontOfSize:size weight:UIFontWeightBold];
+                break;
+            case PingFangFontWeightRegularItalic:
+                font = [UIFont italicSystemFontOfSize:size];
+                break;
+            case PingFangFontWeightBoldItalic:
+                font = [UIFont italicSystemFontOfSize:size]; //无粗斜体
                 break;
             default:
                 font = [UIFont systemFontOfSize:size];
@@ -90,6 +102,14 @@
 
 + (UIFont *)pingFangBoldWithSize:(CGFloat)size {
     return [self pingFangFontWithSize:size weight:PingFangFontWeightBold];
+}
+
++ (UIFont *)pingFangBoldItalicWithSize:(CGFloat)size {
+    return [self pingFangFontWithSize:size weight:PingFangFontWeightBoldItalic];
+}
+
++ (UIFont *)pingFangItalicWithSize:(CGFloat)size {
+    return [self pingFangFontWithSize:size weight:PingFangFontWeightRegularItalic];
 }
 
 @end
