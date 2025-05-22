@@ -11,6 +11,7 @@
 		34287B2E2DCF87820042D6FC /* SLSecondCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */; };
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		344EFA042D2E5111001E5FAF /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 344EFA022D2E5111001E5FAF /* KxMenu.m */; };
+		344F37D12DDF402600D3D0AC /* SLEndOfListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */; };
 		345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C0AA12DAA287B005FCCDB /* UIView+Associated.m */; };
 		345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */; };
 		345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E32DABD7DF005FCCDB /* SLInteractionBar.m */; };
@@ -279,6 +280,8 @@
 		344242772D55FE190081B948 /* SLColorManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLColorManager.m; sourceTree = "<group>"; };
 		344EFA012D2E5111001E5FAF /* KxMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KxMenu.h; sourceTree = "<group>"; };
 		344EFA022D2E5111001E5FAF /* KxMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KxMenu.m; sourceTree = "<group>"; };
+		344F37CF2DDF402600D3D0AC /* SLEndOfListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEndOfListCell.h; sourceTree = "<group>"; };
+		344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEndOfListCell.m; sourceTree = "<group>"; };
 		345C0AA02DAA287B005FCCDB /* UIView+Associated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Associated.h"; sourceTree = "<group>"; };
 		345C0AA12DAA287B005FCCDB /* UIView+Associated.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Associated.m"; sourceTree = "<group>"; };
 		345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIFont+PingFang.h"; sourceTree = "<group>"; };
@@ -1010,6 +1013,8 @@
 		3478D6C82DC3A743007D366B /* Articale */ = {
 			isa = PBXGroup;
 			children = (
+				344F37CF2DDF402600D3D0AC /* SLEndOfListCell.h */,
+				344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */,
 				3499166D2DDEC1ED00C9A866 /* SLEmptyCommentCell.h */,
 				3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */,
 				346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */,
@@ -1924,6 +1929,7 @@
 				345C12CF2DACB84D005FCCDB /* PrepareViewForSkeleton.swift in Sources */,
 				3478EC622DC869D1007D366B /* SLSimpleInteractionBar.m in Sources */,
 				345C12D02DACB84D005FCCDB /* Recoverable.swift in Sources */,
+				344F37D12DDF402600D3D0AC /* SLEndOfListCell.m in Sources */,
 				345C12D12DACB84D005FCCDB /* CollectionSkeleton.swift in Sources */,
 				345C12D22DACB84D005FCCDB /* Swizzling.swift in Sources */,
 				345C12D32DACB84D005FCCDB /* UIColor+Skeleton.swift in Sources */,

@@ -35,6 +35,7 @@
 #import "SLAddLinkViewController.h"
 #import "SLProfileViewController.h"
 #import "SLEmptyCommentCell.h"
+#import "SLEndOfListCell.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -144,6 +145,7 @@
     [self.tableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SLSecondCommentCell"];
     [self.tableView registerClass:[SLShowMoreCell class] forCellReuseIdentifier:@"SLShowMoreCell"];
     [self.tableView registerClass:[SLEmptyCommentCell class] forCellReuseIdentifier:@"SLEmptyCommentCell"];
+    [self.tableView registerClass:[SLEndOfListCell class] forCellReuseIdentifier:@"SLEndOfListCell"];
     self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     if (@available(iOS 15.0, *)) {
         self.tableView.sectionHeaderTopPadding = 0;
@@ -534,12 +536,16 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // 如果没有评论，返回1个section用于显示空白提示
-    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count : self.isLoadData ? 1 : 0;
+    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count + 1 : self.isLoadData ? 1 : 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // 如果没有评论，返回1行用于显示空白提示
     if (self.viewModel.commentList.count == 0) {
+        return 1;
+    }
+    // 如果是最后一个section（"已经到底了"提示），返回1行
+    if (section == self.viewModel.commentList.count) {
         return 1;
     }
     return 1 + self.viewModel.commentList[section].expandedRepliesCount + (self.viewModel.commentList[section].hasMore ? 1 : 0);
@@ -553,6 +559,11 @@
         cell.commentButtonTapHandler = ^{
             [weakSelf commentButtonTapped];
         };
+        return cell;
+    }
+    // 如果是最后一个section（"已经到底了"提示）
+    if (indexPath.section == self.viewModel.commentList.count) {
+        SLEndOfListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLEndOfListCell"];
         return cell;
     }
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
@@ -642,6 +653,10 @@
     // 如果没有评论，设置空白提示Cell的高度
     if (self.viewModel.commentList.count == 0) {
         return 200; // 调整为合适的高度
+    }
+    // 如果是最后一个section（"已经到底了"提示）
+    if (indexPath.section == self.viewModel.commentList.count) {
+        return 50; // 设置"已经到底了"提示的高度
     }
     
     return UITableViewAutomaticDimension;

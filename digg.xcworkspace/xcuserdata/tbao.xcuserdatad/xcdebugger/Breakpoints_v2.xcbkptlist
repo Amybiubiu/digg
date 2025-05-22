@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1016"
             endingLineNumber = "1016"
-            landmarkName = "-replyToComment:index:"
+            landmarkName = "-showToolbar:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
