@@ -494,8 +494,13 @@
             [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
             weakSelf.viewModel.articleEntity.commentsCnt += 1;
             
-            // 重新加载评论列表
-            [weakSelf.tableView reloadData];
+            // 使用插入section的方式更新表格
+            [weakSelf.tableView beginUpdates];
+            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+            [weakSelf.tableView endUpdates];
+            
+            // 滚动到新插入的评论
+            [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
             
             // 显示成功提示
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
@@ -1045,6 +1050,12 @@
             [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
             [weakSelf.tableView endUpdates];
 
+            // 滚动到新添加的评论位置
+            if (indexPathsToInsert.count > 0) {
+                NSIndexPath *lastIndexPath = [indexPathsToInsert lastObject];
+                [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
             //todo: 评论失败
@@ -1097,6 +1108,12 @@
             [weakSelf.tableView beginUpdates];
             [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
             [weakSelf.tableView endUpdates];
+
+            // 滚动到新添加的评论位置
+            if (indexPathsToInsert.count > 0) {
+                NSIndexPath *lastIndexPath = [indexPathsToInsert lastObject];
+                [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
 
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {

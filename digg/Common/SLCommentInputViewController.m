@@ -153,6 +153,7 @@
 
 - (void)setPlaceholder:(NSString *)placeholder {
     _placeholder = placeholder;
+    self.placeholderLabel.text = placeholder;
 }
 
 #pragma mark - Public Methods
