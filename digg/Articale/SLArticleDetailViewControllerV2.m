@@ -1035,7 +1035,7 @@
     __weak typeof(self) weakSelf = self;
     [SVProgressHUD show];
     SLCommentEntity* rootComment = self.viewModel.commentList[section];
-    SLCommentEntity* secondComment = rootComment.replyList[row];
+    SLCommentEntity* secondComment = rootComment.replyList[row - 1];
     [self.viewModel replyToSecondComment:self.viewModel.articleEntity.articleId rootCommentId:rootComment.commentId commentId:secondComment.commentId replyUserId:secondComment.userId content:content resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
         [SVProgressHUD dismiss];
         weakSelf.commentVC.textView.text = @"";

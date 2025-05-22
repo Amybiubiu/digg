@@ -279,7 +279,7 @@
                         }
                         
                         // 在指定位置插入新回复
-                        [(NSMutableArray *)comment.replyList insertObject:newComment atIndex:insertIndex];
+                        [(NSMutableArray *)comment.replyList insertObject:newComment atIndex:insertIndex + 1];
                         break;
                     }
                 }
