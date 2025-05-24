@@ -137,19 +137,18 @@
                 return;
             }
         }
-        
-        // 解析失败
-        if (handler) {
-            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
-                                                 code:1001 
-                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
-            handler(nil, error);
-        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
         // 请求失败
         if (handler) {
-            handler(nil, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(nil, error);
+                }
+            }
         }
     }];
 }
@@ -206,19 +205,18 @@
                 return;
             }
         }
-        
-        // 解析失败
-        if (handler) {
-            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
-                                                 code:1002 
-                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
-            handler(nil, error);
-        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
         // 请求失败
         if (handler) {
-            handler(nil, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(nil, error);
+                }
+            }
         }
     }];
 }
@@ -291,19 +289,18 @@
                 return;
             }
         }
-        
-        // 解析失败
-        if (handler) {
-            NSError *error = [NSError errorWithDomain:@"com.digg.commentError" 
-                                                 code:1003 
-                                             userInfo:@{NSLocalizedDescriptionKey: @"评论数据解析失败"}];
-            handler(nil, error);
-        }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"req error = %@", error);
         // 请求失败
         if (handler) {
-            handler(nil, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(nil, error);
+                }
+            }
         }
     }];
 }
@@ -312,7 +309,7 @@
 
 // 对评论点赞
 - (void)likeComment:(NSString *)commentId
-      resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+      resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler {
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -331,19 +328,24 @@
             NSData* data = (NSData*)responseObject;
             NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
-            handler(result, nil);
+            handler(result, NO, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"点赞评论失败: %@", error);
         if (handler) {
-            handler(NO, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+            }
+            handler(NO, needLogin, error);
         }
     }];
 }
 
 // 对评论点踩
 - (void)dislikeComment:(NSString *)commentId
-         resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+         resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler {
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -362,19 +364,24 @@
             NSData* data = (NSData*)responseObject;
             NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
-            handler(result, nil);
+            handler(result, NO, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"点踩评论失败: %@", error);
         if (handler) {
-            handler(NO, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+            }
+            handler(NO, needLogin, error);
         }
     }];
 }
 
 // 取消对评论的点赞或点踩
 - (void)cancelCommentLike:(NSString *)commentId
-            resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+            resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler {
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -392,12 +399,17 @@
             NSData* data = (NSData*)responseObject;
             NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
-            handler(result, nil);
+            handler(result, NO, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"取消评论点赞/点踩失败: %@", error);
         if (handler) {
-            handler(NO, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+            }
+            handler(NO, needLogin, error);
         }
     }];
 }

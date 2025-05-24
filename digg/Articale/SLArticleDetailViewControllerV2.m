@@ -504,7 +504,7 @@
             // 显示成功提示
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -1070,7 +1070,7 @@
 
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -1129,7 +1129,7 @@
 
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -1152,7 +1152,7 @@
         return;
     }
     if (!selected) {
-        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 commentEntity.disliked = nil;
                 commentEntity.likeCount = MAX(0, commentEntity.likeCount - 1);
@@ -1167,10 +1167,23 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     } else {
-        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 if ([commentEntity.disliked isEqualToString:@"false"]) {
                     commentEntity.dislikeCount -= 1;
@@ -1189,6 +1202,19 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     }
@@ -1211,7 +1237,7 @@
     }
     
     if (!selected) {
-        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 commentEntity.disliked = nil;
                 commentEntity.dislikeCount = MAX(0, commentEntity.dislikeCount - 1);
@@ -1226,10 +1252,23 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     } else {
-        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel dislikeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 if ([commentEntity.disliked isEqualToString:@"true"]) {
                     commentEntity.likeCount -= 1;
@@ -1247,6 +1286,19 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     }
