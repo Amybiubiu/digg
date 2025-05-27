@@ -408,7 +408,12 @@
 // 添加处理相关链接点击的方法
 - (void)handleReferClick:(SLReferEntity *)refer {
     if (refer.url.length > 0) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:refer.url] options:@{} completionHandler:nil];
+        NSURL* url = [NSURL URLWithString:refer.url];
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+        } else {
+            [self.view sl_showToast:@"链接异常，无法打开"];
+        }
     }
 }
 

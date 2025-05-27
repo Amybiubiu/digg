@@ -806,7 +806,7 @@
 - (SLSegmentControl *)segmentControl {
     if (!_segmentControl) {
         _segmentControl = [[SLSegmentControl alloc] initWithFrame:CGRectZero];
-        _segmentControl.titles = @[@"动态", @"赞同", @"收藏"];
+        _segmentControl.titles = @[@"动态", @"赞同", @"发布"];
         _segmentControl.delegate = self; // 设置代理为当前控制器
     }
     return _segmentControl;
