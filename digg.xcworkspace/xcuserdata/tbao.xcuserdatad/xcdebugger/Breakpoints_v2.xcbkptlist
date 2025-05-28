@@ -45,8 +45,8 @@
             filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1021"
-            endingLineNumber = "1021"
+            startingLineNumber = "1049"
+            endingLineNumber = "1049"
             landmarkName = "-showToolbar:"
             landmarkType = "7">
          </BreakpointContent>

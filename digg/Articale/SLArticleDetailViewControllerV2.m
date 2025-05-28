@@ -244,9 +244,25 @@
 // 添加阅读原文方法
 - (void)readOriginalArticle {
     if (self.viewModel.articleEntity.url.length > 0) {
-        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-        [webVC startLoadRequestWithUrl:self.viewModel.articleEntity.url];
-        [self.navigationController pushViewController:webVC animated:YES];
+        //TODO:打开safafi 之前弹窗：是否要访问
+        SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                           message:nil
+                                                               url:[NSURL URLWithString:self.viewModel.articleEntity.url]
+                                                           urlText:self.viewModel.articleEntity.url
+                                                      confirmTitle:@"是"
+                                                       cancelTitle:@"否"
+                                                    confirmHandler:^{
+                                                        NSURL* url = [NSURL URLWithString:self.viewModel.articleEntity.url];
+                                                        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                                                            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+                                                        } else {
+                                                            [self.view sl_showToast:@"链接异常，无法打开"];
+                                                        }
+                                                    }
+                                                     cancelHandler:^{
+                                                    }
+                                                 fromViewController:nil];
+        [alertView show];
     }
 }
 
@@ -408,12 +424,24 @@
 // 添加处理相关链接点击的方法
 - (void)handleReferClick:(SLReferEntity *)refer {
     if (refer.url.length > 0) {
-        NSURL* url = [NSURL URLWithString:refer.url];
-        if ([[UIApplication sharedApplication] canOpenURL:url]) {
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
-        } else {
-            [self.view sl_showToast:@"链接异常，无法打开"];
-        }
+        SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                           message:nil
+                                                               url:[NSURL URLWithString:refer.url]
+                                                           urlText:refer.url
+                                                      confirmTitle:@"是"
+                                                       cancelTitle:@"否"
+                                                    confirmHandler:^{
+                                                        NSURL* url = [NSURL URLWithString:refer.url];
+                                                        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                                                            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+                                                        } else {
+                                                            [self.view sl_showToast:@"链接异常，无法打开"];
+                                                        }
+                                                    }
+                                                     cancelHandler:^{
+                                                    }
+                                                 fromViewController:nil];
+        [alertView show];
     }
 }
 
