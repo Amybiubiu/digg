@@ -84,7 +84,7 @@
     
     //分割线
     self.dividingView = [[UIView alloc] init];
-    self.dividingView.backgroundColor = Color16(0xEEEEEE); //TODO: 暗黑模式
+    self.dividingView.backgroundColor = [SLColorManager cellDivideLineColor];
     [self addSubview:self.dividingView];
     
     // 设置约束
@@ -126,7 +126,7 @@
     
     [self.dividingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.titleLabel);
-        make.height.mas_equalTo(1);
+        make.height.mas_equalTo(0.5);
         make.bottom.equalTo(self);
     }];
 }
