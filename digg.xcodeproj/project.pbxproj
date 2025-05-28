@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		340F64022D2D55130046FC97 /* SLEditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 340F64012D2D55130046FC97 /* SLEditProfileViewController.m */; };
+		341AF9692DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */; };
+		341AF96A2DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */; };
 		34287B2E2DCF87820042D6FC /* SLSecondCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */; };
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		344EFA042D2E5111001E5FAF /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 344EFA022D2E5111001E5FAF /* KxMenu.m */; };
@@ -274,6 +276,10 @@
 /* Begin PBXFileReference section */
 		340F64002D2D55130046FC97 /* SLEditProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEditProfileViewController.h; sourceTree = "<group>"; };
 		340F64012D2D55130046FC97 /* SLEditProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEditProfileViewController.m; sourceTree = "<group>"; };
+		341AF9652DE6EB8D002D9D5F /* SLZoomTransitionAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLZoomTransitionAnimator.h; sourceTree = "<group>"; };
+		341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLZoomTransitionAnimator.m; sourceTree = "<group>"; };
+		341AF9672DE6EB8D002D9D5F /* SLZoomTransitionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLZoomTransitionDelegate.h; sourceTree = "<group>"; };
+		341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLZoomTransitionDelegate.m; sourceTree = "<group>"; };
 		34287B2C2DCF87820042D6FC /* SLSecondCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLSecondCommentCell.h; sourceTree = "<group>"; };
 		34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLSecondCommentCell.m; sourceTree = "<group>"; };
 		344242762D55FE190081B948 /* SLColorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLColorManager.h; sourceTree = "<group>"; };
@@ -1501,6 +1507,10 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				341AF9652DE6EB8D002D9D5F /* SLZoomTransitionAnimator.h */,
+				341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */,
+				341AF9672DE6EB8D002D9D5F /* SLZoomTransitionDelegate.h */,
+				341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */,
 				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
 				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
@@ -1903,6 +1913,8 @@
 				3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */,
 				345C12B62DACB84D005FCCDB /* CALayer+Extensions.swift in Sources */,
 				345C12B72DACB84D005FCCDB /* SkeletonReusableCell.swift in Sources */,
+				341AF9692DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m in Sources */,
+				341AF96A2DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m in Sources */,
 				345C12B82DACB84D005FCCDB /* SkeletonConfig.swift in Sources */,
 				345C12B92DACB84D005FCCDB /* UIView+Transitions.swift in Sources */,
 				345C12BA2DACB84D005FCCDB /* CALayer+Animations.swift in Sources */,

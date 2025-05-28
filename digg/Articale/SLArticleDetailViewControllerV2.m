@@ -959,7 +959,9 @@
 #pragma mark - SLCustomNavigationBarDelegate
 
 - (void)navigationBarBackButtonTapped {
-    [self.navigationController popViewControllerAnimated:YES];
+    // [self.navigationController popViewControllerAnimated:YES];
+//    UIViewController *presentingVC = self.navigationController.presentingViewController;
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)navigationBarMoreButtonTapped {
