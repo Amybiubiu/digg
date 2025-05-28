@@ -467,7 +467,7 @@ public extension String {
                 case .italic:
                     newfont = UIFont.pingFangItalic(withSize: font.pointSize)
                 case .normal:
-                    newfont = UIFont.pingFangRegular(withSize: 14)
+                    newfont = UIFont.pingFangRegular(withSize: 16)
                 }
                 tempAttr.addAttribute(.font, value: newfont, range: range)
             }
