@@ -143,6 +143,19 @@
     self.authorNameLabel.text = authorName ?: source;
     self.publishTimeLabel.text = publishTime;
     self.readOriginalButton.hidden = url.length == 0 ? YES : NO;
+    if (source.length == 0 && url.length == 0) {
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self).offset(7);
+            make.left.equalTo(self).offset(16);
+            make.right.equalTo(self).offset(-16);
+        }];
+    } else {
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.sourceUrlLabel.mas_bottom).offset(7);
+            make.left.equalTo(self).offset(16);
+            make.right.equalTo(self).offset(-16);
+        }];
+    }
 }
 
 - (void)readOriginalButtonTapped {
@@ -165,7 +178,7 @@
     CGFloat sourceHeight = [self.sourceUrlLabel sizeThatFits:CGSizeZero].height;
     
     // 计算总高度
-    CGFloat topMargin = 16.0; // 顶部边距
+    CGFloat topMargin = sourceHeight == 0 ? 0 : 16.0; // 顶部边距
     CGFloat titleTopMargin = 7.0; // 标题上方边距
     CGFloat avatarTopMargin = 16.0; // 头像上方边距
     CGFloat avatarHeight = 30.0; // 头像高度
