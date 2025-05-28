@@ -45,9 +45,9 @@
     
     // 阅读原文按钮
     self.readOriginalButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.readOriginalButton setTitle:@"阅读原文" forState:UIControlStateNormal];
-    [self.readOriginalButton setTitleColor:Color16(0x2592DB) forState:UIControlStateNormal]; //TODO: 暗黑模式
-    self.readOriginalButton.titleLabel.font = [UIFont pingFangSemiboldWithSize:10];
+    [self.readOriginalButton setTitle:@"访问原文" forState:UIControlStateNormal];
+    [self.readOriginalButton setTitleColor:Color16(0x005ecc) forState:UIControlStateNormal];
+    self.readOriginalButton.titleLabel.font = [UIFont pingFangRegularWithSize:10];
     [self.readOriginalButton addTarget:self action:@selector(readOriginalButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     self.readOriginalButton.hidden = YES;
     [self addSubview:self.readOriginalButton];
