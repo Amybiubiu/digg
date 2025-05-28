@@ -155,7 +155,7 @@
         NSAttributedString *htmlAttributedString = [comment.content attributedStringFromHTML];
 
         // 2. 构建完整文本
-        NSString *prefixString = [NSString stringWithFormat:@"回复@%@ : ", comment.replyUsername];
+        NSString *prefixString = [NSString stringWithFormat:@"回复 %@ : ", comment.replyUsername];
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:prefixString];
 
         // 3. 设置前缀文本的样式
@@ -165,7 +165,7 @@
                                  range:NSMakeRange(0, prefixString.length)];
 
         // 4. 设置 @username 的特殊颜色
-        NSString *atString = [NSString stringWithFormat:@"@%@", comment.replyUsername];
+        NSString *atString = [NSString stringWithFormat:@"%@", comment.replyUsername];
         NSRange atRange = [prefixString rangeOfString:atString];
         if (atRange.location != NSNotFound) {
             [attributedString addAttribute:NSForegroundColorAttributeName
