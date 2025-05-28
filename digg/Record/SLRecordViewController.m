@@ -914,7 +914,7 @@
 - (RZRichTextView *)textView {
     if (!_textView) {
         _textView = [[RZRichTextView alloc] initWithFrame:CGRectZero viewModel:[RZRichTextViewModel sharedWithEdit:YES]];
-        _textView.font = [UIFont pingFangRegularWithSize:18];
+        _textView.font = [UIFont pingFangRegularWithSize:16];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
        _textView.delegate = self;
