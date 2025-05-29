@@ -493,10 +493,12 @@ public extension String {
                 let mutableStyle = NSMutableParagraphStyle()
                 mutableStyle.setParagraphStyle(paragraphStyle)
                 mutableStyle.lineSpacing = 4.0
+                mutableStyle.paragraphSpacing = 10.0
                 tempAttr.addAttribute(.paragraphStyle, value: mutableStyle, range: range)
             } else {
                 let paragraphStyle = NSMutableParagraphStyle()
                 paragraphStyle.lineSpacing = 4.0
+                paragraphStyle.paragraphSpacing = 10.0
                 tempAttr.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
             }
         }
