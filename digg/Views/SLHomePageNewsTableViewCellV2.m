@@ -236,7 +236,7 @@
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
         _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
-        _contentLabel.numberOfLines = 3;
+        _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
     return _contentLabel;

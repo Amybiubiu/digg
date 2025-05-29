@@ -52,7 +52,7 @@
         
         // 创建数字标签
         _numberLabel = [[UILabel alloc] init];
-        _numberLabel.textAlignment = NSTextAlignmentRight;
+        _numberLabel.textAlignment = NSTextAlignmentLeft;
         _numberLabel.font = [UIFont pingFangRegularWithSize:12];
         [self addSubview:_numberLabel];
         
@@ -88,9 +88,23 @@
         numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
     }
     
-    // 布局数字标签
+    // 处理图标 - 现在放在左侧
+    CGFloat iconWidth = 0;
+    if (!_iconImageView.hidden) {
+        iconWidth = _iconImageView.image.size.width;
+        if (iconWidth == 0) {
+            iconWidth = height * 0.6; // 默认使用高度的60%作为宽度
+        }
+        
+        _iconImageView.frame = CGRectMake(0, (height - iconWidth) / 2, iconWidth, iconWidth);
+    }
+    
+    // 布局数字标签 - 现在放在右侧
     if (_item.number > 0) {
-        _numberLabel.frame = CGRectMake(0, 0, numberWidth, height);
+        CGFloat numberX = iconWidth > 0 ? (iconWidth + _itemSpacing) : 0;
+        _numberLabel.frame = CGRectMake(numberX, 0, numberWidth, height);
+        // 将文本对齐方式改为左对齐，因为现在在右侧
+        _numberLabel.textAlignment = NSTextAlignmentLeft;
     } else {
         _numberLabel.frame = CGRectZero;
     }
@@ -98,18 +112,8 @@
     // 处理自定义文本
     if (_customTextLabel && !_customTextLabel.hidden) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-        CGFloat textX = (_item.number > 0) ? (numberWidth + _itemSpacing) : 0;
+        CGFloat textX = iconWidth > 0 ? (iconWidth + _itemSpacing) : 0;
         _customTextLabel.frame = CGRectMake(textX, 0, textWidth, height);
-    }
-    // 处理图标
-    else if (!_iconImageView.hidden) {
-        CGFloat iconWidth = _iconImageView.image.size.width;
-        if (iconWidth == 0) {
-            iconWidth = height * 0.6; // 默认使用高度的60%作为宽度
-        }
-        
-        CGFloat iconX = (_item.number > 0) ? (numberWidth + _itemSpacing) : 0;
-        _iconImageView.frame = CGRectMake(iconX, (height - iconWidth) / 2, iconWidth, iconWidth);
     }
     
     // 布局点击按钮 - 扩大点击区域
@@ -159,27 +163,32 @@
     CGFloat width = 0;
     CGFloat height = size.height;
     
-    // 计算数字宽度
+    // 计算图标宽度 - 现在在左侧
+    CGFloat iconWidth = 0;
+    NSString *customText = [_item valueForKey:@"customText"];
+    if (customText.length == 0 && !_iconImageView.hidden) {
+        iconWidth = _iconImageView.image.size.width;
+        if (iconWidth == 0) {
+            iconWidth = height * 0.6; // 默认使用高度的60%作为宽度
+        }
+        width += iconWidth;
+        
+        // 如果有图标且有数字或自定义文本，添加间距
+        if (_item.number > 0 || customText.length > 0) {
+            width += _itemSpacing;
+        }
+    }
+    
+    // 计算数字宽度 - 现在在右侧
     if (_item.number > 0) {
         CGFloat numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
         width += numberWidth;
-        
-        // 如果有数字，添加间距
-        width += _itemSpacing;
     }
     
     // 处理自定义文本
-    NSString *customText = [_item valueForKey:@"customText"];
     if (customText.length > 0) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
         width += textWidth;
-    } else {
-        // 添加图标宽度
-        CGFloat iconWidth = _iconImageView.image.size.width;
-        if (iconWidth == 0) {
-            iconWidth = height; // 默认使用高度作为宽度
-        }
-        width += iconWidth;
     }
     
     return CGSizeMake(width, height);
@@ -312,7 +321,7 @@
             if (nextItemVisible) {
                 // 添加分隔点
                 UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - DOT_WIDTH/2, height/2 - DOT_WIDTH/2, DOT_WIDTH, DOT_WIDTH)];
-                separatorDot.backgroundColor = [SLColorManager categorySelectedTextColor];
+                separatorDot.backgroundColor = [UIColor clearColor]; //[SLColorManager categorySelectedTextColor];
                 separatorDot.layer.cornerRadius = 1;
                 separatorDot.tag = 1000 + i; // 使用tag标识分隔点
                 [self addSubview:separatorDot];

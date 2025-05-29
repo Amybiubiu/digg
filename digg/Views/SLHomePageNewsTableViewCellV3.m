@@ -48,7 +48,7 @@
     self.titleLabel.text = entiy.title;
     self.contentLabel.text = nil;
     self.contentLabel.attributedText = nil;
-    self.contentLabel.numberOfLines = 3;
+    self.contentLabel.numberOfLines = 2;
 
     CGFloat lineSpacing = 4;
     CGFloat offset = 16;
@@ -323,7 +323,7 @@
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
         _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];//[UIFont pingFangLightWithSize:14];
-        _contentLabel.numberOfLines = 3;
+        _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
     return _contentLabel;

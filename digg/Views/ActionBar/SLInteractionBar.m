@@ -88,11 +88,10 @@
 
     // 查看
     SLNumberIconItem *checkItem = [SLNumberIconItem itemWithNumber:0 
-                                                       normalImage:nil 
+                                                       normalImage:[UIImage imageNamed:@"check"]
                                                      selectedImage:nil];
     checkItem.numberColor = [SLColorManager cellContentColor];
     checkItem.iconColor = [SLColorManager cellContentColor];
-    checkItem.customText = @"查看";
     [self.itemsDict setObject:checkItem forKey:@(SLInteractionTypeCustom)];
 }
 
