@@ -38,16 +38,16 @@
     
     // 网站来源标签
     self.sourceUrlLabel = [[UILabel alloc] init];
-    self.sourceUrlLabel.font = [UIFont pingFangMediumWithSize:10];
-    self.sourceUrlLabel.textColor = Color16(0xD2D2D2); //TODO: 暗黑模式
+    self.sourceUrlLabel.font = [UIFont pingFangMediumWithSize:14];
+    self.sourceUrlLabel.textColor = Color16(0x7777777);
     self.sourceUrlLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:self.sourceUrlLabel];
     
     // 阅读原文按钮
     self.readOriginalButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.readOriginalButton setTitle:@"访问原文" forState:UIControlStateNormal];
-    [self.readOriginalButton setTitleColor:Color16(0x005ecc) forState:UIControlStateNormal];
-    self.readOriginalButton.titleLabel.font = [UIFont pingFangRegularWithSize:10];
+    [self.readOriginalButton setTitleColor:Color16(0x005ECC) forState:UIControlStateNormal];
+    self.readOriginalButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
     [self.readOriginalButton addTarget:self action:@selector(readOriginalButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     self.readOriginalButton.hidden = YES;
     [self addSubview:self.readOriginalButton];
