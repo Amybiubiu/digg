@@ -58,6 +58,7 @@
     self.titleLabel.textColor = Color16(0x222222); //TODO: 暗黑模式
     self.titleLabel.numberOfLines = 0;
     self.titleLabel.preferredMaxLayoutWidth = kScreenWidth - (16 * 2);
+    [self.titleLabel sizeToFit];
     [self addSubview:self.titleLabel];
     
     // 作者头像
@@ -178,15 +179,14 @@
     CGFloat sourceHeight = [self.sourceUrlLabel sizeThatFits:CGSizeZero].height;
     
     // 计算总高度
-    CGFloat topMargin = sourceHeight == 0 ? 0 : 16.0; // 顶部边距
+    CGFloat topMargin = sourceHeight == 0 ? -16.0 : 0.0; // 顶部边距。外部增加了16高度
     CGFloat titleTopMargin = 7.0; // 标题上方边距
     CGFloat avatarTopMargin = 16.0; // 头像上方边距
     CGFloat avatarHeight = 30.0; // 头像高度
     CGFloat bottomMargin = 17.0; // 底部边距
     
     CGFloat totalHeight = topMargin + sourceHeight + titleTopMargin + titleHeight + avatarTopMargin + avatarHeight + bottomMargin;
-    
-    return MAX(totalHeight, 135);
+    return totalHeight; //MAX(totalHeight, 135);
 }
 
 @end
