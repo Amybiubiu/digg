@@ -689,7 +689,7 @@
     }
     // 如果是最后一个section（"已经到底了"提示）
     if (indexPath.section == self.viewModel.commentList.count) {
-        return 50; // 设置"已经到底了"提示的高度
+        return 200; // 设置"已经到底了"提示的高度
     }
     
     return UITableViewAutomaticDimension;
