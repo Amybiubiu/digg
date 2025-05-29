@@ -65,7 +65,7 @@
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
             }];
         } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
             self.contentLabel.numberOfLines = 2;
@@ -81,7 +81,7 @@
         } else {
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.contentView).offset(offset);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.contentView).offset(-offset);
             }];
         }
@@ -96,7 +96,7 @@
             [self.smallImageView setHidden:NO];
             
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.left.equalTo(self.tagView.mas_right).offset(8);
                 make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
             }];
@@ -114,7 +114,7 @@
         } else {
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.tagView.mas_right).offset(8);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.contentView).offset(-offset);
             }];
         }
@@ -201,13 +201,13 @@
     CGFloat offset = 16;
     
     [self.smallImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
         make.size.mas_equalTo(CGSizeMake(79, 64));
     }];
     
     [self.bigImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.left.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
         make.height.mas_equalTo(167);
@@ -221,7 +221,7 @@
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagView.mas_right).offset(5);
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
