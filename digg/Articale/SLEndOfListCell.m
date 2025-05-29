@@ -62,7 +62,7 @@
     // 设置约束
     [self.emptyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.contentView);
-        make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
+        make.top.equalTo(self.sectionSegment.mas_bottom).offset(50);
     }];
     
     // 设置左侧横线约束
