@@ -445,29 +445,10 @@
 }
 
 - (void)gotoArticaleDetail:(NSString *)articleId {
-//    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
-//    vc.articleId = articleId;
-//    vc.hidesBottomBarWhenPushed = YES;
-//    [self.navigationController pushViewController:vc animated:YES];
-    
-    // 创建转场代理
-    SLZoomTransitionDelegate *transitionDelegate = [[SLZoomTransitionDelegate alloc] init];
-    
-    // 创建文章详情控制器
     SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
     vc.articleId = articleId;
-    vc.transitioningDelegate = transitionDelegate; // 设置给详情控制器
-    
-    // 创建导航控制器并将文章详情控制器嵌入其中
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.hidden = YES;
-    
-    // 设置转场方式
-    navController.modalPresentationStyle = UIModalPresentationFullScreen;
-    navController.transitioningDelegate = transitionDelegate; // 同时也设置给导航控制器
-    
-    // 使用present方式展示
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
+    vc.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - UITableViewDataSource
