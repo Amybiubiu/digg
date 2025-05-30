@@ -46,7 +46,7 @@
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.text = @"暂无评论";
     self.emptyLabel.textColor = Color16(0x999999);
-    self.emptyLabel.font = [UIFont pingFangRegularWithSize:12];
+    self.emptyLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.emptyLabel];
 
@@ -59,7 +59,7 @@
     self.commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.commentButton setTitle:@"写评论" forState:UIControlStateNormal];
     [self.commentButton setTitleColor:Color16(0x0066FF) forState:UIControlStateNormal];
-    self.commentButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+    self.commentButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.commentButton.backgroundColor = [UIColor clearColor];
     [self.commentButton addTarget:self action:@selector(commentButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     // 显示按钮

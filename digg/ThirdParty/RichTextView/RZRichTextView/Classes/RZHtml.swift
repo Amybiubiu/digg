@@ -463,11 +463,11 @@ public extension String {
                 case .boldItalic:
                     newfont = UIFont.pingFangBoldItalic(withSize: font.pointSize)
                 case .bold:
-                    newfont = UIFont.pingFangBold(withSize: font.pointSize)
+                    newfont = UIFont.boldSystemFont(ofSize: font.pointSize)
                 case .italic:
-                    newfont = UIFont.pingFangItalic(withSize: font.pointSize)
+                    newfont = UIFont.italicSystemFont(ofSize: font.pointSize)
                 case .normal:
-                    newfont = UIFont.pingFangRegular(withSize: 16)
+                    newfont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
                 }
                 tempAttr.addAttribute(.font, value: newfont, range: range)
             }

@@ -45,7 +45,7 @@
     self.emptyLabel = [[UILabel alloc] init];
     self.emptyLabel.text = @"已经到底了";
     self.emptyLabel.textColor = Color16(0x999999);
-    self.emptyLabel.font = [UIFont pingFangRegularWithSize:12];
+    self.emptyLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.emptyLabel];
 

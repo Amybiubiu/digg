@@ -70,14 +70,14 @@
     _replyButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [_replyButton setTitle:@"回复" forState:UIControlStateNormal];
     [_replyButton setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
-    _replyButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+    _replyButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     [_replyButton addTarget:self action:@selector(replyButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_replyButton];
 
     // 计算"回复"文本的宽度
     UILabel* label = [UILabel new];
     label.text = @"回复";
-    label.font = [UIFont pingFangRegularWithSize:12];
+    label.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     CGSize replySize = [label sizeThatFits:CGSizeZero];
     CGFloat replyWidth = replySize.width + 1;
     

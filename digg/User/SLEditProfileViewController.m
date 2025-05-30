@@ -268,7 +268,7 @@
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
         [_leftBackButton setTitleColor:[SLColorManager categoryNormalTextColor] forState:UIControlStateNormal];
-        _leftBackButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _leftBackButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _leftBackButton;
@@ -279,7 +279,7 @@
         _saveBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_saveBackButton setTitle:@"保存" forState:UIControlStateNormal];
         [_saveBackButton setTitleColor:[SLColorManager cellTitleColor] forState:UIControlStateNormal];
-        _saveBackButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _saveBackButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_saveBackButton addTarget:self action:@selector(saveInfo) forControlEvents:UIControlEventTouchUpInside];
     }
     return _saveBackButton;
@@ -290,7 +290,7 @@
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.text = @"编辑个人资料";
         _titleLabel.textColor = [SLColorManager cellTitleColor];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:18];
+        _titleLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _titleLabel;
@@ -330,7 +330,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"姓名";
         _nameLabel.textColor = [SLColorManager cellTitleColor];
-        _nameLabel.font = [UIFont pingFangSemiboldWithSize:18];
+        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
         _nameLabel.textAlignment = NSTextAlignmentLeft;
     }
     return _nameLabel;
@@ -341,7 +341,7 @@
         _nameTextField = [[UITextField alloc] initWithFrame:CGRectZero];
         _nameTextField.borderStyle = UITextBorderStyleNone;
         _nameTextField.placeholder = @"请输入您的姓名";
-        _nameTextField.font = [UIFont pingFangRegularWithSize:18];
+        _nameTextField.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
         _nameTextField.textColor = [SLColorManager cellTitleColor];
         _nameTextField.keyboardType = UIKeyboardTypeDefault;
         _nameTextField.returnKeyType = UIReturnKeyDone;
@@ -355,7 +355,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"简介";
         _briefLabel.textColor = [SLColorManager cellTitleColor];
-        _briefLabel.font = [UIFont pingFangSemiboldWithSize:18];
+        _briefLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
         _briefLabel.textAlignment = NSTextAlignmentLeft;
     }
     return _briefLabel;
@@ -364,7 +364,7 @@
 - (UITextView *)briefTextView {
     if (!_briefTextView) {
         _briefTextView = [[UITextView alloc] initWithFrame:CGRectZero];
-        _briefTextView.font = [UIFont pingFangRegularWithSize:18];
+        _briefTextView.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
         _briefTextView.textColor = [SLColorManager cellTitleColor];
         _briefTextView.keyboardType = UIKeyboardTypeDefault;
         _briefTextView.returnKeyType = UIReturnKeyDefault;

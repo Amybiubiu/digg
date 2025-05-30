@@ -346,7 +346,6 @@
 		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
 		345C124B2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCellV2.h; sourceTree = "<group>"; };
 		345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV2.m; sourceTree = "<group>"; };
-		345C124E2DACB334005FCCDB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		345C124F2DACB84D005FCCDB /* SkeletonAnimationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonAnimationBuilder.swift; sourceTree = "<group>"; };
 		345C12512DACB84D005FCCDB /* SkeletonAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonAppearance.swift; sourceTree = "<group>"; };
 		345C12532DACB84D005FCCDB /* SkeletonCollectionViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCollectionViewProtocols.swift; sourceTree = "<group>"; };
@@ -1449,7 +1448,6 @@
 				E7769E6A2CA2E63B00AE84F4 /* Info.plist */,
 				E7769E6B2CA2E63B00AE84F4 /* main.m */,
 				E7769EA72CB1A10900AE84F4 /* Main.storyboard */,
-				345C124E2DACB334005FCCDB /* PrefixHeader.pch */,
 			);
 			path = digg;
 			sourceTree = "<group>";
@@ -2162,8 +2160,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Reed;
@@ -2212,8 +2210,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Reed;

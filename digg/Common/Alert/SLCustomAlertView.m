@@ -106,7 +106,7 @@
     self.titleLabel = [[UILabel alloc] init];
     self.titleLabel.text = title;
     self.titleLabel.textAlignment = NSTextAlignmentCenter;
-    self.titleLabel.font = [UIFont pingFangBoldWithSize:15];
+    self.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightBold];
     self.titleLabel.textColor = [UIColor labelColor];
     self.titleLabel.numberOfLines = 0;
     [self.containerView addSubview:self.titleLabel];
@@ -124,7 +124,7 @@
     self.messageLabel = [[UILabel alloc] init];
     self.messageLabel.text = message;
     self.messageLabel.textAlignment = NSTextAlignmentCenter;
-    self.messageLabel.font = [UIFont pingFangRegularWithSize:14];
+    self.messageLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.messageLabel.textColor = [UIColor systemBlueColor];
     self.messageLabel.numberOfLines = 0;
     [self.containerView addSubview:self.messageLabel];
@@ -161,7 +161,7 @@
     self.confirmButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.confirmButton setTitle:confirmTitle forState:UIControlStateNormal];
     [self.confirmButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
-    self.confirmButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+    self.confirmButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     [self.confirmButton addTarget:self action:@selector(confirmButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.containerView addSubview:self.confirmButton];
     
@@ -170,7 +170,7 @@
         self.cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
         [self.cancelButton setTitle:cancelTitle forState:UIControlStateNormal];
         [self.cancelButton setTitleColor:[UIColor systemRedColor] forState:UIControlStateNormal];
-        self.cancelButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        self.cancelButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [self.cancelButton addTarget:self action:@selector(cancelButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         [self.containerView addSubview:self.cancelButton];
         

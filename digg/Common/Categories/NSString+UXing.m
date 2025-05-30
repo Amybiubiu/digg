@@ -205,7 +205,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (CGSize)sizeForFont:(UIFont *)font size:(CGSize)size mode:(NSLineBreakMode)lineBreakMode {
     CGSize result;
-    if (!font) font = [UIFont pingFangRegularWithSize:12];
+    if (!font) font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
         NSMutableDictionary *attr = [NSMutableDictionary new];
         attr[NSFontAttributeName] = font;
@@ -283,7 +283,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     // 设置字体和颜色
     [mutableAttributedString addAttribute:NSFontAttributeName
-                                    value:[UIFont pingFangRegularWithSize:14]
+                                    value:[UIFont systemFontOfSize:14 weight:UIFontWeightRegular]
                                     range:NSMakeRange(0, mutableAttributedString.length)];
     
     [mutableAttributedString addAttribute:NSForegroundColorAttributeName

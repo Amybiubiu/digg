@@ -155,7 +155,7 @@
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textColor = UIColor.whiteColor;
-        _titleLabel.font = [UIFont pingFangMediumWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
     }
     return _titleLabel;
 }

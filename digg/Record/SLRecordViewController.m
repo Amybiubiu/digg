@@ -392,7 +392,7 @@
 - (void)setupTitlePlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"添加标题";
-    placeholderLabel.font = [UIFont pingFangRegularWithSize:18];
+    placeholderLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
     placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
@@ -407,7 +407,7 @@
 - (void)setupLinkPlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"链接";
-    placeholderLabel.font = [UIFont pingFangRegularWithSize:16];
+    placeholderLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
@@ -485,7 +485,7 @@
     [self.addTagButton setTitle:buttonTitle forState:UIControlStateNormal];
     
     // 计算按钮宽度 - 文本宽度 + 左右各10像素的间距
-    UIFont *buttonFont = [UIFont pingFangRegularWithSize:12];
+    UIFont *buttonFont = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     CGSize buttonTextSize = [buttonTitle sizeWithAttributes:@{NSFontAttributeName: buttonFont}];
     CGFloat buttonWidth = buttonTextSize.width + (tagInsetSpacing * 2); // 左右各tagInsetSpacing像素的间距;
     
@@ -504,7 +504,7 @@
         NSString *tagName = self.tags[i];
         
         // 计算标签宽度
-        UIFont *font = [UIFont pingFangRegularWithSize:12];
+        UIFont *font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
         
         // 删除按钮宽度和间距
@@ -912,7 +912,7 @@
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
-        _leftBackButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _leftBackButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_leftBackButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -923,7 +923,7 @@
     if (!_commitButton) {
         _commitButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_commitButton setTitle:@"提交" forState:UIControlStateNormal];
-        _commitButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _commitButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_commitButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_commitButton addTarget:self action:@selector(commitBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -962,7 +962,7 @@
 - (UITextView *)titleField {
     if (!_titleField) {
         _titleField = [[UITextView alloc] init];
-        _titleField.font = [UIFont pingFangBoldWithSize:18];
+        _titleField.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
         _titleField.textColor = [SLColorManager recorderTextColor];
         _titleField.backgroundColor = [UIColor clearColor];
         _titleField.delegate = self;
@@ -989,7 +989,7 @@
 
         // 添加字数提示标签
         UILabel *countLabel = [[UILabel alloc] init];
-        countLabel.font = [UIFont pingFangRegularWithSize:12];
+        countLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         countLabel.textColor = Color16(0X646566);
         countLabel.textAlignment = NSTextAlignmentCenter;
         countLabel.hidden = YES;
@@ -1003,7 +1003,7 @@
 - (UITextView *)linkField {
     if (!_linkField) {
         _linkField = [[UITextView alloc] init];
-        _linkField.font = [UIFont pingFangRegularWithSize:16];
+        _linkField.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _linkField.textColor = [SLColorManager lineTextColor];
         _linkField.backgroundColor = [UIColor clearColor];
         _linkField.delegate = self;
@@ -1034,7 +1034,7 @@
         // 添加链接警告标签 - 直接放在输入框内部
         UILabel *warningLabel = [[UILabel alloc] init];
         warningLabel.text = @"链接不合法";
-        warningLabel.font = [UIFont pingFangRegularWithSize:12];
+        warningLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         warningLabel.textColor = [UIColor redColor];
         warningLabel.hidden = YES; // 初始状态隐藏
         [_linkField addSubview:warningLabel];
@@ -1046,7 +1046,7 @@
 - (RZRichTextView *)textView {
     if (!_textView) {
         _textView = [[RZRichTextView alloc] initWithFrame:CGRectZero viewModel:[RZRichTextViewModel sharedWithEdit:YES]];
-        _textView.font = [UIFont pingFangRegularWithSize:16];
+        _textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
        _textView.delegate = self;
@@ -1095,7 +1095,7 @@
         _addTagButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_addTagButton setTitle:@"+ 标签" forState:UIControlStateNormal];
         [_addTagButton setTitleColor:[SLColorManager recorderTagTextColor] forState:UIControlStateNormal];
-        _addTagButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+        _addTagButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _addTagButton.backgroundColor = [SLColorManager recorderTagBgColor];
         _addTagButton.layer.cornerRadius = TAG_DEFAULT_HEIGHT / 2;
         _addTagButton.layer.borderColor = [SLColorManager recorderTagBorderColor].CGColor;
@@ -1122,7 +1122,7 @@
 - (UITextField *)tagInputField {
     if (!_tagInputField) {
         _tagInputField = [[UITextField alloc] init];
-        _tagInputField.font = [UIFont pingFangRegularWithSize:12];
+        _tagInputField.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _tagInputField.textColor = [SLColorManager recorderTagTextColor];
         _tagInputField.backgroundColor = UIColor.clearColor;
         _tagInputField.returnKeyType = UIReturnKeyDone;

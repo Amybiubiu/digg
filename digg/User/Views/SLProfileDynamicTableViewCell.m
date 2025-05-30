@@ -241,7 +241,7 @@
 - (UILabel *)nickNameLabel {
     if(!_nickNameLabel) {
         _nickNameLabel = [[UILabel alloc] init];
-        _nickNameLabel.font = [UIFont pingFangRegularWithSize:14];
+        _nickNameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
         _nickNameLabel.textColor = [SLColorManager cellNickNameColor];
     }
     return _nickNameLabel;
@@ -250,7 +250,7 @@
 - (UILabel *)timeLabel {
     if(!_timeLabel) {
         _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = [UIFont pingFangRegularWithSize:12];
+        _timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _timeLabel.textColor = Color16(0xB6B6B6);
         [_timeLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
         _timeLabel.textAlignment = NSTextAlignmentLeft;
@@ -261,7 +261,7 @@
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         _titleLabel.textColor = [SLColorManager cellTitleColor];
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     }

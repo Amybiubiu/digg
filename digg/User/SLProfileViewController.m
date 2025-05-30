@@ -702,7 +702,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
+                              NSFontAttributeName: [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     
@@ -778,7 +778,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"";
         _nameLabel.textColor = UIColor.whiteColor;
-        _nameLabel.font = [UIFont pingFangSemiboldWithSize:18];
+        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
         _nameLabel.alpha = 0;
     }
     return _nameLabel;
@@ -789,7 +789,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"";
         _briefLabel.textColor = UIColor.whiteColor;
-        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
+        _briefLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _briefLabel.alpha = 0;
     }
     return _briefLabel;

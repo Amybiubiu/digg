@@ -38,7 +38,7 @@
     
     // 网站来源标签
     self.sourceUrlLabel = [[UILabel alloc] init];
-    self.sourceUrlLabel.font = [UIFont pingFangMediumWithSize:14];
+    self.sourceUrlLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
     self.sourceUrlLabel.textColor = Color16(0x7777777);
     self.sourceUrlLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:self.sourceUrlLabel];
@@ -47,14 +47,14 @@
     self.readOriginalButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.readOriginalButton setTitle:@"访问原文" forState:UIControlStateNormal];
     [self.readOriginalButton setTitleColor:Color16(0x005ECC) forState:UIControlStateNormal];
-    self.readOriginalButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+    self.readOriginalButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     [self.readOriginalButton addTarget:self action:@selector(readOriginalButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     self.readOriginalButton.hidden = YES;
     [self addSubview:self.readOriginalButton];
     
     // 文章标题
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.font = [UIFont pingFangBoldWithSize:24];
+    self.titleLabel.font = [UIFont systemFontOfSize:24 weight:UIFontWeightBold];
     self.titleLabel.textColor = Color16(0x222222); //TODO: 暗黑模式
     self.titleLabel.numberOfLines = 0;
     self.titleLabel.preferredMaxLayoutWidth = kScreenWidth - (16 * 2);
@@ -73,13 +73,13 @@
     
     // 作者名称
     self.authorNameLabel = [[UILabel alloc] init];
-    self.authorNameLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.authorNameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.authorNameLabel.textColor = Color16(0x666666); //TODO: 暗黑模式
     [self addSubview:self.authorNameLabel];
     
     // 发布时间
     self.publishTimeLabel = [[UILabel alloc] init];
-    self.publishTimeLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.publishTimeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.publishTimeLabel.textColor = Color16(0xC6C6C6); //TODO: 暗黑模式
     [self addSubview:self.publishTimeLabel];
     

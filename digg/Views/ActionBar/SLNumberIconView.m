@@ -53,7 +53,7 @@
         // 创建数字标签
         _numberLabel = [[UILabel alloc] init];
         _numberLabel.textAlignment = NSTextAlignmentLeft;
-        _numberLabel.font = [UIFont pingFangRegularWithSize:12];
+        _numberLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         [self addSubview:_numberLabel];
         
         // 创建图标视图
@@ -63,7 +63,7 @@
         
         // 创建自定义文本标签
         _customTextLabel = [[UILabel alloc] init];
-        _customTextLabel.font = [UIFont pingFangRegularWithSize:12];
+        _customTextLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _customTextLabel.hidden = YES;
         [self addSubview:_customTextLabel];
         

@@ -47,25 +47,25 @@
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.usernameLabel.textColor = Color16(0x666666);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图
     self.tagView = [[SLHomeTagViewV2 alloc] init];
-    self.tagView.tagLabel.font = [UIFont pingFangRegularWithSize:10];
+    self.tagView.tagLabel.font = [UIFont systemFontOfSize:10 weight:UIFontWeightRegular];
     [self.tagView updateWithLabelBySmall:@"作者"];
     [self.contentView addSubview:self.tagView];
     
     // 时间
     self.timeLabel = [[UILabel alloc] init];
-    self.timeLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.timeLabel.textColor = Color16(0xC6C6C6);
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
     self.contentLabel = [[UITextView alloc] init];
-    self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
+    self.contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.contentLabel.textColor = Color16(0x313131);
     self.contentLabel.editable = NO; // 设置为不可编辑
     self.contentLabel.scrollEnabled = NO; // 禁用滚动
@@ -180,7 +180,7 @@
 
         // 6. 设置统一字体（覆盖HTML可能携带的字体）
         [attributedString addAttribute:NSFontAttributeName
-                                 value:[UIFont pingFangRegularWithSize:14]
+                                 value:[UIFont systemFontOfSize:14 weight:UIFontWeightRegular]
                                  range:NSMakeRange(0, attributedString.length)];
 
         // 7. 设置行间距

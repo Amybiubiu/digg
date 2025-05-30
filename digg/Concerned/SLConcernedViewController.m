@@ -248,7 +248,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
+                              NSFontAttributeName: [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     

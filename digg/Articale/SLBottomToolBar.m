@@ -38,7 +38,7 @@
         [self addSubview:self.button];
         
         self.countLabel = [[UILabel alloc] init];
-        self.countLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        self.countLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         self.countLabel.textColor = Color16(0x222222);
         self.countLabel.text = @"";
         [self addSubview:self.countLabel];
