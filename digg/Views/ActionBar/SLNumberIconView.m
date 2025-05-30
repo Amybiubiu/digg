@@ -9,6 +9,7 @@
 #import "SLColorManager.h"
 
 #define DOT_WIDTH 1
+#define NUMBER_LABLE_WIDTH 40
 
 @implementation SLNumberIconItem
 
@@ -83,10 +84,10 @@
     CGFloat height = self.bounds.size.height;
     
     // 计算数字标签宽度
-    CGFloat numberWidth = 0;
-    if (_item.number > 0) {
-        numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-    }
+    CGFloat numberWidth = NUMBER_LABLE_WIDTH;
+//    if (_item.number > 0) {
+//        numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
+//    }
     
     // 处理图标 - 现在放在左侧
     CGFloat iconWidth = 0;
@@ -100,14 +101,14 @@
     }
     
     // 布局数字标签 - 现在放在右侧
-    if (_item.number > 0) {
+//    if (_item.number > 0) {
         CGFloat numberX = iconWidth > 0 ? (iconWidth + _itemSpacing) : 0;
         _numberLabel.frame = CGRectMake(numberX, 0, numberWidth, height);
         // 将文本对齐方式改为左对齐，因为现在在右侧
         _numberLabel.textAlignment = NSTextAlignmentLeft;
-    } else {
-        _numberLabel.frame = CGRectZero;
-    }
+//    } else {
+//        _numberLabel.frame = CGRectZero;
+//    }
     
     // 处理自定义文本
     if (_customTextLabel && !_customTextLabel.hidden) {
@@ -174,16 +175,16 @@
         width += iconWidth;
         
         // 如果有图标且有数字或自定义文本，添加间距
-        if (_item.number > 0 || customText.length > 0) {
+//        if (_item.number > 0 || customText.length > 0) {
             width += _itemSpacing;
-        }
+//        }
     }
     
     // 计算数字宽度 - 现在在右侧
-    if (_item.number > 0) {
-        CGFloat numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
+//    if (_item.number > 0) {
+        CGFloat numberWidth = NUMBER_LABLE_WIDTH; //[_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
         width += numberWidth;
-    }
+//    }
     
     // 处理自定义文本
     if (customText.length > 0) {
@@ -213,7 +214,7 @@
 - (instancetype)initWithFrame:(CGRect)frame items:(NSArray<SLNumberIconItem *> *)items {
     self = [super initWithFrame:frame];
     if (self) {
-        _spacing = 15.0;
+        _spacing = 2;//15.0;
         _itemSpacing = 4.0;
         _fontSize = 12.0;
         _iconSize = 16.0;
@@ -318,29 +319,29 @@
                 }
             }
             
-            if (nextItemVisible) {
-                // 添加分隔点
-                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - DOT_WIDTH/2, height/2 - DOT_WIDTH/2, DOT_WIDTH, DOT_WIDTH)];
-                separatorDot.backgroundColor = [UIColor clearColor]; //[SLColorManager categorySelectedTextColor];
-                separatorDot.layer.cornerRadius = 1;
-                separatorDot.tag = 1000 + i; // 使用tag标识分隔点
-                [self addSubview:separatorDot];
-                
-                // 更新位置，考虑分隔点和间距
-                x += _spacing * 2;
-            }
+//            if (nextItemVisible) {
+//                // 添加分隔点
+//                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - DOT_WIDTH/2, height/2 - DOT_WIDTH/2, DOT_WIDTH, DOT_WIDTH)];
+//                separatorDot.backgroundColor = [UIColor clearColor]; //[SLColorManager categorySelectedTextColor];
+//                separatorDot.layer.cornerRadius = 1;
+//                separatorDot.tag = 1000 + i; // 使用tag标识分隔点
+//                [self addSubview:separatorDot];
+//                
+//                // 更新位置，考虑分隔点和间距
+//                x += _spacing * 2;
+//            }
         }
     }
     
     // 移除多余的分隔点
-    for (UIView *subview in self.subviews) {
-        if (subview.tag >= 1000 && subview.tag < 1000 + self.itemViews.count) {
-            NSInteger dotIndex = subview.tag - 1000;
-            if (dotIndex >= self.itemViews.count - 1 || self.itemViews[dotIndex].hidden || self.itemViews[dotIndex+1].hidden) {
-                [subview removeFromSuperview];
-            }
-        }
-    }
+//    for (UIView *subview in self.subviews) {
+//        if (subview.tag >= 1000 && subview.tag < 1000 + self.itemViews.count) {
+//            NSInteger dotIndex = subview.tag - 1000;
+//            if (dotIndex >= self.itemViews.count - 1 || self.itemViews[dotIndex].hidden || self.itemViews[dotIndex+1].hidden) {
+//                [subview removeFromSuperview];
+//            }
+//        }
+//    }
 }
 
 - (void)updateNumber:(NSInteger)number atIndex:(NSInteger)index {
