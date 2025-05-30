@@ -217,7 +217,7 @@
     
     // 2. 内容区域约束
     [self.articleContentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
+        make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4); //margin 因为内部设置了行间距4
         make.left.equalTo(self.headerView);
         make.right.equalTo(self.headerView);
         make.height.mas_equalTo(0);
@@ -368,10 +368,10 @@
     height += margin;
     if (!self.articleContentView.isHidden) {
         height += [self.articleContentView getContentHeight];
-        height += margin;
+        height += margin - 4;
         
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
+            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4);
         }];
     } else {
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -959,9 +959,7 @@
 #pragma mark - SLCustomNavigationBarDelegate
 
 - (void)navigationBarBackButtonTapped {
-    // [self.navigationController popViewControllerAnimated:YES];
-//    UIViewController *presentingVC = self.navigationController.presentingViewController;
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)navigationBarMoreButtonTapped {

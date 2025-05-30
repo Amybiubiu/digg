@@ -127,7 +127,7 @@
     
     [self.dividingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.titleLabel);
-        make.height.mas_equalTo(0.5);
+        make.height.mas_equalTo(1);
         make.bottom.equalTo(self);
     }];
 }

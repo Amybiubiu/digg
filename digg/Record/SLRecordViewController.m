@@ -309,7 +309,7 @@
     CGSize contentSize = [self.linkField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
     // CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height);
     // 如果警告标签可见，增加额外高度
-    CGFloat extraHeight = self.linkWarningLabel.hidden ? 0 : 25; // 警告标签高度+间距
+    CGFloat extraHeight = self.linkWarningLabel.hidden ? 0 : 15; // 警告标签高度+间距
     CGFloat newHeight = contentSize.height + extraHeight;
     
     // 更新linkField高度
