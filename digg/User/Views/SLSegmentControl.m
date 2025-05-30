@@ -55,7 +55,7 @@
         self.indicatorView = [[UIView alloc] initWithFrame:CGRectZero];
         self.indicatorView.layer.cornerRadius = 1.5;
         self.indicatorView.layer.masksToBounds = YES;
-        self.indicatorView.backgroundColor = Color16(0xFF1852);
+        self.indicatorView.backgroundColor = Color16(0x14932A);
         [self addSubview:self.indicatorView];
         [self.indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.bottom.equalTo(button.mas_bottom);
