@@ -134,7 +134,6 @@
                 if (handler) {
                     handler(newComment, nil);
                 }
-                return;
             }
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {

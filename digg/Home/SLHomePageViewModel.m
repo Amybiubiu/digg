@@ -33,7 +33,6 @@
     @weakobj(self);
     [manager GET:urlString parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-//            NSLog(@"res:%@",responseObject);
             @strongobj(self);
             if ([responseObject isKindOfClass:[NSArray class]]) {
                 [self handleRes:responseObject
@@ -103,11 +102,18 @@
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
             //判断是否点赞成功
-            handler(YES,nil);
+            handler(YES, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO,error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error);
+                }
+            }
         }
     }];
 }
@@ -129,11 +135,18 @@
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
             //判断是否点赞成功
-            handler(YES,nil);
+            handler(YES, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO,error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error);
+                }
+            }
         }
     }];
 }
@@ -154,11 +167,18 @@
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
             //判断是否点赞成功
-            handler(YES,nil);
+            handler(YES, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO,error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error);
+                }
+            }
         }
     }];
 }
@@ -170,7 +190,6 @@
     @weakobj(self);
     [manager GET:urlString parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-//            NSLog(@"res:%@",responseObject);
             @strongobj(self);
             if ([responseObject isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *dic = (NSDictionary *)responseObject;

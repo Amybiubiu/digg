@@ -371,10 +371,8 @@
             [SVProgressHUD dismiss];
             if (isSuccess) {
                 [self backPage];
-//                [self gotoH5Page:articleId];
-//                [self clearAll];
             } else {
-                [SVProgressHUD showErrorWithStatus:@"提交失败"];
+                [self gotoLoginPage];
             }
         }];
     } else {
@@ -384,6 +382,8 @@
             if (isSuccess) {
                 [self gotoH5Page:articleId];
                 [self clearAll];
+            } else { //401 跳转到登陆
+                [self gotoLoginPage];
             }
         }];
     }
@@ -611,6 +611,14 @@
 // 更新标签布局
 - (void)updateTagsLayout {
     [self.tagContainerView layoutIfNeeded];
+}
+
+- (void)gotoLoginPage {
+    SLWebViewController *dvc = [[SLWebViewController alloc] init];
+    [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
+    dvc.hidesBottomBarWhenPushed = YES;
+    dvc.isLoginPage = YES;
+    [self presentViewController:dvc animated:YES completion:nil];
 }
 
 #pragma mark - UITextViewDelegate

@@ -147,37 +147,39 @@
     return UITableViewAutomaticDimension;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SLHomePageNewsTableViewCellV3 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
-        cell.controlName = @"HOME_LIST";
-        cell.args = @{
-            @"url": entity.url,
-            @"title": entity.title,
-            @"pageStyle": @(self.pageStyle)
-        };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self jumpToLogin];
                 return;
             }
             [self.viewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self jumpToLogin];
+                }
             }];
         };
         
         cell.dislikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self jumpToLogin];
                 return;
             }
             [self.viewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self jumpToLogin];
+                }
             }];
         };
         
@@ -206,21 +208,29 @@
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self jumpToLogin];
                 return;
             }
             [self.viewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                            
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self jumpToLogin];
+                }
             }];
         };
         cell.cancelDisLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self jumpToLogin];
                 return;
             }
             [self.viewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                            
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self jumpToLogin];
+                }
             }];
         };
         cell.labelClick = ^(SLArticleTodayEntity *entity) {

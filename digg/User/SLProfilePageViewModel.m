@@ -111,13 +111,21 @@
             @strongobj(self); //统一返回true or false
             if ([responseObject isKindOfClass:[NSDictionary class]]) {
                 handler(YES, nil);
-            } else {
-                handler(NO, nil);
             }
+//            else {
+//                handler(NO, nil);
+//            }
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO, error);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error);
+                }
+            }
         }
     }];
 }

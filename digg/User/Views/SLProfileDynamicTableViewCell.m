@@ -18,10 +18,9 @@
 @property (nonatomic, strong) UIImageView* avatarImageView;
 @property (nonatomic, strong) UILabel *nickNameLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
-
+@property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UIView *lineView;
 @property (nonatomic, strong) SLArticleTodayEntity *entity;
 @property (nonatomic, assign) BOOL isSelected;
