@@ -461,17 +461,51 @@ public extension String {
                 let newfont: UIFont
                 switch font.fontType {
                 case .boldItalic:
-                    newfont = UIFont.rzboldItalicFont.withSize(font.pointSize)
+                    newfont = UIFont.pingFangBoldItalic(withSize: font.pointSize)
                 case .bold:
-                    newfont = UIFont.rzboldFont.withSize(font.pointSize)
+                    newfont = UIFont.boldSystemFont(ofSize: font.pointSize)
                 case .italic:
-                    newfont = UIFont.rzitalicFont.withSize(font.pointSize)
+                    newfont = UIFont.italicSystemFont(ofSize: font.pointSize)
                 case .normal:
-                    newfont = UIFont.rznormalFont.withSize(font.pointSize)
+                    newfont = UIFont.systemFont(ofSize: 16, weight: UIFont.Weight.regular)
                 }
                 tempAttr.addAttribute(.font, value: newfont, range: range)
             }
+//            if let font = font as? UIFont {
+//                let newfont: UIFont
+//                switch font.fontType {
+//                case .boldItalic:
+//                    newfont = UIFont.rzboldItalicFont.withSize(font.pointSize)
+//                case .bold:
+//                    newfont = UIFont.rzboldFont.withSize(font.pointSize)
+//                case .italic:
+//                    newfont = UIFont.rzitalicFont.withSize(font.pointSize)
+//                case .normal:
+//                    newfont = UIFont.rznormalFont.withSize(font.pointSize)
+//                }
+//                tempAttr.addAttribute(.font, value: newfont, range: range)
+//            }
         }
+        //--- 手动增加，按照UI图显示
+        // 设置行间距
+        tempAttr.enumerateAttribute(.paragraphStyle, in: .init(location: 0, length: tempAttr.length)) { style, range, _ in
+            if let paragraphStyle = style as? NSParagraphStyle {
+                let mutableStyle = NSMutableParagraphStyle()
+                mutableStyle.setParagraphStyle(paragraphStyle)
+                mutableStyle.lineSpacing = 4.0
+                mutableStyle.paragraphSpacing = 10.0
+                tempAttr.addAttribute(.paragraphStyle, value: mutableStyle, range: range)
+            } else {
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.lineSpacing = 4.0
+                paragraphStyle.paragraphSpacing = 10.0
+                tempAttr.addAttribute(.paragraphStyle, value: paragraphStyle, range: range)
+            }
+        }
+        
+        // 设置文字颜色
+        tempAttr.addAttribute(.foregroundColor, value: UIColor(red: 49/255.0, green: 49/255.0, blue: 49/255.0, alpha: 1.0), range: NSRange(location: 0, length: tempAttr.length))
+        //---
         /// 设置附件的图片，附件的bounds，由textView或者UILabel自己实现
         /// 取未编辑状态的配置
         let configure = RZRichTextViewConfigure.shared.imageViewEdgeInsetsNormal

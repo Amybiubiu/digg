@@ -9,6 +9,7 @@
 #import "NSString+UXing.h"
 #import <sys/xattr.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "SLGeneralMacro.h"
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -204,7 +205,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (CGSize)sizeForFont:(UIFont *)font size:(CGSize)size mode:(NSLineBreakMode)lineBreakMode {
     CGSize result;
-    if (!font) font = [UIFont pingFangRegularWithSize:12];
+    if (!font) font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
         NSMutableDictionary *attr = [NSMutableDictionary new];
         attr[NSFontAttributeName] = font;
@@ -278,6 +279,15 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     
     [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 
                                     value:paragraphStyle 
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+
+    // 设置字体和颜色
+    [mutableAttributedString addAttribute:NSFontAttributeName
+                                    value:[UIFont systemFontOfSize:14 weight:UIFontWeightRegular]
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+    
+    [mutableAttributedString addAttribute:NSForegroundColorAttributeName
+                                    value:Color16(0x313131)
                                     range:NSMakeRange(0, mutableAttributedString.length)];
     
     return mutableAttributedString;

@@ -397,7 +397,7 @@ typedef enum {
     const CGFloat kMarginY = 5.f;
     
     UIFont *titleFont = [KxMenu titleFont];
-    if (!titleFont) titleFont = [UIFont pingFangSemiboldWithSize:16];
+    if (!titleFont) titleFont = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
     
     CGFloat maxImageWidth = 0;    
     CGFloat maxItemHeight = 0;

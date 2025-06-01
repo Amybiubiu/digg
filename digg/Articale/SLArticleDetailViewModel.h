@@ -68,15 +68,15 @@ resultHandler:(void(^)(SLCommentEntity * _Nullable comment, NSError * _Nullable 
 
 // 对评论点赞
 - (void)likeComment:(NSString *)commentId
-resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler;
 
 // 对评论点踩
 - (void)dislikeComment:(NSString *)commentId
-   resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+   resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler;
 
 // 取消对评论的点赞或点踩
 - (void)cancelCommentLike:(NSString *)commentId
-      resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler;
+      resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler;
 
 /**
  * 删除文章

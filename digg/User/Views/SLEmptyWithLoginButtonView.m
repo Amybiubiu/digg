@@ -62,7 +62,7 @@
         _loginBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_loginBtn setTitle:@"登录" forState:UIControlStateNormal];
         [_loginBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        _loginBtn.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _loginBtn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _loginBtn.layer.cornerRadius = 4;
         _loginBtn.layer.masksToBounds = YES;
         _loginBtn.backgroundColor = Color16(0xFF3468);
@@ -84,7 +84,7 @@
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.text = @"你还没有登录";
         _titleLabel.textColor = [SLColorManager primaryTextColor];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:20];
+        _titleLabel.font = [UIFont systemFontOfSize:20 weight:UIFontWeightSemibold];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _titleLabel;
@@ -95,7 +95,7 @@
         _descLabel = [[UILabel alloc] init];
         _descLabel.text = @"登录账号，查看你关注的精彩内容";
         _descLabel.textColor = [SLColorManager secondaryTextColor];
-        _descLabel.font = [UIFont pingFangRegularWithSize:14];
+        _descLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
         _descLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _descLabel;

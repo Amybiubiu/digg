@@ -33,6 +33,9 @@
 #import "SLHomePageViewModel.h"
 #import "SLRecordViewController.h"
 #import "SLAddLinkViewController.h"
+#import "SLProfileViewController.h"
+#import "SLEmptyCommentCell.h"
+#import "SLEndOfListCell.h"
 
 
 @interface SLArticleDetailViewControllerV2 () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, SLCustomNavigationBarDelegate, SLBottomToolBarDelegate>
@@ -64,6 +67,7 @@
 @property (nonatomic, assign) NSTimeInterval lastScrollTime;
 @property (nonatomic, assign) CGFloat scrollVelocity;
 @property (nonatomic, assign) BOOL isAtBottomState;
+@property (nonatomic, assign) BOOL isLoadData;
 
 @end
 
@@ -73,6 +77,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.isLoadData = NO;
     self.homeViewModel = [[SLHomePageViewModel alloc] init];
     [self setupUI];
     [self setupGestures];
@@ -139,6 +144,8 @@
     [self.tableView registerClass:[SLCommentCellV2 class] forCellReuseIdentifier:@"SLCommentCellV2"];
     [self.tableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SLSecondCommentCell"];
     [self.tableView registerClass:[SLShowMoreCell class] forCellReuseIdentifier:@"SLShowMoreCell"];
+    [self.tableView registerClass:[SLEmptyCommentCell class] forCellReuseIdentifier:@"SLEmptyCommentCell"];
+    [self.tableView registerClass:[SLEndOfListCell class] forCellReuseIdentifier:@"SLEndOfListCell"];
     self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     if (@available(iOS 15.0, *)) {
         self.tableView.sectionHeaderTopPadding = 0;
@@ -166,6 +173,9 @@
     self.articleHeaderView = [[SLArticleHeaderView alloc] init];
     self.articleHeaderView.readOriginalHandler = ^{
         [weakSelf readOriginalArticle];
+    };
+    self.articleHeaderView.avatarClickHandler = ^{
+        [weakSelf gotoProfilePage:weakSelf.viewModel.userEntity.userId];
     };
     [self.headerView addSubview:self.articleHeaderView];
     
@@ -207,7 +217,7 @@
     
     // 2. 内容区域约束
     [self.articleContentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
+        make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4); //margin 因为内部设置了行间距4
         make.left.equalTo(self.headerView);
         make.right.equalTo(self.headerView);
         make.height.mas_equalTo(0);
@@ -234,10 +244,35 @@
 // 添加阅读原文方法
 - (void)readOriginalArticle {
     if (self.viewModel.articleEntity.url.length > 0) {
-        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-        [webVC startLoadRequestWithUrl:self.viewModel.articleEntity.url];
-        [self.navigationController pushViewController:webVC animated:YES];
+        //TODO:打开safafi 之前弹窗：是否要访问
+        SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                           message:nil
+                                                               url:[NSURL URLWithString:self.viewModel.articleEntity.url]
+                                                           urlText:self.viewModel.articleEntity.url
+                                                      confirmTitle:@"是"
+                                                       cancelTitle:@"否"
+                                                    confirmHandler:^{
+                                                        NSURL* url = [NSURL URLWithString:self.viewModel.articleEntity.url];
+                                                        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                                                            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+                                                        } else {
+                                                            [self.view sl_showToast:@"链接异常，无法打开"];
+                                                        }
+                                                    }
+                                                     cancelHandler:^{
+                                                    }
+                                                 fromViewController:nil];
+        [alertView show];
     }
+}
+
+// 跳转到profile页面
+- (void)gotoProfilePage:(NSString *)userId {
+    SLProfileViewController *dvc = [[SLProfileViewController alloc] init];
+    dvc.userId = userId;
+    dvc.fromWeb = YES;
+    [self.navigationController pushViewController:dvc animated:YES];
+
 }
 
 - (void)loadData {
@@ -245,12 +280,13 @@
         self.viewModel = [[SLArticleDetailViewModel alloc] init];
     }
     
-    [SVProgressHUD show];
+//    [SVProgressHUD show];
     __weak typeof(self) weakSelf = self;
     
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+//        [SVProgressHUD dismiss];
         if (isSuccess) {
+            self.isLoadData = YES;
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
             if (articleEntity) {
                 // 更新UI
@@ -276,7 +312,8 @@
                                     source:entity.source
                                avatarImage:self.viewModel.userEntity.avatar
                                 authorName:self.viewModel.userEntity.userName
-                               publishTime:publishTimeStr];
+                               publishTime:publishTimeStr
+                                     url:entity.url];
     
     // 更新内容区域
     NSString* content = entity.richContent ?: entity.content;
@@ -319,7 +356,7 @@
     [self updateTableHeaderViewHeight];
     
     // 加载评论数据
-    [self loadComments];
+    [self.tableView reloadData];
 }
 
 - (void)updateTableHeaderViewHeight {    
@@ -331,10 +368,10 @@
     height += margin;
     if (!self.articleContentView.isHidden) {
         height += [self.articleContentView getContentHeight];
-        height += margin;
+        height += margin - 4;
         
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin);
+            make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4);
         }];
     } else {
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -382,70 +419,30 @@
     self.tableView.tableHeaderView = self.headerView;
 }
 
-- (void)loadComments {
-    if (self.viewModel.commentList.count > 0) {
-        [self.tableView reloadData];
-    }
-}
-
 #pragma mark - Action Methods
 
 // 添加处理相关链接点击的方法
 - (void)handleReferClick:(SLReferEntity *)refer {
     if (refer.url.length > 0) {
-        SLWebViewController *webVC = [[SLWebViewController alloc] init];
-        [webVC startLoadRequestWithUrl:refer.url];
-        [self.navigationController pushViewController:webVC animated:YES];
+        SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                           message:nil
+                                                               url:[NSURL URLWithString:refer.url]
+                                                           urlText:refer.url
+                                                      confirmTitle:@"是"
+                                                       cancelTitle:@"否"
+                                                    confirmHandler:^{
+                                                        NSURL* url = [NSURL URLWithString:refer.url];
+                                                        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                                                            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
+                                                        } else {
+                                                            [self.view sl_showToast:@"链接异常，无法打开"];
+                                                        }
+                                                    }
+                                                     cancelHandler:^{
+                                                    }
+                                                 fromViewController:nil];
+        [alertView show];
     }
-}
-
-- (void)navigationBarMoreButtonTapped {
-        UIButton *moreButton = self.navigationBar.moreButton;
-
-        NSMutableArray *actions = [NSMutableArray array];
-        
-        if (self.viewModel.userEntity.isSelf) {
-            // 自己发布的文章
-            [actions addObject:[UIAction actionWithTitle:@"编辑" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理编辑逻辑
-                [self editArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"删除" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理删除逻辑
-                [self deleteArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理添加链接逻辑
-                [self addLink];
-            }]];
-        } else {
-            // 他人发布的文章
-            [actions addObject:[UIAction actionWithTitle:@"反馈" image:[UIImage systemImageNamed:@"exclamationmark.bubble"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理反馈逻辑
-                [self provideFeedback];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"举报" image:[UIImage systemImageNamed:@"flag"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理举报逻辑
-                [self reportArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"不喜欢" image:[UIImage systemImageNamed:@"hand.thumbsdown"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理不喜欢逻辑
-                [self dislikeArticle];
-            }]];
-            
-            [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
-                // 处理添加链接逻辑
-                [self addLink];
-            }]];
-        }
-        
-        UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
-        moreButton.menu = menu;
-        moreButton.showsMenuAsPrimaryAction = YES;
 }
 
 - (void)likeButtonTapped {
@@ -529,13 +526,18 @@
             [weakSelf.toolbarView updateCommentCount:weakSelf.viewModel.articleEntity.commentsCnt + 1];
             weakSelf.viewModel.articleEntity.commentsCnt += 1;
             
-            // 重新加载评论列表
-            [weakSelf.tableView reloadData];
+            // 使用插入section的方式更新表格
+            [weakSelf.tableView beginUpdates];
+            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+            [weakSelf.tableView endUpdates];
+            
+            // 滚动到新插入的评论
+            [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
             
             // 显示成功提示
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -566,15 +568,37 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return self.viewModel.commentList.count;
+    // 如果没有评论，返回1个section用于显示空白提示
+    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count + 1 : self.isLoadData ? 1 : 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    
+    // 如果没有评论，返回1行用于显示空白提示
+    if (self.viewModel.commentList.count == 0) {
+        return 1;
+    }
+    // 如果是最后一个section（"已经到底了"提示），返回1行
+    if (section == self.viewModel.commentList.count) {
+        return 1;
+    }
     return 1 + self.viewModel.commentList[section].expandedRepliesCount + (self.viewModel.commentList[section].hasMore ? 1 : 0);
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 如果没有评论，显示空白提示Cell
+    if (self.viewModel.commentList.count == 0) {
+        SLEmptyCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLEmptyCommentCell"];
+        __weak typeof(self) weakSelf = self;
+        cell.commentButtonTapHandler = ^{
+            [weakSelf commentButtonTapped];
+        };
+        return cell;
+    }
+    // 如果是最后一个section（"已经到底了"提示）
+    if (indexPath.section == self.viewModel.commentList.count) {
+        SLEndOfListCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLEndOfListCell"];
+        return cell;
+    }
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     if (indexPath.row == 0) {
         SLCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCellV2"];
@@ -601,6 +625,9 @@
             SLWebViewController *webVC = [[SLWebViewController alloc] init];
             [webVC startLoadRequestWithUrl:url.absoluteString];
             [self.navigationController pushViewController:webVC animated:YES];
+        };
+        cell.avatarClickHandler = ^(SLCommentEntity *commentEntity) {
+            [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
         [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
@@ -633,6 +660,9 @@
             [webVC startLoadRequestWithUrl:url.absoluteString];
             [self.navigationController pushViewController:webVC animated:YES];
         };
+        cell.avatarClickHandler = ^(SLCommentEntity *commentEntity) {
+            [weakSelf gotoProfilePage:commentEntity.userId];
+        };
         
         [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 60];
         return cell;
@@ -649,6 +679,20 @@
         };
         return cell;
     }
+}
+
+// 添加UITableViewDelegate方法设置Cell高度
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 如果没有评论，设置空白提示Cell的高度
+    if (self.viewModel.commentList.count == 0) {
+        return 200; // 调整为合适的高度
+    }
+    // 如果是最后一个section（"已经到底了"提示）
+    if (indexPath.section == self.viewModel.commentList.count) {
+        return 200; // 设置"已经到底了"提示的高度
+    }
+    
+    return UITableViewAutomaticDimension;
 }
 
 #pragma mark - UITableViewDelegate
@@ -914,12 +958,77 @@
 
 #pragma mark - SLCustomNavigationBarDelegate
 
-- (void)navigationBarDidTapBackButton:(SLCustomNavigationBar *)navigationBar {
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)navigationBarBackButtonTapped {
+     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)navigationBarDidTapMoreButton:(SLCustomNavigationBar *)navigationBar {
-    [self navigationBarMoreButtonTapped];
+- (void)navigationBarMoreButtonTapped {
+    UIButton *moreButton = self.navigationBar.moreButton;
+
+    NSMutableArray *actions = [NSMutableArray array];
+    
+    if (self.viewModel.userEntity.isSelf) {
+        // 自己发布的文章
+        [actions addObject:[UIAction actionWithTitle:@"编辑" image:[UIImage systemImageNamed:@"pencil"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理编辑逻辑
+            [self editArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"删除" image:[UIImage systemImageNamed:@"trash"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理删除逻辑
+            [self deleteArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理添加链接逻辑
+            [self addLink];
+        }]];
+    } else {
+        // 他人发布的文章
+        [actions addObject:[UIAction actionWithTitle:@"反馈" image:[UIImage systemImageNamed:@"exclamationmark.bubble"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理反馈逻辑
+            [self provideFeedback];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"举报" image:[UIImage systemImageNamed:@"flag"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理举报逻辑
+            [self reportArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"不喜欢" image:[UIImage systemImageNamed:@"hand.thumbsdown"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理不喜欢逻辑
+            [self dislikeArticle];
+        }]];
+        
+        [actions addObject:[UIAction actionWithTitle:@"添加链接" image:[UIImage systemImageNamed:@"link"] identifier:nil handler:^(__kindof UIAction * _Nonnull action) {
+            // 处理添加链接逻辑
+            [self addLink];
+        }]];
+    }
+    
+    UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
+    moreButton.menu = menu;
+    moreButton.showsMenuAsPrimaryAction = YES;
+}
+
+#pragma mark - DZNEmptyDataSetDelegate
+
+- (BOOL)emptyDataSetShouldDisplay:(UIScrollView *)scrollView {
+    // 只有在评论列表为空时显示
+    return self.viewModel.commentList.count == 0;
+}
+
+- (BOOL)emptyDataSetShouldAllowTouch:(UIScrollView *)scrollView {
+    return YES;
+}
+
+- (BOOL)emptyDataSetShouldAllowScroll:(UIScrollView *)scrollView {
+    return YES;
+}
+
+- (void)emptyDataSet:(UIScrollView *)scrollView didTapButton:(UIButton *)button {
+    // 点击"立即评论"按钮的处理
+    [self commentButtonTapped];
 }
 
 #pragma mark - Helper Methods
@@ -986,9 +1095,15 @@
             [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
             [weakSelf.tableView endUpdates];
 
+            // 滚动到新添加的评论位置
+            if (indexPathsToInsert.count > 0) {
+                NSIndexPath *lastIndexPath = [indexPathsToInsert lastObject];
+                [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -1021,7 +1136,7 @@
     __weak typeof(self) weakSelf = self;
     [SVProgressHUD show];
     SLCommentEntity* rootComment = self.viewModel.commentList[section];
-    SLCommentEntity* secondComment = rootComment.replyList[row];
+    SLCommentEntity* secondComment = rootComment.replyList[row - 1];
     [self.viewModel replyToSecondComment:self.viewModel.articleEntity.articleId rootCommentId:rootComment.commentId commentId:secondComment.commentId replyUserId:secondComment.userId content:content resultHandler:^(SLCommentEntity * _Nullable newComment, NSError * _Nullable error) {
         [SVProgressHUD dismiss];
         weakSelf.commentVC.textView.text = @"";
@@ -1039,9 +1154,15 @@
             [weakSelf.tableView insertRowsAtIndexPaths:indexPathsToInsert withRowAnimation:UITableViewRowAnimationBottom];
             [weakSelf.tableView endUpdates];
 
+            // 滚动到新添加的评论位置
+            if (indexPathsToInsert.count > 0) {
+                NSIndexPath *lastIndexPath = [indexPathsToInsert lastObject];
+                [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+            }
+
             [SVProgressHUD showSuccessWithStatus:@"评论成功"];
         } else {
-            //todo: 评论失败
+            [weakSelf gotoLoginPage];
         }
     }];
 }
@@ -1051,10 +1172,20 @@
 - (void)likeComment:(SLCommentEntity *)commentEntity section:(NSInteger)section row:(NSInteger)row selected:(BOOL)selected {
     if (![SLUser defaultUser].isLogin) {
         [self gotoLoginPage];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+            [commentCell updateLikeStatus:commentEntity];
+        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+            [commentCell updateLikeStatus:commentEntity];
+        }
         return;
     }
     if (!selected) {
-        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 commentEntity.disliked = nil;
                 commentEntity.likeCount = MAX(0, commentEntity.likeCount - 1);
@@ -1069,10 +1200,23 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     } else {
-        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 if ([commentEntity.disliked isEqualToString:@"false"]) {
                     commentEntity.dislikeCount -= 1;
@@ -1091,6 +1235,19 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     }
@@ -1099,11 +1256,21 @@
 - (void)dislikeComment:(SLCommentEntity *)commentEntity section:(NSInteger)section row:(NSInteger)row selected:(BOOL)selected {
     if (![SLUser defaultUser].isLogin) {
         [self gotoLoginPage];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+        
+        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+            [commentCell updateLikeStatus:commentEntity];
+        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+            [commentCell updateLikeStatus:commentEntity];
+        }
         return;
     }
     
     if (!selected) {
-        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel cancelCommentLike:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 commentEntity.disliked = nil;
                 commentEntity.dislikeCount = MAX(0, commentEntity.dislikeCount - 1);
@@ -1118,10 +1285,23 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     } else {
-        [self.viewModel likeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [self.viewModel dislikeComment:commentEntity.commentId resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError *error) {
             if (isSuccess) {
                 if ([commentEntity.disliked isEqualToString:@"true"]) {
                     commentEntity.likeCount -= 1;
@@ -1139,6 +1319,19 @@
                     SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
+            } else if (needLogin) {
+                [self gotoLoginPage];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                
+                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
+                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
+                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                    [commentCell updateLikeStatus:commentEntity];
+                }
+                return;
             }
         }];
     }

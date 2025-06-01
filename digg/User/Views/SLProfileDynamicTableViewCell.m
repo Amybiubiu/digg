@@ -18,10 +18,9 @@
 @property (nonatomic, strong) UIImageView* avatarImageView;
 @property (nonatomic, strong) UILabel *nickNameLabel;
 @property (nonatomic, strong) UILabel *timeLabel;
-
+@property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *contentLabel;
-@property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UIView *lineView;
 @property (nonatomic, strong) SLArticleTodayEntity *entity;
 @property (nonatomic, assign) BOOL isSelected;
@@ -73,7 +72,7 @@
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:[UIFont pingFangLightWithSize:14] forKey:NSFontAttributeName];
+        [attributes setObject:[UIFont systemFontOfSize:14 weight:UIFontWeightLight] forKey:NSFontAttributeName];
         [attributes setObject:[SLColorManager cellContentColor] forKey:NSForegroundColorAttributeName];
         [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
@@ -241,7 +240,7 @@
 - (UILabel *)nickNameLabel {
     if(!_nickNameLabel) {
         _nickNameLabel = [[UILabel alloc] init];
-        _nickNameLabel.font = [UIFont pingFangRegularWithSize:14];
+        _nickNameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
         _nickNameLabel.textColor = [SLColorManager cellNickNameColor];
     }
     return _nickNameLabel;
@@ -250,7 +249,7 @@
 - (UILabel *)timeLabel {
     if(!_timeLabel) {
         _timeLabel = [[UILabel alloc] init];
-        _timeLabel.font = [UIFont pingFangRegularWithSize:12];
+        _timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _timeLabel.textColor = Color16(0xB6B6B6);
         [_timeLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh forAxis:UILayoutConstraintAxisHorizontal];
         _timeLabel.textAlignment = NSTextAlignmentLeft;
@@ -261,7 +260,7 @@
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         _titleLabel.textColor = [SLColorManager cellTitleColor];
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     }
@@ -271,7 +270,7 @@
 - (UILabel *)contentLabel {
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont pingFangLightWithSize:14];
+        _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
         _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }

@@ -17,8 +17,9 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 #import "SLArticleDetailViewControllerV2.h"
+#import "SLZoomTransitionDelegate.h"
 
-#define FIELD_DEFAULT_HEIGHT 48
+#define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
 
 @interface SLRecordViewController () <UITextFieldDelegate, UITextViewDelegate, RZRichTextViewDelegate>
@@ -49,6 +50,9 @@
 @property (nonatomic, assign) BOOL isUpdateUrl;
 
 @property (nonatomic, assign) CGFloat textViewContentHeight; // 记录文本视图高度
+
+@property (nonatomic, strong) UILabel *titleCountLabel; // 标题字数提示标签
+@property (nonatomic, strong) UILabel *linkWarningLabel; // 链接警告标签
 
 @end
 
@@ -122,8 +126,8 @@
     }];
     [self.contentView addSubview:self.containerView];
     [self.containerView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self.contentView);
-            make.width.equalTo(self.contentView);
+        make.edges.equalTo(self.contentView);
+        make.width.equalTo(self.contentView);
     }];
     
     [self.containerView addSubview:self.tagView];
@@ -143,12 +147,12 @@
         make.top.equalTo(self.titleField.mas_bottom);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(0.5);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom).offset(10);
-        make.left.equalTo(self.containerView).offset(13);
+        make.top.equalTo(self.line1View.mas_bottom);
+        make.left.equalTo(self.containerView).offset(12);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
@@ -158,7 +162,7 @@
         make.top.equalTo(self.linkField.mas_bottom);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(0.5);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.textView];
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -170,9 +174,9 @@
     [self.containerView addSubview:self.line3View];
     [self.line3View mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.textView.mas_bottom);
-        make.left.equalTo(self.containerView).offset(12);
-        make.right.equalTo(self.containerView).offset(-12);
-        make.height.mas_equalTo(0.5);
+        make.left.equalTo(self.containerView).offset(10);
+        make.right.equalTo(self.containerView).offset(-10);
+        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     [self.containerView addSubview:self.tagContainerView];
     [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -204,6 +208,7 @@
         placeholderLabel.hidden = NO;
         UIButton *clearButton = [self.titleField associatedObjectForKey:@"clearButton"];
         clearButton.hidden = YES;
+        self.titleCountLabel.hidden = YES;
         
         [self performSelector:@selector(updateTitleFieldHeight) withObject:nil afterDelay:0.1];
     } else if (sender.tag == 1002) { // 链接输入框的清除按钮
@@ -212,7 +217,7 @@
         placeholderLabel.hidden = NO;
         UIButton *clearButton = [self.linkField associatedObjectForKey:@"clearButton"];
         clearButton.hidden = YES;
-
+        self.linkWarningLabel.hidden = YES;
         [self performSelector:@selector(updateLinkFieldHeight) withObject:nil afterDelay:0.1];
     }
 }
@@ -227,6 +232,7 @@
     placeholderLabel.hidden = NO;
     UIButton *clearButton = [self.titleField associatedObjectForKey:@"clearButton"];
     clearButton.hidden = YES;
+    self.titleCountLabel.hidden = YES;
     
     // 清空链接输入框
     self.linkField.text = @"";
@@ -234,6 +240,7 @@
     linkPlaceholder.hidden = NO;
     UIButton *clearButton2 = [self.linkField associatedObjectForKey:@"clearButton"];
     clearButton2.hidden = YES;
+    self.linkWarningLabel.hidden = YES;
     [self updateLinkFieldHeight];
 
     [self.textView clearContent];
@@ -295,30 +302,42 @@
         frame.origin.y = (self.titleField.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
     }
-    
-    // 确保 line1View 与 titleField 底部保持适当距离
-    [self.line1View mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleField.mas_bottom);
-    }];
 }
 
 - (void)updateLinkFieldHeight {
     CGFloat fixedWidth = self.linkField.frame.size.width > 0 ? self.linkField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
-    CGSize newSize = [self.linkField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-    CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height);
+    CGSize contentSize = [self.linkField sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+    // CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height);
+    // 如果警告标签可见，增加额外高度
+    CGFloat extraHeight = self.linkWarningLabel.hidden ? 0 : 15; // 警告标签高度+间距
+    CGFloat newHeight = contentSize.height + extraHeight;
     
+    // 更新linkField高度
     [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(newHeight);
+    }];
+    
+    // 更新line2的位置
+    [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.linkField.mas_bottom);
+    }];
+    
+    // 更新textView的位置
+    [self.textView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.line2View.mas_bottom);
     }];
     
     // 更新清除按钮位置
     UIButton *clearButton = [self.linkField associatedObjectForKey:@"clearButton"];
     if (clearButton) {
         CGRect frame = clearButton.frame;
-        frame.origin.x = self.linkField.bounds.size.width - frame.size.width;
+        frame.origin.x = self.linkField.bounds.size.width - frame.size.width - 5;
         frame.origin.y = (self.linkField.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
     }
+
+    // 强制布局更新
+    [self.view layoutIfNeeded];
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
@@ -326,12 +345,6 @@
     vc.articleId = articleId;
     vc.hidesBottomBarWhenPushed = YES;
     [self.navigationController pushViewController:vc animated:YES];
-//    NSString *url = [NSString stringWithFormat:@"%@/post/%@", H5BaseUrl, articleId];
-//    SLWebViewController *vc = [[SLWebViewController alloc] init];
-//    vc.isShowProgress = NO;
-//    [vc startLoadRequestWithUrl:url];
-//    vc.hidesBottomBarWhenPushed = YES;
-//    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Actions
@@ -358,10 +371,8 @@
             [SVProgressHUD dismiss];
             if (isSuccess) {
                 [self backPage];
-//                [self gotoH5Page:articleId];
-//                [self clearAll];
             } else {
-                [SVProgressHUD showErrorWithStatus:@"提交失败"];
+                [self gotoLoginPage];
             }
         }];
     } else {
@@ -371,6 +382,8 @@
             if (isSuccess) {
                 [self gotoH5Page:articleId];
                 [self clearAll];
+            } else { //401 跳转到登陆
+                [self gotoLoginPage];
             }
         }];
     }
@@ -379,7 +392,7 @@
 - (void)setupTitlePlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"添加标题";
-    placeholderLabel.font = [UIFont pingFangRegularWithSize:18];
+    placeholderLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
     placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
@@ -394,13 +407,13 @@
 - (void)setupLinkPlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
     placeholderLabel.text = @"链接";
-    placeholderLabel.font = [UIFont pingFangRegularWithSize:16];
+    placeholderLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     placeholderLabel.textColor = [UIColor placeholderTextColor];
     placeholderLabel.numberOfLines = 0;
     [placeholderLabel sizeToFit];
     
     // 设置标签位置
-    placeholderLabel.frame = CGRectMake(5, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
+    placeholderLabel.frame = CGRectMake(3, (FIELD_DEFAULT_HEIGHT - placeholderLabel.frame.size.height)/2.0, placeholderLabel.frame.size.width, placeholderLabel.frame.size.height);
     placeholderLabel.tag = 998;
     
     [self.linkField addSubview:placeholderLabel];
@@ -472,7 +485,7 @@
     [self.addTagButton setTitle:buttonTitle forState:UIControlStateNormal];
     
     // 计算按钮宽度 - 文本宽度 + 左右各10像素的间距
-    UIFont *buttonFont = [UIFont pingFangRegularWithSize:12];
+    UIFont *buttonFont = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     CGSize buttonTextSize = [buttonTitle sizeWithAttributes:@{NSFontAttributeName: buttonFont}];
     CGFloat buttonWidth = buttonTextSize.width + (tagInsetSpacing * 2); // 左右各tagInsetSpacing像素的间距;
     
@@ -491,7 +504,7 @@
         NSString *tagName = self.tags[i];
         
         // 计算标签宽度
-        UIFont *font = [UIFont pingFangRegularWithSize:12];
+        UIFont *font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
         
         // 删除按钮宽度和间距
@@ -600,6 +613,14 @@
     [self.tagContainerView layoutIfNeeded];
 }
 
+- (void)gotoLoginPage {
+    SLWebViewController *dvc = [[SLWebViewController alloc] init];
+    [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
+    dvc.hidesBottomBarWhenPushed = YES;
+    dvc.isLoginPage = YES;
+    [self presentViewController:dvc animated:YES completion:nil];
+}
+
 #pragma mark - UITextViewDelegate
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == self.titleField) {
@@ -616,6 +637,24 @@
         frame.origin.x = textView.bounds.size.width - frame.size.width;
         frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
+
+        // 限制标题最大字符数为50
+        NSInteger maxLength = 50;
+        if (textView.text.length > maxLength) {
+            textView.text = [textView.text substringToIndex:maxLength];
+        }
+        // 更新字数提示标签
+        NSInteger textLength = textView.text.length;
+        self.titleCountLabel.text = [NSString stringWithFormat:@"%ld/%ld", textLength, maxLength];
+        
+        // 当字数接近或达到最大值时显示标签
+        self.titleCountLabel.hidden = (textLength < maxLength * 0.8);
+        
+        // 更新标签位置 - 放在右下角，不会被文字遮挡
+        CGRect labelFrame = self.titleCountLabel.frame;
+        labelFrame.origin.x = textView.bounds.size.width - labelFrame.size.width - 10;
+        labelFrame.origin.y = textView.bounds.size.height - labelFrame.size.height - 10;
+        self.titleCountLabel.frame = labelFrame;
         
         // 根据内容自动调整高度
         CGFloat fixedWidth = textView.frame.size.width;
@@ -643,15 +682,37 @@
         frame.origin.x = textView.bounds.size.width - frame.size.width;
         frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
         clearButton.frame = frame;
+
+        // 验证链接
+        NSString *linkText = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        BOOL isValidLink = [self isValidURL:linkText];
         
-        // 根据内容自动调整高度
-        CGFloat fixedWidth = textView.frame.size.width;
-        CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
-        CGFloat newHeight = MAX(30, newSize.height); // 最小高度为30
+        // 只有当链接不为空且无效时才显示警告
+        self.linkWarningLabel.hidden = (linkText.length == 0 || isValidLink);
+
+        // 如果显示警告，确保警告标签位置正确
+        if (!self.linkWarningLabel.hidden) {
+            // 计算文本的位置和大小
+            CGRect textRect = [textView.layoutManager usedRectForTextContainer:textView.textContainer];
+            CGFloat textHeight = textRect.size.height;
+            
+            // 警告标签位置 - 放在文本下方
+            CGFloat xPos = textView.textContainerInset.left;
+            CGFloat yPos = textView.textContainerInset.top + textHeight + 5; // 文本下方5个点的位置
+            
+            self.linkWarningLabel.frame = CGRectMake(xPos, yPos, 100, 15);
+        }
+        // 更新linkField的高度以适应警告标签
+        [self updateLinkFieldHeight];
         
-        [textView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.height.mas_equalTo(newHeight);
-        }];
+//        // 根据内容自动调整高度
+//        CGFloat fixedWidth = textView.frame.size.width;
+//        CGSize newSize = [textView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+//        CGFloat newHeight = MAX(FIELD_DEFAULT_HEIGHT, newSize.height); // 最小高度为30
+//        
+//        [textView mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.height.mas_equalTo(newHeight);
+//        }];
     } else if (textView == self.textView) {
         [self updateTextViewHeight];
         [self.textView contentTextChanged];
@@ -681,11 +742,26 @@
         UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
         clearButton.hidden = textView.text.length == 0;
         
-        // 更新清除按钮位置
-        CGRect frame = clearButton.frame;
-        frame.origin.x = textView.bounds.size.width - frame.size.width;
-        frame.origin.y = (textView.bounds.size.height - frame.size.height) / 2;
-        clearButton.frame = frame;
+        // 验证链接
+        NSString *linkText = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        BOOL isValidLink = [self isValidURL:linkText];
+        
+        // 只有当链接不为空且无效时才显示警告
+        self.linkWarningLabel.hidden = (linkText.length == 0 || isValidLink);
+        
+        // 如果显示警告，确保警告标签位置正确
+        if (!self.linkWarningLabel.hidden) {
+            // 计算文本的位置和大小
+            CGRect textRect = [textView.layoutManager usedRectForTextContainer:textView.textContainer];
+            CGFloat textHeight = textRect.size.height;
+            
+            // 警告标签位置 - 放在文本下方
+            CGFloat xPos = textView.textContainerInset.left;
+            CGFloat yPos = textView.textContainerInset.top + textHeight + 5; // 文本下方5个点的位置
+            
+            self.linkWarningLabel.frame = CGRectMake(xPos, yPos, 100, 15);
+        }
+        [self updateLinkFieldHeight];
     }
 }
 
@@ -697,6 +773,11 @@
         // 隐藏清除按钮
         UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
         clearButton.hidden = YES;
+
+        // 保持字数提示标签可见（如果接近最大字数）
+        NSInteger maxLength = 50;
+        NSInteger textLength = textView.text.length;
+        self.titleCountLabel.hidden = (textLength < maxLength * 0.8);
     } else if (textView == self.linkField) {
         UILabel *placeholderLabel = [textView viewWithTag:998];
         placeholderLabel.hidden = textView.text.length > 0;
@@ -704,6 +785,30 @@
         // 隐藏清除按钮
         UIButton *clearButton = [textView associatedObjectForKey:@"clearButton"];
         clearButton.hidden = YES;
+
+        // 验证链接
+        NSString *linkText = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        BOOL isValidLink = [self isValidURL:linkText];
+        
+        // 只有当链接不为空且无效时才显示警告
+        self.linkWarningLabel.hidden = (linkText.length == 0 || isValidLink);
+        
+        // 如果显示警告，确保警告标签位置正确
+        if (!self.linkWarningLabel.hidden) {
+            // 计算文本的位置和大小
+            CGRect textRect = [textView.layoutManager usedRectForTextContainer:textView.textContainer];
+            CGFloat textHeight = textRect.size.height;
+            
+            // 警告标签位置 - 放在文本下方
+            CGFloat xPos = textView.textContainerInset.left;
+            CGFloat yPos = textView.textContainerInset.top + textHeight + 5; // 文本下方5个点的位置
+            
+            self.linkWarningLabel.frame = CGRectMake(xPos, yPos, 100, 15);
+        } else {
+            self.linkWarningLabel.frame = CGRectZero;
+        }
+        // 更新linkField的高度以适应警告标签
+        [self updateLinkFieldHeight];
     }
 }
 
@@ -796,6 +901,12 @@
     [self updateTextViewHeight];
 }
 
+- (BOOL)isValidURL:(NSString *)urlString {
+    // 简单的URL验证
+    NSURL *url = [NSURL URLWithString:urlString];
+    return (url && url.scheme && url.host);
+}
+
 #pragma mark - UI Elements
 - (UIView *)navigationView {
     if (!_navigationView) {
@@ -809,7 +920,7 @@
     if (!_leftBackButton) {
         _leftBackButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
-        _leftBackButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _leftBackButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_leftBackButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_leftBackButton addTarget:self action:@selector(backPage) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -820,7 +931,7 @@
     if (!_commitButton) {
         _commitButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_commitButton setTitle:@"提交" forState:UIControlStateNormal];
-        _commitButton.titleLabel.font = [UIFont pingFangRegularWithSize:16];
+        _commitButton.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         [_commitButton setTitleColor:[SLColorManager recorderTextColor] forState:UIControlStateNormal];
         [_commitButton addTarget:self action:@selector(commitBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -859,13 +970,13 @@
 - (UITextView *)titleField {
     if (!_titleField) {
         _titleField = [[UITextView alloc] init];
-        _titleField.font = [UIFont pingFangRegularWithSize:18];
+        _titleField.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
         _titleField.textColor = [SLColorManager recorderTextColor];
         _titleField.backgroundColor = [UIColor clearColor];
         _titleField.delegate = self;
         _titleField.scrollEnabled = NO;
         _titleField.returnKeyType = UIReturnKeyDefault; // 允许换行
-        _titleField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        _titleField.textContainerInset = UIEdgeInsetsMake(17.35, 0, 17.35, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
         // 添加占位文本
         [self setupTitlePlaceholder];
@@ -883,6 +994,16 @@
         
         // 保存清除按钮的引用，以便后续访问
         [_titleField setAssociatedObject:clearButton forKey:@"clearButton"];
+
+        // 添加字数提示标签
+        UILabel *countLabel = [[UILabel alloc] init];
+        countLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+        countLabel.textColor = Color16(0X646566);
+        countLabel.textAlignment = NSTextAlignmentCenter;
+        countLabel.hidden = YES;
+        countLabel.frame = CGRectMake(_titleField.bounds.size.width - 50, _titleField.bounds.size.height - 25, 40, 20);
+        [_titleField addSubview:countLabel];
+        self.titleCountLabel = countLabel;
     }
     return _titleField;
 }
@@ -890,13 +1011,13 @@
 - (UITextView *)linkField {
     if (!_linkField) {
         _linkField = [[UITextView alloc] init];
-        _linkField.font = [UIFont pingFangRegularWithSize:16];
+        _linkField.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _linkField.textColor = [SLColorManager lineTextColor];
         _linkField.backgroundColor = [UIColor clearColor];
         _linkField.delegate = self;
         _linkField.scrollEnabled = NO;
         _linkField.returnKeyType = UIReturnKeyDefault; // 允许换行
-        _linkField.textContainerInset = UIEdgeInsetsMake(15, 0, 15, 30); // 右侧增加30的内边距，为清除按钮留出空间
+        _linkField.textContainerInset = UIEdgeInsetsMake(18.7, 0, 18.7, 30); // 右侧增加30的内边距，为清除按钮留出空间
         
         // 添加占位文本
         [self setupLinkPlaceholder];
@@ -916,8 +1037,16 @@
         [_linkField setAssociatedObject:clearButton forKey:@"clearButton"];
         
         // 设置内容优先级，确保不会挤压其他视图
-        [_linkField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
-        [_linkField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
+//        [_linkField setContentCompressionResistancePriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+//        [_linkField setContentHuggingPriority:UILayoutPriorityDefaultLow forAxis:UILayoutConstraintAxisVertical];
+        // 添加链接警告标签 - 直接放在输入框内部
+        UILabel *warningLabel = [[UILabel alloc] init];
+        warningLabel.text = @"链接不合法";
+        warningLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+        warningLabel.textColor = [UIColor redColor];
+        warningLabel.hidden = YES; // 初始状态隐藏
+        [_linkField addSubview:warningLabel];
+        self.linkWarningLabel = warningLabel;
     }
     return _linkField;
 }
@@ -925,7 +1054,7 @@
 - (RZRichTextView *)textView {
     if (!_textView) {
         _textView = [[RZRichTextView alloc] initWithFrame:CGRectZero viewModel:[RZRichTextViewModel sharedWithEdit:YES]];
-        _textView.font = [UIFont pingFangRegularWithSize:16];
+        _textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
        _textView.delegate = self;
@@ -938,6 +1067,7 @@
     if (!_line1View) {
         _line1View = [[UIView alloc] init];
         _line1View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line1View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line1View;
 }
@@ -946,6 +1076,7 @@
     if (!_line2View) {
         _line2View = [[UIView alloc] init];
         _line2View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line2View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line2View;
 }
@@ -954,6 +1085,7 @@
     if (!_line3View) {
         _line3View = [[UIView alloc] init];
         _line3View.backgroundColor = [SLColorManager cellDivideLineColor];
+        _line3View.contentScaleFactor = [UIScreen mainScreen].scale;
     }
     return _line3View;
 }
@@ -971,7 +1103,7 @@
         _addTagButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_addTagButton setTitle:@"+ 标签" forState:UIControlStateNormal];
         [_addTagButton setTitleColor:[SLColorManager recorderTagTextColor] forState:UIControlStateNormal];
-        _addTagButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+        _addTagButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _addTagButton.backgroundColor = [SLColorManager recorderTagBgColor];
         _addTagButton.layer.cornerRadius = TAG_DEFAULT_HEIGHT / 2;
         _addTagButton.layer.borderColor = [SLColorManager recorderTagBorderColor].CGColor;
@@ -998,7 +1130,7 @@
 - (UITextField *)tagInputField {
     if (!_tagInputField) {
         _tagInputField = [[UITextField alloc] init];
-        _tagInputField.font = [UIFont pingFangRegularWithSize:12];
+        _tagInputField.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _tagInputField.textColor = [SLColorManager recorderTagTextColor];
         _tagInputField.backgroundColor = UIColor.clearColor;
         _tagInputField.returnKeyType = UIReturnKeyDone;

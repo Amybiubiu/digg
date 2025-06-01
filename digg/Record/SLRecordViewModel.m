@@ -34,14 +34,20 @@
     parameters[@"labels"] = labels;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            
             NSData* data = (NSData*)responseObject;
             NSString *articleId = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             handler(YES, articleId);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO, error.description);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error.description);
+                }
+            }
         }
     }];
 }
@@ -74,7 +80,14 @@
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO, error.description);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error.description);
+                }
+            }
         }
     }];
 }

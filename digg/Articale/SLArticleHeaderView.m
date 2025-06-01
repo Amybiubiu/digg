@@ -38,24 +38,27 @@
     
     // 网站来源标签
     self.sourceUrlLabel = [[UILabel alloc] init];
-    self.sourceUrlLabel.font = [UIFont pingFangMediumWithSize:10];
-    self.sourceUrlLabel.textColor = Color16(0xD2D2D2); //TODO: 暗黑模式
+    self.sourceUrlLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+    self.sourceUrlLabel.textColor = Color16(0x7777777);
     self.sourceUrlLabel.textAlignment = NSTextAlignmentLeft;
     [self addSubview:self.sourceUrlLabel];
     
     // 阅读原文按钮
     self.readOriginalButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.readOriginalButton setTitle:@"阅读原文" forState:UIControlStateNormal];
-    [self.readOriginalButton setTitleColor:Color16(0x2592DB) forState:UIControlStateNormal]; //TODO: 暗黑模式
-    self.readOriginalButton.titleLabel.font = [UIFont pingFangSemiboldWithSize:10];
+    [self.readOriginalButton setTitle:@"访问原文" forState:UIControlStateNormal];
+    [self.readOriginalButton setTitleColor:Color16(0x005ECC) forState:UIControlStateNormal];
+    self.readOriginalButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     [self.readOriginalButton addTarget:self action:@selector(readOriginalButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    self.readOriginalButton.hidden = YES;
     [self addSubview:self.readOriginalButton];
     
     // 文章标题
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.font = [UIFont pingFangRegularWithSize:24];
+    self.titleLabel.font = [UIFont systemFontOfSize:24 weight:UIFontWeightBold];
     self.titleLabel.textColor = Color16(0x222222); //TODO: 暗黑模式
     self.titleLabel.numberOfLines = 0;
+    self.titleLabel.preferredMaxLayoutWidth = kScreenWidth - (16 * 2);
+    [self.titleLabel sizeToFit];
     [self addSubview:self.titleLabel];
     
     // 作者头像
@@ -63,23 +66,26 @@
     self.avatarImageView.layer.cornerRadius = 15;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
+     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
+    [self.avatarImageView addGestureRecognizer:tapGesture];
     [self addSubview:self.avatarImageView];
     
     // 作者名称
     self.authorNameLabel = [[UILabel alloc] init];
-    self.authorNameLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.authorNameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.authorNameLabel.textColor = Color16(0x666666); //TODO: 暗黑模式
     [self addSubview:self.authorNameLabel];
     
     // 发布时间
     self.publishTimeLabel = [[UILabel alloc] init];
-    self.publishTimeLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.publishTimeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.publishTimeLabel.textColor = Color16(0xC6C6C6); //TODO: 暗黑模式
     [self addSubview:self.publishTimeLabel];
     
     //分割线
     self.dividingView = [[UIView alloc] init];
-    self.dividingView.backgroundColor = Color16(0xEEEEEE); //TODO: 暗黑模式
+    self.dividingView.backgroundColor = [SLColorManager cellDivideLineColor];
     [self addSubview:self.dividingView];
     
     // 设置约束
@@ -130,12 +136,27 @@
                 source:(NSString *)source
            avatarImage:(NSString *)avatarImage
             authorName:(NSString *)authorName
-           publishTime:(NSString *)publishTime {
+           publishTime:(NSString *)publishTime
+                 url:(NSString *)url {
     self.titleLabel.text = title;
     self.sourceUrlLabel.text = source;
     [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:avatarImage] placeholderImage:[UIImage imageNamed:@"avatar_default_icon"]];
     self.authorNameLabel.text = authorName ?: source;
     self.publishTimeLabel.text = publishTime;
+    self.readOriginalButton.hidden = url.length == 0 ? YES : NO;
+    if (source.length == 0 && url.length == 0) {
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self).offset(7);
+            make.left.equalTo(self).offset(16);
+            make.right.equalTo(self).offset(-16);
+        }];
+    } else {
+        [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.sourceUrlLabel.mas_bottom).offset(7);
+            make.left.equalTo(self).offset(16);
+            make.right.equalTo(self).offset(-16);
+        }];
+    }
 }
 
 - (void)readOriginalButtonTapped {
@@ -144,26 +165,28 @@
     }
 }
 
+- (void)avatarImageTapped {
+    if (self.avatarClickHandler) {
+        self.avatarClickHandler();
+    }
+}
+
 - (CGFloat)getContentHeight {
     // 计算标题实际高度
-    CGFloat titleWidth = self.titleLabel.frame.size.width;
-    CGFloat titleHeight = [self.titleLabel.text boundingRectWithSize:CGSizeMake(titleWidth, CGFLOAT_MAX)
-                                                             options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                                          attributes:@{NSFontAttributeName: self.titleLabel.font}
-                                                             context:nil].size.height;
+    CGFloat titleWidth = kScreenWidth - 32; // 左右各16点边距
+    CGFloat titleHeight = [self.titleLabel sizeThatFits:CGSizeMake(titleWidth, CGFLOAT_MAX)].height;
     
     CGFloat sourceHeight = [self.sourceUrlLabel sizeThatFits:CGSizeZero].height;
     
     // 计算总高度
-    CGFloat topMargin = 16.0; // 顶部边距
+    CGFloat topMargin = sourceHeight == 0 ? -16.0 : 0.0; // 顶部边距。外部增加了16高度
     CGFloat titleTopMargin = 7.0; // 标题上方边距
     CGFloat avatarTopMargin = 16.0; // 头像上方边距
     CGFloat avatarHeight = 30.0; // 头像高度
     CGFloat bottomMargin = 17.0; // 底部边距
     
     CGFloat totalHeight = topMargin + sourceHeight + titleTopMargin + titleHeight + avatarTopMargin + avatarHeight + bottomMargin;
-    
-    return MAX(totalHeight, 135);
+    return totalHeight; //MAX(totalHeight, 135);
 }
 
 @end

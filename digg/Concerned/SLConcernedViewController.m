@@ -21,6 +21,7 @@
 #import "TMViewTrackerSDK.h"
 #import "UIView+TMViewTracker.h"
 #import "SLArticleDetailViewControllerV2.h"
+#import "SLZoomTransitionDelegate.h"
 
 
 @interface SLConcernedViewController () <UITableViewDelegate, UITableViewDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate>
@@ -163,31 +164,34 @@
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
-        cell.controlName = @"CONCERN_LIST";
-        cell.args = @{
-            @"url": entity.url,
-            @"title": entity.title,
-        };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         
         cell.dislikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         
@@ -212,21 +216,29 @@
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         cell.cancelDisLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {
@@ -247,7 +259,7 @@
     NSString *text = @"还没有内容";
     
     NSDictionary *attributes = @{
-                              NSFontAttributeName: [UIFont pingFangSemiboldWithSize:16.0f],
+                              NSFontAttributeName: [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold],
                               NSForegroundColorAttributeName: Color16(0xC6C6C6)
                              };
     

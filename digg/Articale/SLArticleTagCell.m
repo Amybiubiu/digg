@@ -34,7 +34,7 @@
 - (void)setupUI {
     // 标题标签
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.font = [UIFont pingFangMediumWithSize:16];
+    self.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
     self.titleLabel.textColor = [SLColorManager primaryTextColor];
     self.titleLabel.text = @"相关标签";
     [self.contentView addSubview:self.titleLabel];

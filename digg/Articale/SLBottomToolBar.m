@@ -38,7 +38,7 @@
         [self addSubview:self.button];
         
         self.countLabel = [[UILabel alloc] init];
-        self.countLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        self.countLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         self.countLabel.textColor = Color16(0x222222);
         self.countLabel.text = @"";
         [self addSubview:self.countLabel];
@@ -158,7 +158,8 @@
     }];
     
     [self.stackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self);
+        make.top.left.right.equalTo(self);
+        make.bottom.equalTo(self).offset(-kiPhoneXBottomMargin);
     }];
 }
 
@@ -194,11 +195,11 @@
     [self.likeView setButtonSelected:isLiked];
     [self.likeView updateCount:count];
     
-    if (isLiked) {
-        [self.likeView updateCountColor:[UIColor redColor]];
-    } else {
-        [self.likeView updateCountColor:[UIColor darkGrayColor]];
-    }
+//    if (isLiked) {
+//        [self.likeView updateCountColor:[UIColor redColor]];
+//    } else {
+//        [self.likeView updateCountColor:[UIColor darkGrayColor]];
+//    }
 }
 
 - (void)updateCommentCount:(NSInteger)count {

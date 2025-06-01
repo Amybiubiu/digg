@@ -39,7 +39,7 @@
     // 创建"展开更多评论"按钮
     self.showMoreButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.showMoreButton setTitle:@"展开更多评论" forState:UIControlStateNormal];
-    self.showMoreButton.titleLabel.font = [UIFont pingFangRegularWithSize:14];
+    self.showMoreButton.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     [self.showMoreButton setTitleColor:Color16(0x14932A) forState:UIControlStateNormal];
     [self.showMoreButton addTarget:self action:@selector(showMoreButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.contentView addSubview:self.showMoreButton];

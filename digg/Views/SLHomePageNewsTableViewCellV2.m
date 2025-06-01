@@ -53,7 +53,7 @@
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:[UIFont pingFangLightWithSize:14] forKey:NSFontAttributeName];
+        [attributes setObject:[UIFont systemFontOfSize:14 weight:UIFontWeightLight] forKey:NSFontAttributeName];
         [attributes setObject:[SLColorManager cellContentColor] forKey:NSForegroundColorAttributeName];
         [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
@@ -225,7 +225,7 @@
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         _titleLabel.textColor = [SLColorManager cellTitleColor];
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     }
@@ -235,8 +235,8 @@
 - (UILabel *)contentLabel {
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont pingFangLightWithSize:14];
-        _contentLabel.numberOfLines = 3;
+        _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
+        _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
     return _contentLabel;

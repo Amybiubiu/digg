@@ -8,9 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		340F64022D2D55130046FC97 /* SLEditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 340F64012D2D55130046FC97 /* SLEditProfileViewController.m */; };
+		341AF9692DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */; };
+		341AF96A2DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */; };
 		34287B2E2DCF87820042D6FC /* SLSecondCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */; };
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		344EFA042D2E5111001E5FAF /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 344EFA022D2E5111001E5FAF /* KxMenu.m */; };
+		344F37D12DDF402600D3D0AC /* SLEndOfListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */; };
 		345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C0AA12DAA287B005FCCDB /* UIView+Associated.m */; };
 		345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */; };
 		345C11E72DABD7DF005FCCDB /* SLInteractionBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E32DABD7DF005FCCDB /* SLInteractionBar.m */; };
@@ -154,9 +157,9 @@
 		3486EFE52D2B721900A55258 /* SLEmptyWithLoginButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFE42D2B721900A55258 /* SLEmptyWithLoginButtonView.m */; };
 		3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFE72D2B807A00A55258 /* SLProfilePageViewModel.m */; };
 		3486EFEB2D2B80EB00A55258 /* SLProfileEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486EFEA2D2B80EB00A55258 /* SLProfileEntity.m */; };
-		348EE3272DBF7F7C00E88092 /* SLWebViewControllerV2.m in Sources */ = {isa = PBXBuildFile; fileRef = 348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */; };
 		34933F842D2E780E009F781A /* SLProfileDynamicTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */; };
 		34933F872D2E9951009F781A /* SLTagsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 34933F862D2E9951009F781A /* SLTagsView.m */; };
+		3499166F2DDEC1ED00C9A866 /* SLEmptyCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */; };
 		34A071062D72D999006BC583 /* ViewTrackerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A071032D72D999006BC583 /* ViewTrackerProxy.m */; };
 		34A071072D72D999006BC583 /* CALayer+TMViewExposure.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070E52D72D999006BC583 /* CALayer+TMViewExposure.m */; };
 		34A071082D72D999006BC583 /* Swizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A070E22D72D999006BC583 /* Swizzler.m */; };
@@ -273,12 +276,18 @@
 /* Begin PBXFileReference section */
 		340F64002D2D55130046FC97 /* SLEditProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEditProfileViewController.h; sourceTree = "<group>"; };
 		340F64012D2D55130046FC97 /* SLEditProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEditProfileViewController.m; sourceTree = "<group>"; };
+		341AF9652DE6EB8D002D9D5F /* SLZoomTransitionAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLZoomTransitionAnimator.h; sourceTree = "<group>"; };
+		341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLZoomTransitionAnimator.m; sourceTree = "<group>"; };
+		341AF9672DE6EB8D002D9D5F /* SLZoomTransitionDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLZoomTransitionDelegate.h; sourceTree = "<group>"; };
+		341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLZoomTransitionDelegate.m; sourceTree = "<group>"; };
 		34287B2C2DCF87820042D6FC /* SLSecondCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLSecondCommentCell.h; sourceTree = "<group>"; };
 		34287B2D2DCF87820042D6FC /* SLSecondCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLSecondCommentCell.m; sourceTree = "<group>"; };
 		344242762D55FE190081B948 /* SLColorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLColorManager.h; sourceTree = "<group>"; };
 		344242772D55FE190081B948 /* SLColorManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLColorManager.m; sourceTree = "<group>"; };
 		344EFA012D2E5111001E5FAF /* KxMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KxMenu.h; sourceTree = "<group>"; };
 		344EFA022D2E5111001E5FAF /* KxMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KxMenu.m; sourceTree = "<group>"; };
+		344F37CF2DDF402600D3D0AC /* SLEndOfListCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEndOfListCell.h; sourceTree = "<group>"; };
+		344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEndOfListCell.m; sourceTree = "<group>"; };
 		345C0AA02DAA287B005FCCDB /* UIView+Associated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Associated.h"; sourceTree = "<group>"; };
 		345C0AA12DAA287B005FCCDB /* UIView+Associated.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+Associated.m"; sourceTree = "<group>"; };
 		345C11DF2DABD7BF005FCCDB /* UIFont+PingFang.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIFont+PingFang.h"; sourceTree = "<group>"; };
@@ -337,7 +346,6 @@
 		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
 		345C124B2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLHomePageNewsTableViewCellV2.h; sourceTree = "<group>"; };
 		345C124C2DAC9983005FCCDB /* SLHomePageNewsTableViewCellV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLHomePageNewsTableViewCellV2.m; sourceTree = "<group>"; };
-		345C124E2DACB334005FCCDB /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		345C124F2DACB84D005FCCDB /* SkeletonAnimationBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonAnimationBuilder.swift; sourceTree = "<group>"; };
 		345C12512DACB84D005FCCDB /* SkeletonAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonAppearance.swift; sourceTree = "<group>"; };
 		345C12532DACB84D005FCCDB /* SkeletonCollectionViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCollectionViewProtocols.swift; sourceTree = "<group>"; };
@@ -459,12 +467,12 @@
 		3486EFE72D2B807A00A55258 /* SLProfilePageViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfilePageViewModel.m; sourceTree = "<group>"; };
 		3486EFE92D2B80EB00A55258 /* SLProfileEntity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileEntity.h; sourceTree = "<group>"; };
 		3486EFEA2D2B80EB00A55258 /* SLProfileEntity.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfileEntity.m; sourceTree = "<group>"; };
-		348EE3252DBF7F7C00E88092 /* SLWebViewControllerV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLWebViewControllerV2.h; sourceTree = "<group>"; };
-		348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLWebViewControllerV2.m; sourceTree = "<group>"; };
 		34933F822D2E780E009F781A /* SLProfileDynamicTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLProfileDynamicTableViewCell.h; sourceTree = "<group>"; };
 		34933F832D2E780E009F781A /* SLProfileDynamicTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLProfileDynamicTableViewCell.m; sourceTree = "<group>"; };
 		34933F852D2E9951009F781A /* SLTagsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLTagsView.h; sourceTree = "<group>"; };
 		34933F862D2E9951009F781A /* SLTagsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLTagsView.m; sourceTree = "<group>"; };
+		3499166D2DDEC1ED00C9A866 /* SLEmptyCommentCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLEmptyCommentCell.h; sourceTree = "<group>"; };
+		3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLEmptyCommentCell.m; sourceTree = "<group>"; };
 		34A070DA2D72D999006BC583 /* UIView+PageName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+PageName.h"; sourceTree = "<group>"; };
 		34A070DB2D72D999006BC583 /* UIView+PageName.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+PageName.m"; sourceTree = "<group>"; };
 		34A070DC2D72D999006BC583 /* UIView+TMViewTracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+TMViewTracker.h"; sourceTree = "<group>"; };
@@ -1010,6 +1018,10 @@
 		3478D6C82DC3A743007D366B /* Articale */ = {
 			isa = PBXGroup;
 			children = (
+				344F37CF2DDF402600D3D0AC /* SLEndOfListCell.h */,
+				344F37D02DDF402600D3D0AC /* SLEndOfListCell.m */,
+				3499166D2DDEC1ED00C9A866 /* SLEmptyCommentCell.h */,
+				3499166E2DDEC1ED00C9A866 /* SLEmptyCommentCell.m */,
 				346B7EB62DD39C7B000525F7 /* SLShowMoreCell.h */,
 				346B7EB72DD39C7B000525F7 /* SLShowMoreCell.m */,
 				346B7EB02DD39AD8000525F7 /* SLArticleDetailViewControllerV2.h */,
@@ -1436,7 +1448,6 @@
 				E7769E6A2CA2E63B00AE84F4 /* Info.plist */,
 				E7769E6B2CA2E63B00AE84F4 /* main.m */,
 				E7769EA72CB1A10900AE84F4 /* Main.storyboard */,
-				345C124E2DACB334005FCCDB /* PrefixHeader.pch */,
 			);
 			path = digg;
 			sourceTree = "<group>";
@@ -1494,8 +1505,10 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				348EE3252DBF7F7C00E88092 /* SLWebViewControllerV2.h */,
-				348EE3262DBF7F7C00E88092 /* SLWebViewControllerV2.m */,
+				341AF9652DE6EB8D002D9D5F /* SLZoomTransitionAnimator.h */,
+				341AF9662DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m */,
+				341AF9672DE6EB8D002D9D5F /* SLZoomTransitionDelegate.h */,
+				341AF9682DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m */,
 				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
 				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
@@ -1798,6 +1811,7 @@
 				345C12362DAC95AB005FCCDB /* QPlayer.swift in Sources */,
 				345C12372DAC95AB005FCCDB /* QuicklyLabel.swift in Sources */,
 				348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */,
+				3499166F2DDEC1ED00C9A866 /* SLEmptyCommentCell.m in Sources */,
 				345C12382DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift in Sources */,
 				345C12392DAC95AB005FCCDB /* QuicklyArray.swift in Sources */,
 				345C123A2DAC95AB005FCCDB /* QDispatch.swift in Sources */,
@@ -1897,6 +1911,8 @@
 				3478D6DA2DC47C91007D366B /* SLArticleContentView.m in Sources */,
 				345C12B62DACB84D005FCCDB /* CALayer+Extensions.swift in Sources */,
 				345C12B72DACB84D005FCCDB /* SkeletonReusableCell.swift in Sources */,
+				341AF9692DE6EB8D002D9D5F /* SLZoomTransitionAnimator.m in Sources */,
+				341AF96A2DE6EB8D002D9D5F /* SLZoomTransitionDelegate.m in Sources */,
 				345C12B82DACB84D005FCCDB /* SkeletonConfig.swift in Sources */,
 				345C12B92DACB84D005FCCDB /* UIView+Transitions.swift in Sources */,
 				345C12BA2DACB84D005FCCDB /* CALayer+Animations.swift in Sources */,
@@ -1923,6 +1939,7 @@
 				345C12CF2DACB84D005FCCDB /* PrepareViewForSkeleton.swift in Sources */,
 				3478EC622DC869D1007D366B /* SLSimpleInteractionBar.m in Sources */,
 				345C12D02DACB84D005FCCDB /* Recoverable.swift in Sources */,
+				344F37D12DDF402600D3D0AC /* SLEndOfListCell.m in Sources */,
 				345C12D12DACB84D005FCCDB /* CollectionSkeleton.swift in Sources */,
 				345C12D22DACB84D005FCCDB /* Swizzling.swift in Sources */,
 				345C12D32DACB84D005FCCDB /* UIColor+Skeleton.swift in Sources */,
@@ -1946,7 +1963,6 @@
 				E7769E6C2CA2E63B00AE84F4 /* main.m in Sources */,
 				3486EFE82D2B807A00A55258 /* SLProfilePageViewModel.m in Sources */,
 				E7C139372CF325BC00C5053A /* SLUserEntity.m in Sources */,
-				348EE3272DBF7F7C00E88092 /* SLWebViewControllerV2.m in Sources */,
 				3486EFE52D2B721900A55258 /* SLEmptyWithLoginButtonView.m in Sources */,
 				34D2E9822D33C8370067CC05 /* SLTagListContainerViewModel.m in Sources */,
 				E7C405742CC0EF13004D90CD /* SLHomePageViewModel.m in Sources */,
@@ -2144,8 +2160,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Reed;
@@ -2194,8 +2210,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/digg",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/digg/PrefixHeader.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = digg/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Reed;

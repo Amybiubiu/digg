@@ -32,7 +32,7 @@
     self.backgroundColor = [UIColor clearColor];    
     // 标题标签
     self.titleLabel = [[UILabel alloc] init];
-    self.titleLabel.font = [UIFont pingFangRegularWithSize:14];
+    self.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.titleLabel.textColor = Color16(0x999999);
     self.titleLabel.text = @"进一步阅读";
     [self addSubview:self.titleLabel];
@@ -76,7 +76,7 @@
                                  range:NSMakeRange(0, refer.title.length)];
         // 添加字体属性
         [attributedString addAttribute:NSFontAttributeName
-                                 value:[UIFont pingFangRegularWithSize:14]
+                                 value:[UIFont systemFontOfSize:14 weight:UIFontWeightRegular]
                                  range:NSMakeRange(0, refer.title.length)];
         // 添加颜色属性
         [attributedString addAttribute:NSForegroundColorAttributeName

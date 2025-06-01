@@ -46,29 +46,32 @@
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
+     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
+    [self.avatarImageView addGestureRecognizer:tapGesture];
     [self.contentView addSubview:self.avatarImageView];
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.usernameLabel.textColor = Color16(0x666666);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图
     self.tagView = [[SLHomeTagViewV2 alloc] init];
-    self.tagView.tagLabel.font = [UIFont pingFangRegularWithSize:10];
+    self.tagView.tagLabel.font = [UIFont systemFontOfSize:10 weight:UIFontWeightRegular];
     [self.tagView updateWithLabelBySmall:@"作者"];
     [self.contentView addSubview:self.tagView];
     
     // 时间
     self.timeLabel = [[UILabel alloc] init];
-    self.timeLabel.font = [UIFont pingFangMediumWithSize:12];
+    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     self.timeLabel.textColor = Color16(0xC6C6C6);
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
     self.contentLabel = [[UITextView alloc] init];
-    self.contentLabel.font = [UIFont pingFangRegularWithSize:14];
+    self.contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.contentLabel.textColor = Color16(0x313131);
     self.contentLabel.editable = NO; // 设置为不可编辑
     self.contentLabel.scrollEnabled = NO; // 禁用滚动
@@ -99,8 +102,8 @@
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.avatarImageView.mas_right).offset(12);
-        make.top.equalTo(self.contentView).offset(18);
     }];
     
     [self.tagView mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -109,8 +112,8 @@
     }];
     
     [self.timeLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
         make.top.equalTo(self.usernameLabel.mas_bottom).offset(1);
+        make.left.equalTo(self.avatarImageView.mas_right).offset(12);
     }];
     
     [self.contentLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -127,6 +130,12 @@
         make.right.equalTo(self.contentView).offset(-16);
         make.bottom.equalTo(self.contentView).offset(-8);
     }];
+}
+
+- (void)avatarImageTapped {
+    if (self.avatarClickHandler) {
+        self.avatarClickHandler(self.comment);
+    }
 }
 
 - (void)updateWithComment:(SLCommentEntity *)comment authorId:(NSString *)authorId contentWidth:(CGFloat)width {

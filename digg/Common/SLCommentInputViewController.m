@@ -43,7 +43,7 @@
     
     // 创建文本输入框
     self.textView = [[UITextView alloc] init];
-    self.textView.font = [UIFont pingFangRegularWithSize:12.0];
+    self.textView.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.textView.textColor = [SLColorManager textViewTextColor];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.delegate = self;
@@ -57,7 +57,7 @@
     self.textView.textContainer.lineFragmentPadding = 0;
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 2.0; // 设置行间距
-    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: [UIFont pingFangRegularWithSize:12.0], NSForegroundColorAttributeName: [SLColorManager textViewTextColor]};
+    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: [UIFont systemFontOfSize:12 weight:UIFontWeightRegular], NSForegroundColorAttributeName: [SLColorManager textViewTextColor]};
     // 添加键盘工具栏
     UIToolbar *toolbar = [[UIToolbar alloc] init];
     toolbar.barStyle = UIBarStyleDefault;
@@ -77,7 +77,7 @@
     
     // 创建占位符标签
     self.placeholderLabel = [[UILabel alloc] init];
-    self.placeholderLabel.font = [UIFont pingFangRegularWithSize:12.0];
+    self.placeholderLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.placeholderLabel.textColor = [SLColorManager textViewPlaceholderColor];
     self.placeholderLabel.text = self.placeholder ?: @"写回复";
     [self.inputContainerView addSubview:self.placeholderLabel];
@@ -87,7 +87,7 @@
     [self.submitButton setTitle:@"发送" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateDisabled];
-    self.submitButton.titleLabel.font = [UIFont pingFangRegularWithSize:12.0];
+    self.submitButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.submitButton.hidden = YES; // 初始状态隐藏
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.inputContainerView addSubview:self.submitButton];
@@ -153,6 +153,7 @@
 
 - (void)setPlaceholder:(NSString *)placeholder {
     _placeholder = placeholder;
+    self.placeholderLabel.text = placeholder;
 }
 
 #pragma mark - Public Methods

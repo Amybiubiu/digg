@@ -78,7 +78,7 @@
         _tagNameLabel = [[UILabel alloc] init];
         _tagNameLabel.text = @"";
         _tagNameLabel.textColor = [SLColorManager cellTitleColor];
-        _tagNameLabel.font = [UIFont pingFangRegularWithSize:12];
+        _tagNameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _tagNameLabel.textAlignment = NSTextAlignmentCenter;
     }
     return _tagNameLabel;
@@ -257,7 +257,7 @@
     UILabel *tagNameLabel = [[UILabel alloc] init];
     tagNameLabel.text = text;
     tagNameLabel.textColor = [SLColorManager cellTitleColor];
-    tagNameLabel.font = [UIFont pingFangRegularWithSize:12];
+    tagNameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     tagNameLabel.textAlignment = NSTextAlignmentCenter;
     CGSize size = [tagNameLabel sizeThatFits:CGSizeZero];
     return size;

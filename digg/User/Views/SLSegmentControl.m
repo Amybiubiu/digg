@@ -44,7 +44,7 @@
             [button setTitle:self.titles[i] forState:UIControlStateNormal];
             [button setTitleColor:[SLColorManager categorySelectedTextColor] forState:UIControlStateSelected];
             [button setTitleColor:[SLColorManager categoryNormalTextColor] forState:UIControlStateNormal];
-            button.titleLabel.font = i == self.selectedIndex ? [UIFont pingFangSemiboldWithSize:14] : [UIFont pingFangRegularWithSize:14];
+            button.titleLabel.font = i == self.selectedIndex ? [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold] : [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
             [button addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
             [self addSubview:button];
             [self.buttons addObject:button];
@@ -55,7 +55,7 @@
         self.indicatorView = [[UIView alloc] initWithFrame:CGRectZero];
         self.indicatorView.layer.cornerRadius = 1.5;
         self.indicatorView.layer.masksToBounds = YES;
-        self.indicatorView.backgroundColor = Color16(0xFF1852);
+        self.indicatorView.backgroundColor = Color16(0x14932A);
         [self addSubview:self.indicatorView];
         [self.indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.bottom.equalTo(button.mas_bottom);
@@ -77,7 +77,7 @@
 - (void)buttonTapped:(UIButton *)button {
     UIButton* lastSelectedBtn = self.buttons[self.selectedIndex];
     lastSelectedBtn.selected = NO;
-    lastSelectedBtn.titleLabel.font = [UIFont pingFangSemiboldWithSize:14];
+    lastSelectedBtn.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
     NSInteger index = [self.buttons indexOfObject:button];
     self.selectedIndex = index;
     [self updateIndicatorPosition];
@@ -90,7 +90,7 @@
 
 - (void)updateIndicatorPosition {
     UIButton* button = self.buttons[self.selectedIndex];
-    button.titleLabel.font = [UIFont pingFangSemiboldWithSize:14];
+    button.titleLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
     button.selected = YES;
     [self.indicatorView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(button.mas_bottom);

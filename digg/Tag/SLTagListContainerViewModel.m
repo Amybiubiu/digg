@@ -19,7 +19,7 @@
     self = [super init];
     if (self) {
         self.curPage = 1;
-        self.pageSize = 10;
+        self.pageSize = 30;
     }
     return self;
 }

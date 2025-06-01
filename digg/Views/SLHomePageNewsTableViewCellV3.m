@@ -48,7 +48,7 @@
     self.titleLabel.text = entiy.title;
     self.contentLabel.text = nil;
     self.contentLabel.attributedText = nil;
-    self.contentLabel.numberOfLines = 3;
+    self.contentLabel.numberOfLines = 2;
 
     CGFloat lineSpacing = 4;
     CGFloat offset = 16;
@@ -65,7 +65,7 @@
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
             }];
         } else if (entiy.picSize == 1 && entiy.mainPicUrl.length > 0) {
             self.contentLabel.numberOfLines = 2;
@@ -81,7 +81,7 @@
         } else {
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.contentView).offset(offset);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.contentView).offset(-offset);
             }];
         }
@@ -96,7 +96,7 @@
             [self.smallImageView setHidden:NO];
             
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.left.equalTo(self.tagView.mas_right).offset(8);
                 make.right.equalTo(self.smallImageView.mas_left).offset(-offset);
             }];
@@ -114,7 +114,7 @@
         } else {
             [self.titleLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.left.equalTo(self.tagView.mas_right).offset(8);
-                make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+                make.top.equalTo(self.contentView).offset(offset);
                 make.right.equalTo(self.contentView).offset(-offset);
             }];
         }
@@ -132,7 +132,7 @@
         NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
         paragraphStyle.lineSpacing = lineSpacing;
         NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-        [attributes setObject:[UIFont pingFangLightWithSize:14] forKey:NSFontAttributeName];
+        [attributes setObject:[UIFont systemFontOfSize:14 weight:UIFontWeightLight] forKey:NSFontAttributeName];
         [attributes setObject:[SLColorManager cellContentColor] forKey:NSForegroundColorAttributeName];
         [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
         self.contentLabel.attributedText = [[NSAttributedString alloc] initWithString:contentStr attributes:attributes];
@@ -201,13 +201,13 @@
     CGFloat offset = 16;
     
     [self.smallImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
         make.size.mas_equalTo(CGSizeMake(79, 64));
     }];
     
     [self.bigImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.left.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
         make.height.mas_equalTo(167);
@@ -221,7 +221,7 @@
     
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.tagView.mas_right).offset(5);
-        make.top.equalTo(self.contentView).offset(CELL_CONTENT_V_SPACE);
+        make.top.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
     }];
     
@@ -312,7 +312,7 @@
 - (UILabel *)titleLabel {
     if(!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont pingFangSemiboldWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         _titleLabel.textColor = [SLColorManager cellTitleColor];
         _titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     }
@@ -322,8 +322,8 @@
 - (UILabel *)contentLabel {
     if(!_contentLabel){
         _contentLabel = [[UILabel alloc] init];
-        _contentLabel.font = [UIFont pingFangLightWithSize:14];
-        _contentLabel.numberOfLines = 3;
+        _contentLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightLight];
+        _contentLabel.numberOfLines = 2;
         _contentLabel.textColor = [SLColorManager cellContentColor];
     }
     return _contentLabel;

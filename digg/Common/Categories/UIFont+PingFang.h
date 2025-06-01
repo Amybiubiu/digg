@@ -13,9 +13,11 @@ typedef NS_ENUM(NSInteger, PingFangFontWeight) {
     PingFangFontWeightThin,       // 极细体
     PingFangFontWeightLight,      // 细体
     PingFangFontWeightRegular,    // 常规体
+    PingFangFontWeightRegularItalic,// 常规斜体
     PingFangFontWeightMedium,     // 中黑体
     PingFangFontWeightSemibold,   // 中粗体
-    PingFangFontWeightBold        // 粗体
+    PingFangFontWeightBold,        // 粗体
+    PingFangFontWeightBoldItalic   // 粗斜体
 };
 
 @interface UIFont (PingFang)
@@ -69,6 +71,21 @@ typedef NS_ENUM(NSInteger, PingFangFontWeight) {
  * @return 苹方粗体
  */
 + (UIFont *)pingFangBoldWithSize:(CGFloat)size;
+
+/**
+ * 创建苹方粗斜体
+ * @param size 字体大小
+ * @return 苹方粗体
+ */
++ (UIFont *)pingFangBoldItalicWithSize:(CGFloat)size;
+
+/**
+ * 创建苹方常规斜体
+ * @param size 字体大小
+ * @return 苹方常规体
+ */
++ (UIFont *)pingFangItalicWithSize:(CGFloat)size;
+
 
 @end
 

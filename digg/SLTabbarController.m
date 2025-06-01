@@ -68,7 +68,7 @@
 
 - (UITabBarItemAppearance *)itemAppearanceWithNormalColor:(UIColor *)normalColor selectedColor:(UIColor *)selectedColor {
     UITabBarItemAppearance *itemAppearance = [[UITabBarItemAppearance alloc] init];
-    UIFont *tabBarFont = [UIFont pingFangRegularWithSize:10.0];
+    UIFont *tabBarFont = [UIFont systemFontOfSize:10 weight:UIFontWeightRegular];
     [itemAppearance.normal setTitleTextAttributes:@{
         NSForegroundColorAttributeName: normalColor,
         NSFontAttributeName: tabBarFont

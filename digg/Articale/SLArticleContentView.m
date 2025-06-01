@@ -39,7 +39,7 @@
     self.richTextView.editable = NO;
     self.richTextView.scrollEnabled = NO;
     self.richTextView.backgroundColor = [UIColor clearColor];
-    self.richTextView.font = [UIFont pingFangRegularWithSize:16];
+    self.richTextView.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
     self.richTextView.textColor = Color16(0x313131);
     [self addSubview:self.richTextView];
     

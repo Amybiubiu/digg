@@ -23,6 +23,7 @@
 #import "UIView+SLToast.h"
 #import "SLColorManager.h"
 #import "SLArticleDetailViewControllerV2.h"
+#import "SLZoomTransitionDelegate.h"
 
 
 @interface SLTagListContainerViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -154,7 +155,7 @@
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textColor = UIColor.whiteColor;
-        _titleLabel.font = [UIFont pingFangMediumWithSize:16];
+        _titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
     }
     return _titleLabel;
 }
@@ -268,32 +269,34 @@
     if (cell) {
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
-        cell.controlName = @"TAG_LIST";
-        cell.args = @{
-            @"url": entity.url,
-            @"title": entity.title,
-            @"index": @(0)
-        };
         @weakobj(self);
         cell.likeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         
         cell.dislikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         
@@ -323,21 +326,29 @@
         cell.cancelLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         cell.cancelDisLikeClick = ^(SLArticleTodayEntity *entity) {
             @strongobj(self);
             if (![SLUser defaultUser].isLogin) {
+                [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
                 [self gotoLoginPage];
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                
+                if (!isSuccess) { //401
+                    [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
+                    [self gotoLoginPage];
+                }
             }];
         };
         cell.showDetailClick = ^(SLArticleTodayEntity * _Nonnull entity) {

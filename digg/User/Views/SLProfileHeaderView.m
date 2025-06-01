@@ -181,9 +181,9 @@
     NSString* txt = [NSString stringWithFormat:@"%ld 粉丝", entity.followCnt];
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:txt];
     // 设置字体和颜色
-    UIFont *bigFont = [UIFont pingFangRegularWithSize:12];
+    UIFont *bigFont = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     UIColor *bigColor = [SLColorManager categorySelectedTextColor];
-    UIFont *smallFont = [UIFont pingFangSemiboldWithSize:12];
+    UIFont *smallFont = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
     UIColor *smallColor = Color16(0x999999);
     
     [attributedString addAttribute:NSFontAttributeName value:bigFont range:NSMakeRange(0, txt.length)];
@@ -271,7 +271,7 @@
         _editorButton.layer.borderWidth = 0.5;
         [_editorButton setTitle:@"编辑信息" forState:UIControlStateNormal];
         [_editorButton setTitleColor:[SLColorManager categorySelectedTextColor] forState:UIControlStateNormal];
-        _editorButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+        _editorButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         [_editorButton setHidden: YES];
         [_editorButton addTarget:self action:@selector(gotoEdit) forControlEvents:UIControlEventTouchUpInside];
         
@@ -289,7 +289,7 @@
         _focusButton.layer.borderWidth = 0.5;
         [_focusButton setTitle:@"关注" forState:UIControlStateNormal];
         [_focusButton setTitleColor:[SLColorManager categorySelectedTextColor] forState:UIControlStateNormal];
-        _focusButton.titleLabel.font = [UIFont pingFangRegularWithSize:12];
+        _focusButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         [_focusButton setHidden: NO];
         [_focusButton addTarget:self action:@selector(focusBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -301,7 +301,7 @@
         _nameLabel = [[UILabel alloc] init];
         _nameLabel.text = @"";
         _nameLabel.textColor = [SLColorManager categorySelectedTextColor];
-        _nameLabel.font = [UIFont pingFangSemiboldWithSize:18];
+        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
         
         _nameLabel.isSkeletonable = YES;
     }
@@ -313,7 +313,7 @@
         _briefLabel = [[UILabel alloc] init];
         _briefLabel.text = @"";
         _briefLabel.textColor = [SLColorManager cellTitleColor];
-        _briefLabel.font = [UIFont pingFangRegularWithSize:12];
+        _briefLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _briefLabel.numberOfLines = 0;
         
         _briefLabel.isSkeletonable = YES;
@@ -327,9 +327,9 @@
         NSString* txt = @"0 粉丝";
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:txt];
         // 设置字体和颜色
-        UIFont *bigFont = [UIFont pingFangRegularWithSize:12];
+        UIFont *bigFont = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         UIColor *bigColor = [SLColorManager categorySelectedTextColor];
-        UIFont *smallFont = [UIFont pingFangSemiboldWithSize:12];
+        UIFont *smallFont = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
         UIColor *smallColor = Color16(0x999999);
         
         [attributedString addAttribute:NSFontAttributeName value:bigFont range:NSMakeRange(0, txt.length)];
@@ -351,9 +351,9 @@
         NSString* txt = @"0 关注";
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:txt];
         // 设置字体和颜色
-        UIFont *bigFont = [UIFont pingFangRegularWithSize:12];
+        UIFont *bigFont = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         UIColor *bigColor = [SLColorManager categorySelectedTextColor];
-        UIFont *smallFont = [UIFont pingFangSemiboldWithSize:12];
+        UIFont *smallFont = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
         UIColor *smallColor = Color16(0x999999);
         
         [attributedString addAttribute:NSFontAttributeName value:bigFont range:NSMakeRange(0, txt.length)];
@@ -377,9 +377,9 @@
         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:txt];
         
         // 设置字体和颜色
-        UIFont *bigFont = [UIFont pingFangRegularWithSize:12];
+        UIFont *bigFont = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         UIColor *bigColor = [SLColorManager categorySelectedTextColor];
-        UIFont *smallFont = [UIFont pingFangSemiboldWithSize:12];
+        UIFont *smallFont = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
         UIColor *smallColor = Color16(0x999999);
         
         [attributedString addAttribute:NSFontAttributeName value:bigFont range:NSMakeRange(0, txt.length)];
@@ -400,7 +400,7 @@
         _tagLabel = [[UILabel alloc] init];
         _tagLabel.text = @"我的标签";
         _tagLabel.textColor = [SLColorManager categorySelectedTextColor];
-        _tagLabel.font = [UIFont pingFangSemiboldWithSize:14];
+        _tagLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
         
         _tagLabel.isSkeletonable = YES;
     }
