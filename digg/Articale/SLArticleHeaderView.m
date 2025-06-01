@@ -189,4 +189,8 @@
     return totalHeight; //MAX(totalHeight, 135);
 }
 
+- (void)setDivideView:(BOOL)hide {
+    self.dividingView.hidden = hide;
+}
+
 @end

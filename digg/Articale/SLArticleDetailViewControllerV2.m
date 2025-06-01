@@ -373,10 +373,12 @@
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4);
         }];
+        [self.articleHeaderView setDivideView:NO];
     } else {
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.articleHeaderView.mas_bottom).offset(0);
         }];
+        [self.articleHeaderView setDivideView:YES];
     }
 
     if (!self.tagListView.isHidden) {
