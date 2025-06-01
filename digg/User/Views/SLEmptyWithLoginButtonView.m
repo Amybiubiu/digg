@@ -65,7 +65,7 @@
         _loginBtn.titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _loginBtn.layer.cornerRadius = 4;
         _loginBtn.layer.masksToBounds = YES;
-        _loginBtn.backgroundColor = Color16(0xFF3468);
+        _loginBtn.backgroundColor = Color16(0x14932A);
         [_loginBtn addTarget:self action:@selector(gotoLoginPage) forControlEvents:UIControlEventTouchUpInside];
     }
     return _loginBtn;
