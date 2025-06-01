@@ -112,7 +112,11 @@
                 needLogin = response.statusCode == 401;
                 if (needLogin) {
                     handler(NO, error);
+                } else {
+                    handler(NO, nil);
                 }
+            } else {
+                handler(NO, nil);
             }
         }
     }];
@@ -134,7 +138,6 @@
     [mutDic setObject:articleId forKey:@"articleId"];
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            //判断是否点赞成功
             handler(YES, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
@@ -145,7 +148,11 @@
                 needLogin = response.statusCode == 401;
                 if (needLogin) {
                     handler(NO, error);
+                } else {
+                    handler(NO, nil);
                 }
+            } else {
+                handler(NO, nil);
             }
         }
     }];
@@ -177,7 +184,11 @@
                 needLogin = response.statusCode == 401;
                 if (needLogin) {
                     handler(NO, error);
+                } else {
+                    handler(NO, nil);
                 }
+            } else {
+                handler(NO, nil);
             }
         }
     }];

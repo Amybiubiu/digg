@@ -450,22 +450,37 @@
         [self gotoLoginPage];
         return;
     }
+    @weakobj(self)
     if (self.viewModel.articleEntity.liked) {
         // 如果已经点赞，则取消点赞
         [self.homeViewModel cancelLikeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            @strongobj(self)
             if (isSuccess) {
                 self.viewModel.articleEntity.liked = NO;
                 self.viewModel.articleEntity.likeCnt -= 1;
                 [self.toolbarView updateLikeStatus:NO count:self.viewModel.articleEntity.likeCnt];
+            } else {
+                if (error) {
+                    [self gotoLoginPage];
+                } else {
+                    [self.view sl_showToast:request_error_msg];
+                }
             }
         }];
     } else {
         // 如果未点赞，则点赞
         [self.homeViewModel likeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            @strongobj(self)
             if (isSuccess) {
                 self.viewModel.articleEntity.liked = YES;
                 self.viewModel.articleEntity.likeCnt += 1;
                 [self.toolbarView updateLikeStatus:YES count:self.viewModel.articleEntity.likeCnt];
+            } else {
+                if (error) {
+                    [self gotoLoginPage];
+                } else {
+                    [self.view sl_showToast:request_error_msg];
+                }
             }
         }];
     }

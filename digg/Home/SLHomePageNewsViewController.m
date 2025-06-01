@@ -16,11 +16,8 @@
 #import "SLWebViewController.h"
 #import "SLUser.h"
 #import "SLAlertManager.h"
-#import "SLTrackingManager.h"
-#import "TMViewTrackerSDK.h"
-#import "UIView+TMViewTracker.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
+#import "UIView+SLToast.h"
 
 # define kSLHomePageNewsTableViewCellID @"SLHomePageNewsTableViewCell"
 
@@ -45,8 +42,6 @@
     
     [self addRefresh];
     [self loadMessagesList:CaocaoCarMessageListRefreshTypeRefresh];
-    
-    [TMViewTrackerManager setCurrentPageName:@"Home"];
 }
 
 - (void)changeBgColor{
@@ -163,7 +158,11 @@
             [self.viewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
                 if (!isSuccess) { //401
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self jumpToLogin];
+                    if (error) {
+                        [self jumpToLogin];
+                    } else {
+                       [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -176,9 +175,13 @@
                 return;
             }
             [self.viewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self jumpToLogin];
+                    if (error) {
+                        [self jumpToLogin];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -196,7 +199,6 @@
                                                                 @"url": entity.url,
                                                                 @"index": @(self.pageStyle)
                                                             };
-                                                            [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_HOME" parameters:param];
                                                                                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
                                                         }
                                                          cancelHandler:^{
@@ -213,9 +215,13 @@
                 return;
             }
             [self.viewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self jumpToLogin];
+                    if (error) {
+                        [self jumpToLogin];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };

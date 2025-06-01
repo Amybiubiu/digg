@@ -28,11 +28,8 @@
 #import "digg-Swift.h"
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
-#import "SLTrackingManager.h"
-#import "TMViewTrackerSDK.h"
-#import "UIView+TMViewTracker.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
+#import "UIView+SLToast.h"
 
 
 @interface SLProfileViewController () <SLSegmentControlDelegate, UITableViewDelegate, UITableViewDataSource, SLEmptyWithLoginButtonViewDelegate, UIScrollViewDelegate, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate, SLEmptyWithLoginButtonViewDelegate, SLProfileHeaderViewDelegate>
@@ -68,8 +65,6 @@
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self setupUI];
     [self.hideView setHidden:NO];
-    
-    [TMViewTrackerManager setCurrentPageName:@"Profile"];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -514,12 +509,6 @@
         if (cell) {
             SLArticleTodayEntity *entity = [self.viewModel.entity.feedList objectAtIndex:indexPath.row];
             [cell updateWithEntity:entity];
-            cell.controlName = @"Profile_LIST";
-            cell.args = @{
-                @"url": entity.url,
-                @"title": entity.title,
-                @"index": @(self.segmentControl.selectedIndex)
-            };
             @weakobj(self);
             cell.likeClick = ^(SLArticleTodayEntity *entity) {
                 @strongobj(self);
@@ -529,9 +518,13 @@
                     return;
                 }
                 [self.homeViewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                    if (!isSuccess) { //401
+                    if (!isSuccess) {
                         [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                        [self gotoLoginPage];
+                        if (error) {
+                            [self gotoLoginPage];
+                        } else {
+                          [self.view sl_showToast:request_error_msg];
+                       }
                     }
                 }];
             };
@@ -544,9 +537,13 @@
                     return;
                 }
                 [self.homeViewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                    if (!isSuccess) { //401
+                    if (!isSuccess) {
                         [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                        [self gotoLoginPage];
+                        if (error) {
+                            [self gotoLoginPage];
+                        } else {
+                            [self.view sl_showToast:request_error_msg];
+                        }
                     }
                 }];
             };
@@ -564,7 +561,6 @@
                                                                     @"url": entity.url,
                                                                     @"index": @(self.segmentControl.selectedIndex)
                                                                 };
-                                                                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_PROFILE" parameters:param];
                                                                                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
                                                             }
                                                              cancelHandler:^{
@@ -581,9 +577,13 @@
                     return;
                 }
                 [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                    if (!isSuccess) { //401
+                    if (!isSuccess) {
                         [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                        [self gotoLoginPage];
+                        if (error) {
+                            [self gotoLoginPage];
+                        } else {
+                            [self.view sl_showToast:request_error_msg];
+                        }
                     }
                 }];
             };
@@ -661,7 +661,6 @@
                                                                     @"url": entity.url,
                                                                     @"index": @(self.segmentControl.selectedIndex)
                                                                 };
-                                                                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_PROFILE" parameters:param];
                                                                                     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
                                                             }
                                                              cancelHandler:^{

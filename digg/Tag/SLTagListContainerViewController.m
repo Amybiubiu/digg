@@ -16,14 +16,11 @@
 #import "SLUser.h"
 #import "SLWebViewController.h"
 #import "SLAlertManager.h"
-#import "SLTrackingManager.h"
-#import "TMViewTrackerSDK.h"
-#import "UIView+TMViewTracker.h"
 #import "SLArticleTodayEntity.h"
 #import "UIView+SLToast.h"
 #import "SLColorManager.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
+#import "UIView+SLToast.h"
 
 
 @interface SLTagListContainerViewController () <UITableViewDelegate, UITableViewDataSource>
@@ -53,8 +50,6 @@
     [self setupUI];
     [self addRefresh];
     [self requestData];
-    
-    [TMViewTrackerManager setCurrentPageName:@"TagList"];
 }
 
 #pragma mark - Methods
@@ -280,7 +275,11 @@
             [self.homeViewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
                 if (!isSuccess) { //401
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -293,9 +292,13 @@
                 return;
             }
             [self.homeViewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -314,7 +317,6 @@
                                                                 @"label": self.label,
                                                                 @"index": @(0)
                                                             };
-                                                            [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_TAGLIST" parameters:param];
                                                                                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
                                                         }
                                                          cancelHandler:^{
@@ -331,9 +333,13 @@
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
