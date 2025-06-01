@@ -1431,6 +1431,7 @@
                         url:url
               resultHandler:^(BOOL isSuccess, NSError *error) {
         if (isSuccess) {
+            [SVProgressHUD dismiss];
             [weakSelf loadData];
         } else {
             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"添加失败：%@", error.localizedDescription]];
