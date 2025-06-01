@@ -314,10 +314,8 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
                 NSString *tag = [[dic objectForKey:@"tag"] stringValue];
-                NSString *url = [[dic objectForKey:@"url"] stringValue];
                 SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                 vc.label = tag;
-                vc.articleId = url;
                 vc.source = @"article";
                 vc.hidesBottomBarWhenPushed = YES;
                 [self.navigationController pushViewController:vc animated:YES];
