@@ -280,11 +280,9 @@
         self.viewModel = [[SLArticleDetailViewModel alloc] init];
     }
     
-//    [SVProgressHUD show];
     __weak typeof(self) weakSelf = self;
     
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
-//        [SVProgressHUD dismiss];
         if (isSuccess) {
             self.isLoadData = YES;
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
@@ -585,11 +583,13 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (!self.isLoadData) return 0;
     // 如果没有评论，返回1个section用于显示空白提示
-    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count + 1 : self.isLoadData ? 1 : 0;
+    return self.viewModel.commentList.count > 0 ? (self.viewModel.commentList.count + 1) : (self.isLoadData ? 1 : 0);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (!self.isLoadData) return 0;
     // 如果没有评论，返回1行用于显示空白提示
     if (self.viewModel.commentList.count == 0) {
         return 1;
