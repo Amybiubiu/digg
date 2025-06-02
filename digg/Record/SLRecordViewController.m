@@ -17,7 +17,6 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
 
 #define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
@@ -1063,8 +1062,8 @@
         _textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
-       _textView.delegate = self;
-       _textView.scrollEnabled = NO;
+        _textView.delegate = self;
+        _textView.scrollEnabled = NO;
     }
     return _textView;
 }

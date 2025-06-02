@@ -101,8 +101,10 @@
     [mutDic setObject:articleId forKey:@"articleId"];
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            //判断是否点赞成功
-            handler(YES, nil);
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
@@ -138,7 +140,10 @@
     [mutDic setObject:articleId forKey:@"articleId"];
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            handler(YES, nil);
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
@@ -173,8 +178,10 @@
     [mutDic setObject:articleId forKey:@"articleId"];
     [manager POST:urlString parameters:mutDic.copy headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            //判断是否点赞成功
-            handler(YES, nil);
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {

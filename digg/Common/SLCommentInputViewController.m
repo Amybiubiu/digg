@@ -47,7 +47,7 @@
     self.textView.textColor = [SLColorManager textViewTextColor];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.delegate = self;
-    self.textView.returnKeyType = UIReturnKeyDone;
+    self.textView.returnKeyType = UIReturnKeyDefault;
     self.textView.scrollEnabled = YES;
     // 确保可以选择和编辑文本
     self.textView.selectable = YES;
@@ -228,10 +228,6 @@
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    if ([text isEqualToString:@"\n"]) {
-        [self dismissKeyboard];
-        return NO;
-    }
     return YES;
 }
 
