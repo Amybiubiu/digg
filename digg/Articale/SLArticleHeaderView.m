@@ -141,7 +141,7 @@
     self.titleLabel.text = title;
     self.sourceUrlLabel.text = source;
     [self.avatarImageView sd_setImageWithURL:[NSURL URLWithString:avatarImage] placeholderImage:[UIImage imageNamed:@"avatar_default_icon"]];
-    self.authorNameLabel.text = authorName ?: source;
+    self.authorNameLabel.text = authorName;
     self.publishTimeLabel.text = publishTime;
     self.readOriginalButton.hidden = url.length == 0 ? YES : NO;
     if (source.length == 0 && url.length == 0) {
@@ -155,6 +155,23 @@
             make.top.equalTo(self.sourceUrlLabel.mas_bottom).offset(7);
             make.left.equalTo(self).offset(16);
             make.right.equalTo(self).offset(-16);
+        }];
+    }
+    if (authorName.length == 0) { //没有用户情况下
+        self.avatarImageView.hidden = YES;
+        self.authorNameLabel.hidden = YES;
+        self.publishTimeLabel.hidden = YES;
+        [self.avatarImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.titleLabel.mas_bottom);
+            make.width.height.equalTo(@0);
+            make.bottom.equalTo(self).offset(-16);
+        }];
+    } else {
+        [self.avatarImageView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.titleLabel.mas_bottom).offset(16);
+            make.left.equalTo(self).offset(16);
+            make.width.height.equalTo(@30);
+            make.bottom.equalTo(self).offset(-17);
         }];
     }
 }
@@ -182,8 +199,8 @@
     CGFloat topMargin = sourceHeight == 0 ? -16.0 : 0.0; // 顶部边距。外部增加了16高度
     CGFloat titleTopMargin = 7.0; // 标题上方边距
     CGFloat avatarTopMargin = 16.0; // 头像上方边距
-    CGFloat avatarHeight = 30.0; // 头像高度
-    CGFloat bottomMargin = 17.0; // 底部边距
+    CGFloat avatarHeight = self.authorNameLabel.text.length == 0 ? 0 : 30.0; // 头像高度
+    CGFloat bottomMargin = self.authorNameLabel.text.length == 0 ? 0 : 17.0; // 底部边距
     
     CGFloat totalHeight = topMargin + sourceHeight + titleTopMargin + titleHeight + avatarTopMargin + avatarHeight + bottomMargin;
     return totalHeight; //MAX(totalHeight, 135);
