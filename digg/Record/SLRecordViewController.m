@@ -357,12 +357,18 @@
 }
 
 - (void)commitBtnClick {
-    NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (title.length == 0) {
         [SVProgressHUD showErrorWithStatus:@"请添加标题"];
         return;
     }
-    NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString* content = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (content.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"请输入内容"];
+        return;
+    }
     [SVProgressHUD show];
     @weakobj(self)
     if (self.isEdit) {
