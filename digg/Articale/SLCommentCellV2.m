@@ -37,7 +37,7 @@
 - (void)setupUI {
     //分割条
     self.sectionSegment = [UIView new];
-    self.sectionSegment.backgroundColor = Color16(0xF6F6F6);
+    self.sectionSegment.backgroundColor = Color16(0xEEEEEE);
     [self.contentView addSubview:self.sectionSegment];
     
     // 头像
@@ -91,8 +91,10 @@
 - (void)setupConstraints {
     // 设置约束
     [self.sectionSegment mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(7);
+        make.top.equalTo(self.contentView);
+        make.left.equalTo(self.contentView).offset(15);
+        make.right.equalTo(self.contentView).offset(-15);
+        make.height.mas_equalTo(1);
     }];
     
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {

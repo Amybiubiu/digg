@@ -9,6 +9,7 @@
 #import <Masonry/Masonry.h>
 #import "SLGeneralMacro.h"
 #import "SLColorManager.h"
+#import "SLArticleEntity.h"
 
 @interface SLShowMoreCell ()
 
@@ -70,6 +71,15 @@
 - (void)showMoreButtonTapped {
     if (self.showMoreButtonTappedHandler) {
         self.showMoreButtonTappedHandler(self.comment);
+    }
+}
+
+- (void)setComment:(SLCommentEntity *)comment {
+    _comment = comment;
+    if (_comment.expandedRepliesCount == 1) {
+        [self.showMoreButton setTitle:[NSString stringWithFormat:@"展开%ld评论", _comment.replyList.count - _comment.expandedRepliesCount] forState:UIControlStateNormal];
+    } else {
+        [self.showMoreButton setTitle:@"展开更多评论" forState:UIControlStateNormal];
     }
 }
 

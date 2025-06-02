@@ -739,13 +739,16 @@
     if (section < self.viewModel.commentList.count) {
         self.viewModel.commentList[section] = comment;
     }
+    
+    NSInteger showMoreRow = newCount + 1;
     if (!hasMore) {
-        NSInteger showMoreRow = newCount + 1;
         if ([self.tableView numberOfRowsInSection:section] > showMoreRow) {
             [self.tableView beginUpdates];
             [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:showMoreRow inSection:section]] withRowAnimation:UITableViewRowAnimationFade];
             [self.tableView endUpdates];
         }
+    } else { //更新下加载更多cell
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:showMoreRow inSection:section]] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
