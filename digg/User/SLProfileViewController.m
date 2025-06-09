@@ -430,13 +430,13 @@
 - (void)follow:(BOOL)cancel {
     [SVProgressHUD show];
     @weakobj(self)
-    [self.viewModel followWithUserID:self.userId cancel:cancel resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
+    [self.viewModel followWithUserID:self.userId cancel:cancel resultHandler:^(BOOL isSuccess, BOOL needLogin, NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
         if (isSuccess) {
             @strongobj(self)
             self.viewModel.entity.hasFollow = cancel;
             self.headerView.entity = self.viewModel.entity;
-        } else {
+        } else if (needLogin) {
             [self gotoLoginPage];
         }
     }];
