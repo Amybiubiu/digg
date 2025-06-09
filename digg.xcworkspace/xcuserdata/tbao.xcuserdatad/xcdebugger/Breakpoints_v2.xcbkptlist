@@ -45,8 +45,8 @@
             filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1067"
-            endingLineNumber = "1067"
+            startingLineNumber = "1068"
+            endingLineNumber = "1068"
             landmarkName = "-showToolbar:"
             landmarkType = "7">
          </BreakpointContent>
@@ -175,6 +175,66 @@
             endingLineNumber = "478"
             landmarkName = "-addLink:title:url:resultHandler:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "677999FC-F50F-4A55-AA05-754A52D454FC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1102"
+            endingLineNumber = "1102"
+            landmarkName = "-submitReplyToComment:index:content:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "677999FC-F50F-4A55-AA05-754A52D454FC - 3f01cf0e5a0973ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__70-[SLArticleDetailViewControllerV2 submitReplyToComment:index:content:]_block_invoke"
+                  moduleName = "digg.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Articale/SLArticleDetailViewControllerV2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1102"
+                  endingLineNumber = "1102">
+               </Location>
+               <Location
+                  uuid = "677999FC-F50F-4A55-AA05-754A52D454FC - 83c0ca73202f618f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SLArticleDetailViewControllerV2 submitReplyToComment:index:content:]"
+                  moduleName = "digg.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Articale/SLArticleDetailViewControllerV2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1102"
+                  endingLineNumber = "1102">
+               </Location>
+               <Location
+                  uuid = "677999FC-F50F-4A55-AA05-754A52D454FC - 3f01cf0e5a09739b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__70-[SLArticleDetailViewControllerV2 submitReplyToComment:index:content:]_block_invoke"
+                  moduleName = "digg.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Articale/SLArticleDetailViewControllerV2.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1103"
+                  endingLineNumber = "1103">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

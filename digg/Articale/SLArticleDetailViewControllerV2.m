@@ -542,9 +542,10 @@
             weakSelf.viewModel.articleEntity.commentsCnt += 1;
             
             // 使用插入section的方式更新表格
-            [weakSelf.tableView beginUpdates];
-            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
-            [weakSelf.tableView endUpdates];
+            [weakSelf.tableView reloadData];
+//            [weakSelf.tableView beginUpdates];
+//            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+//            [weakSelf.tableView endUpdates];
             
             // 滚动到新插入的评论
             [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
