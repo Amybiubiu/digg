@@ -364,14 +364,15 @@
     NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     NSString* content = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString* htmlContent = self.textView.code2html;
     if (content.length == 0) {
-        [SVProgressHUD showErrorWithStatus:@"请输入内容"];
-        return;
+        htmlContent = @"";
     }
+
     [SVProgressHUD show];
     @weakobj(self)
     if (self.isEdit) {
-        [self.viewModel updateRecord:title link:url content:self.textView.text htmlContent:self.textView.code2html labels:self.tags articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
+        [self.viewModel updateRecord:title link:url content:content htmlContent:htmlContent labels:self.tags articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
@@ -381,7 +382,7 @@
             }
         }];
     } else {
-        [self.viewModel subimtRecord:title link:url content:self.textView.text htmlContent:self.textView.code2html labels:self.tags resultHandler:^(BOOL isSuccess, NSString * articleId) {
+        [self.viewModel subimtRecord:title link:url content:content htmlContent:htmlContent labels:self.tags resultHandler:^(BOOL isSuccess, NSString * articleId) {
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
