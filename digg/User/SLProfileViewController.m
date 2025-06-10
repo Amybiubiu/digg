@@ -434,7 +434,7 @@
         [SVProgressHUD dismiss];
         if (isSuccess) {
             @strongobj(self)
-            self.viewModel.entity.hasFollow = cancel;
+            self.viewModel.entity.hasFollow = !cancel;
             self.headerView.entity = self.viewModel.entity;
         } else if (needLogin) {
             [self gotoLoginPage];

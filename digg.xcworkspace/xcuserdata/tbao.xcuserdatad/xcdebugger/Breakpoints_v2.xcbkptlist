@@ -70,22 +70,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "79AB3810-46BE-4A17-B590-7418B8BC6C0A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "digg/Home/SLHomePageNewsViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "-tableView:cellForRowAtIndexPath:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "802E714D-7E76-4921-BAFD-DEADF2AC4B17"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -178,32 +162,48 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DB17D086-A1C2-4C36-A645-F7B0AAC44C84"
+            uuid = "D103BF38-087C-4DAF-898B-A2E3AA0B5088"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "digg/User/SLProfilePageViewModel.m"
+            filePath = "digg/User/Views/SLProfileHeaderView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "113"
-            endingLineNumber = "113"
-            landmarkName = "-followWithUserID:cancel:resultHandler:"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "-setEntity:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F76E10CB-B184-4CC2-9302-C05D1EB2977A"
+            uuid = "ECB4BE8F-F04D-4D33-9C31-23CC50700A59"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "digg/User/SLProfilePageViewModel.m"
+            filePath = "digg/User/Views/SLProfileHeaderView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
-            landmarkName = "-followWithUserID:cancel:resultHandler:"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "-setEntity:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "140638A4-EA33-4650-93E0-CCA877A8C14D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "digg/User/Views/SLProfileHeaderView.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
+            landmarkName = "-setEntity:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
