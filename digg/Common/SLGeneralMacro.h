@@ -131,6 +131,8 @@ static inline bool dictIsEmpty(NSDictionary *dic) {
     return (![dic isKindOfClass:[NSDictionary class]] || dic == nil || [dic isKindOfClass:[NSNull class]] || dic.allKeys.count == 0);
 }
 
+static NSString* request_error_msg = @"网络错误，请重试";
+
 #endif /* SLGeneralMacro_h */
 
 

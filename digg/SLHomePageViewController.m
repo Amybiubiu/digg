@@ -148,7 +148,7 @@
 - (JXCategoryBaseView *)categoryView {
     if (!_categoryView) {
         _categoryView = [self preferredCategoryView];
-        _categoryView.numberBackgroundColor = [UIColor colorWithRed:255.0 / 255 green:24.0 / 255 blue:82.0 / 255 alpha:1];
+        _categoryView.numberBackgroundColor = Color16(0x14932A);
         _categoryView.delegate = self;
         _categoryView.titleColorGradientEnabled = YES;
         _categoryView.titleLabelZoomEnabled = YES;

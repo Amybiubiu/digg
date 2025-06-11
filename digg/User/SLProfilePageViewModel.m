@@ -89,11 +89,12 @@
     }];
 }
 
-- (void)followWithUserID:(NSString *)userId cancel:(BOOL)cancel resultHandler:(void(^)(BOOL isSuccess, NSError *error))handler {
+- (void)followWithUserID:(NSString *)userId cancel:(BOOL)cancel resultHandler:(void(^)(BOOL isSuccess, BOOL needLogin, NSError *error))handler {
     if (userId.length == 0) {
         return;
     }
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *urlString = @"";
     if (cancel) {
         urlString = [NSString stringWithFormat:@"%@/cancelFollow", APPBaseUrl];
@@ -104,17 +105,16 @@
     NSString *cookieStr = [NSString stringWithFormat:@"bp-token=%@", [SLUser defaultUser].userEntity.token];
     [manager.requestSerializer setValue:cookieStr forHTTPHeaderField:@"Cookie"];
     
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    @weakobj(self);
-    [manager POST:urlString parameters:@{@"followUserId": userId} headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/plain", @"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    NSDictionary *params = @{@"followUserId": userId};
+
+    [manager POST:urlString parameters:params headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            @strongobj(self); //统一返回true or false
-            if ([responseObject isKindOfClass:[NSDictionary class]]) {
-                handler(YES, nil);
-            }
-//            else {
-//                handler(NO, nil);
-//            }
+            NSData* data = (NSData*)responseObject;
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, NO, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
@@ -122,10 +122,8 @@
             NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
             if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
                 needLogin = response.statusCode == 401;
-                if (needLogin) {
-                    handler(NO, error);
-                }
             }
+            handler(NO, needLogin, error);
         }
     }];
 }

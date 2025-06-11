@@ -274,7 +274,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     // 增加行间距处理
     NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineSpacing:4.0];
+    [paragraphStyle setLineSpacing:5.0];
     [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
     
     [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 

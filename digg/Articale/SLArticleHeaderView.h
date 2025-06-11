@@ -35,12 +35,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * 头像点击回调
  */
- @property (nonatomic, copy) void (^avatarClickHandler)(void);
+@property (nonatomic, copy) void (^avatarClickHandler)(void);
 
 /**
  * 获取内容高度
  */
- - (CGFloat)getContentHeight;
+- (CGFloat)getContentHeight;
+
+- (void)setDivideView:(BOOL)hide;
 
 @end
 

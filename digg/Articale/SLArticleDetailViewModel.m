@@ -562,7 +562,6 @@
             handler(result, nil);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"不喜欢失败: %@", error);
         if (handler) {
             handler(NO, error);
         }

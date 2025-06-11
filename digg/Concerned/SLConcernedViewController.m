@@ -17,11 +17,8 @@
 #import <DZNEmptyDataSet/UIScrollView+EmptyDataSet.h>
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
-#import "SLTrackingManager.h"
-#import "TMViewTrackerSDK.h"
-#import "UIView+TMViewTracker.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
+#import "UIView+SLToast.h"
 
 
 @interface SLConcernedViewController () <UITableViewDelegate, UITableViewDataSource, DZNEmptyDataSetSource, DZNEmptyDataSetDelegate>
@@ -44,8 +41,6 @@
     [self setupUI];
     [self addRefresh];
     [self requestData];
-    
-    [TMViewTrackerManager setCurrentPageName:@"Concern"];
 }
 
 #pragma mark - Methods
@@ -173,9 +168,13 @@
                 return;
             }
             [self.homeViewModel likeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -188,9 +187,13 @@
                 return;
             }
             [self.homeViewModel dislikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };
@@ -204,7 +207,6 @@
                                                           confirmTitle:@"是"
                                                            cancelTitle:@"否"
                                                         confirmHandler:^{
-                                                            [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_CONCERN" parameters:@{@"url": entity.url}];
                                                                                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:entity.url] options:@{} completionHandler:nil];
                                                         }
                                                          cancelHandler:^{
@@ -221,9 +223,13 @@
                 return;
             }
             [self.homeViewModel cancelLikeWith:entity.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
-                if (!isSuccess) { //401
+                if (!isSuccess) {
                     [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-                    [self gotoLoginPage];
+                    if (error) {
+                        [self gotoLoginPage];
+                    } else {
+                        [self.view sl_showToast:request_error_msg];
+                    }
                 }
             }];
         };

@@ -34,13 +34,8 @@
 
     //分割条
     self.sectionSegment = [UIView new];
-    self.sectionSegment.backgroundColor = Color16(0xF6F6F6);
+    self.sectionSegment.backgroundColor = Color16(0xEEEEEE);
     [self.contentView addSubview:self.sectionSegment];
-    
-    // 创建左侧横线
-//    UIView *leftLineView = [[UIView alloc] init];
-//    leftLineView.backgroundColor = Color16(0xC6C6C6);
-//    [self.contentView addSubview:leftLineView];
     
     // 创建提示标签
     self.emptyLabel = [[UILabel alloc] init];
@@ -49,11 +44,6 @@
     self.emptyLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.emptyLabel.textAlignment = NSTextAlignmentCenter;
     [self.contentView addSubview:self.emptyLabel];
-
-    // 创建右侧横线
-//    UIView *rightLineView = [[UIView alloc] init];
-//    rightLineView.backgroundColor = Color16(0xC6C6C6);
-//    [self.contentView addSubview:rightLineView];
     
     // 创建评论按钮
     self.commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -67,8 +57,10 @@
     [self.contentView addSubview:self.commentButton];
     
     [self.sectionSegment mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(7);
+        make.top.equalTo(self.contentView);
+        make.left.equalTo(self.contentView).offset(15);
+        make.right.equalTo(self.contentView).offset(-15);
+        make.height.mas_equalTo(1);
     }];
 
     // 设置约束
@@ -76,22 +68,6 @@
         make.centerX.equalTo(self.contentView).offset(-20); // 向左偏移，为写评论按钮留出空间
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(55);
     }];
-    
-//    // 设置左侧横线约束
-//    [leftLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.centerY.equalTo(self.emptyLabel);
-//        make.right.equalTo(self.emptyLabel.mas_left).offset(-15);
-//        make.width.mas_equalTo(7);
-//        make.height.mas_equalTo(0.5);
-//    }];
-    
-    // 设置右侧横线约束
-//    [rightLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.centerY.equalTo(self.emptyLabel);
-//        make.left.equalTo(self.commentButton.mas_right).offset(10);
-//        make.width.mas_equalTo(7);
-//        make.height.mas_equalTo(0.5);
-//    }];
     
     // 修改评论按钮位置，放在标签右侧
     [self.commentButton mas_makeConstraints:^(MASConstraintMaker *make) {

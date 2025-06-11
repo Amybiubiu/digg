@@ -23,6 +23,8 @@
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
 #import "SLTagListContainerViewController.h"
+#import "SLArticleDetailViewControllerV2.h"
+
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
 @property (nonatomic, strong) WebViewJavascriptBridge* bridge;
@@ -314,11 +316,24 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
                 NSString *tag = [[dic objectForKey:@"tag"] stringValue];
-                NSString *url = [[dic objectForKey:@"url"] stringValue];
                 SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
                 vc.label = tag;
-                vc.articleId = url;
                 vc.source = @"article";
+                vc.hidesBottomBarWhenPushed = YES;
+                [self.navigationController pushViewController:vc animated:YES];
+            });
+        }
+        responseCallback(data);
+    }];
+    
+    [self.bridge registerHandler:@"openArticlePage" handler:^(id data, WVJBResponseCallback responseCallback) {
+        if ([data isKindOfClass:[NSDictionary class]]) {
+            @strongobj(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary *dic = (NSDictionary *)data;
+                NSString *articleId = [[dic objectForKey:@"id"] stringValue];
+                SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
+                vc.articleId = articleId;
                 vc.hidesBottomBarWhenPushed = YES;
                 [self.navigationController pushViewController:vc animated:YES];
             });

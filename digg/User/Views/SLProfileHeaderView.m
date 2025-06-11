@@ -228,7 +228,7 @@
 
 - (void)focusBtnClick {
     if (self.delegate && [self.delegate respondsToSelector:@selector(follow:)]) {
-        [self.delegate follow:!self.entity.hasFollow];
+        [self.delegate follow:self.entity.hasFollow];
     }
 }
 

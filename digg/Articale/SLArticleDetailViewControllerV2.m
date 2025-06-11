@@ -280,11 +280,9 @@
         self.viewModel = [[SLArticleDetailViewModel alloc] init];
     }
     
-//    [SVProgressHUD show];
     __weak typeof(self) weakSelf = self;
     
     [self.viewModel loadArticleDetail:self.articleId resultHandler:^(BOOL isSuccess, NSError * _Nonnull error) {
-//        [SVProgressHUD dismiss];
         if (isSuccess) {
             self.isLoadData = YES;
             SLArticleDetailEntity *articleEntity = weakSelf.viewModel.articleEntity;
@@ -373,10 +371,12 @@
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.articleHeaderView.mas_bottom).offset(margin - 4);
         }];
+        [self.articleHeaderView setDivideView:NO];
     } else {
         [self.articleContentView mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.articleHeaderView.mas_bottom).offset(0);
         }];
+        [self.articleHeaderView setDivideView:YES];
     }
 
     if (!self.tagListView.isHidden) {
@@ -450,22 +450,37 @@
         [self gotoLoginPage];
         return;
     }
+    @weakobj(self)
     if (self.viewModel.articleEntity.liked) {
         // 如果已经点赞，则取消点赞
         [self.homeViewModel cancelLikeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            @strongobj(self)
             if (isSuccess) {
                 self.viewModel.articleEntity.liked = NO;
                 self.viewModel.articleEntity.likeCnt -= 1;
                 [self.toolbarView updateLikeStatus:NO count:self.viewModel.articleEntity.likeCnt];
+            } else {
+                if (error) {
+                    [self gotoLoginPage];
+                } else {
+                    [self.view sl_showToast:request_error_msg];
+                }
             }
         }];
     } else {
         // 如果未点赞，则点赞
         [self.homeViewModel likeWith:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+            @strongobj(self)
             if (isSuccess) {
                 self.viewModel.articleEntity.liked = YES;
                 self.viewModel.articleEntity.likeCnt += 1;
                 [self.toolbarView updateLikeStatus:YES count:self.viewModel.articleEntity.likeCnt];
+            } else {
+                if (error) {
+                    [self gotoLoginPage];
+                } else {
+                    [self.view sl_showToast:request_error_msg];
+                }
             }
         }];
     }
@@ -527,9 +542,10 @@
             weakSelf.viewModel.articleEntity.commentsCnt += 1;
             
             // 使用插入section的方式更新表格
-            [weakSelf.tableView beginUpdates];
-            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
-            [weakSelf.tableView endUpdates];
+            [weakSelf.tableView reloadData];
+//            [weakSelf.tableView beginUpdates];
+//            [weakSelf.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationTop];
+//            [weakSelf.tableView endUpdates];
             
             // 滚动到新插入的评论
             [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
@@ -568,11 +584,13 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    if (!self.isLoadData) return 0;
     // 如果没有评论，返回1个section用于显示空白提示
-    return self.viewModel.commentList.count > 0 ? self.viewModel.commentList.count + 1 : self.isLoadData ? 1 : 0;
+    return self.viewModel.commentList.count > 0 ? (self.viewModel.commentList.count + 1) : (self.isLoadData ? 1 : 0);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (!self.isLoadData) return 0;
     // 如果没有评论，返回1行用于显示空白提示
     if (self.viewModel.commentList.count == 0) {
         return 1;
@@ -722,13 +740,16 @@
     if (section < self.viewModel.commentList.count) {
         self.viewModel.commentList[section] = comment;
     }
+    
+    NSInteger showMoreRow = newCount + 1;
     if (!hasMore) {
-        NSInteger showMoreRow = newCount + 1;
         if ([self.tableView numberOfRowsInSection:section] > showMoreRow) {
             [self.tableView beginUpdates];
             [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:showMoreRow inSection:section]] withRowAnimation:UITableViewRowAnimationFade];
             [self.tableView endUpdates];
         }
+    } else { //更新下加载更多cell
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:showMoreRow inSection:section]] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
@@ -1414,6 +1435,7 @@
                         url:url
               resultHandler:^(BOOL isSuccess, NSError *error) {
         if (isSuccess) {
+            [SVProgressHUD dismiss];
             [weakSelf loadData];
         } else {
             [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"添加失败：%@", error.localizedDescription]];

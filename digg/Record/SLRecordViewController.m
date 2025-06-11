@@ -17,7 +17,6 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 #import "SLArticleDetailViewControllerV2.h"
-#import "SLZoomTransitionDelegate.h"
 
 #define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
@@ -357,16 +356,23 @@
 }
 
 - (void)commitBtnClick {
-    NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (title.length == 0) {
         [SVProgressHUD showErrorWithStatus:@"请添加标题"];
         return;
     }
-    NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString* content = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString* htmlContent = self.textView.code2html;
+    if (content.length == 0) {
+        htmlContent = @"";
+    }
+
     [SVProgressHUD show];
     @weakobj(self)
     if (self.isEdit) {
-        [self.viewModel updateRecord:title link:url content:self.textView.text htmlContent:self.textView.code2html labels:self.tags articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
+        [self.viewModel updateRecord:title link:url content:content htmlContent:htmlContent labels:self.tags articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
@@ -376,7 +382,7 @@
             }
         }];
     } else {
-        [self.viewModel subimtRecord:title link:url content:self.textView.text htmlContent:self.textView.code2html labels:self.tags resultHandler:^(BOOL isSuccess, NSString * articleId) {
+        [self.viewModel subimtRecord:title link:url content:content htmlContent:htmlContent labels:self.tags resultHandler:^(BOOL isSuccess, NSString * articleId) {
             @strongobj(self)
             [SVProgressHUD dismiss];
             if (isSuccess) {
@@ -1057,8 +1063,8 @@
         _textView.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _textView.backgroundColor = [SLColorManager primaryBackgroundColor];
         _textView.textColor = [SLColorManager cellTitleColor];
-       _textView.delegate = self;
-       _textView.scrollEnabled = NO;
+        _textView.delegate = self;
+        _textView.scrollEnabled = NO;
     }
     return _textView;
 }

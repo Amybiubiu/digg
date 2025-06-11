@@ -33,7 +33,7 @@
 
     //分割条
     self.sectionSegment = [UIView new];
-    self.sectionSegment.backgroundColor = Color16(0xF6F6F6);
+    self.sectionSegment.backgroundColor = Color16(0xEEEEEE);
     [self.contentView addSubview:self.sectionSegment];
     
     // 创建左侧横线
@@ -55,8 +55,10 @@
     [self.contentView addSubview:rightLineView];
 
     [self.sectionSegment mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.contentView);
-        make.height.mas_equalTo(7);
+        make.top.equalTo(self.contentView);
+        make.left.equalTo(self.contentView).offset(15);
+        make.right.equalTo(self.contentView).offset(-15);
+        make.height.mas_equalTo(1);
     }];
 
     // 设置约束
