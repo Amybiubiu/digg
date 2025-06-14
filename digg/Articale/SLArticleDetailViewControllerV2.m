@@ -14,9 +14,9 @@
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
 #import <SDWebImage/SDWebImage.h>
-#import "SLCommentCellV2.h"
+#import "SLCommentCell.h"
 #import "SLShowMoreCell.h"
-#import "SLSecondCommentCell.h"
+#import "SLSecondCommentCellV2.h"
 #import "SLArticleTagCell.h"
 #import "SLWebViewController.h"
 #import "SVProgressHUD.h"
@@ -136,13 +136,13 @@
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.backgroundColor = UIColor.clearColor; //[SLColorManager primaryBackgroundColor];
+    self.tableView.backgroundColor = UIColor.clearColor;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.estimatedRowHeight = 100.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
-    [self.tableView registerClass:[SLCommentCellV2 class] forCellReuseIdentifier:@"SLCommentCellV2"];
-    [self.tableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SLSecondCommentCell"];
+    [self.tableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"SLCommentCell"];
+    [self.tableView registerClass:[SLSecondCommentCellV2 class] forCellReuseIdentifier:@"SLSecondCommentCellV2"];
     [self.tableView registerClass:[SLShowMoreCell class] forCellReuseIdentifier:@"SLShowMoreCell"];
     [self.tableView registerClass:[SLEmptyCommentCell class] forCellReuseIdentifier:@"SLEmptyCommentCell"];
     [self.tableView registerClass:[SLEndOfListCell class] forCellReuseIdentifier:@"SLEndOfListCell"];
@@ -619,9 +619,9 @@
     }
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     if (indexPath.row == 0) {
-        SLCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCellV2"];
+        SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCell"];
         if (!cell) {
-            cell = [[SLCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCellV2"];
+            cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCell"];
         }
         cell.section = indexPath.section;
         cell.row = indexPath.row;
@@ -652,9 +652,9 @@
         return cell;
     } else if (indexPath.row <= comment.expandedRepliesCount) { 
         // 展示二级评论
-        SLSecondCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLSecondCommentCell"];
+        SLSecondCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLSecondCommentCellV2"];
         if (!cell) {
-            cell = [[SLSecondCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLSecondCommentCell"];
+            cell = [[SLSecondCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLSecondCommentCellV2"];
         }
         cell.section = indexPath.section;
         cell.row = indexPath.row;
@@ -1196,11 +1196,11 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         
-        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+        if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+            SLCommentCell *commentCell = (SLCommentCell *)cell;
             [commentCell updateLikeStatus:commentEntity];
-        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+        } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+            SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
             [commentCell updateLikeStatus:commentEntity];
         }
         return;
@@ -1214,11 +1214,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1226,11 +1226,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1249,11 +1249,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1261,11 +1261,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1280,11 +1280,11 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         
-        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+        if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+            SLCommentCell *commentCell = (SLCommentCell *)cell;
             [commentCell updateLikeStatus:commentEntity];
-        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+        } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+            SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
             [commentCell updateLikeStatus:commentEntity];
         }
         return;
@@ -1299,11 +1299,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1311,11 +1311,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1333,11 +1333,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1345,11 +1345,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;

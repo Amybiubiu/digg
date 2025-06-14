@@ -275,6 +275,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineSpacing:5.0];
+    paragraphStyle.paragraphSpacing = 15.0;
     [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
     
     [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 

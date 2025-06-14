@@ -1,4 +1,3 @@
-//
 //  SLSimpleInteractionBar.m
 //  digg
 //
@@ -6,19 +5,24 @@
 //
 
 #import "SLSimpleInteractionBar.h"
-#import "SLNumberIconView.h"
 #import "SLColorManager.h"
+#import "SLGeneralMacro.h"
 #import "Masonry.h"
 
-@interface SLSimpleInteractionBar () <SLNumberIconViewDelegate>
+@interface SLSimpleInteractionBar ()
 
-@property (nonatomic, strong) SLNumberIconView *leftIconView;  // 左侧点赞和不喜欢
-@property (nonatomic, strong) UIButton *replyButton;          // 右侧回复按钮
-@property (nonatomic, strong) NSMutableArray<SLNumberIconItem *> *leftItems;
+@property (nonatomic, strong) UIButton *likeButton;        // 点赞按钮
+@property (nonatomic, strong) UILabel *likeLabel;          // 点赞数量标签
+@property (nonatomic, strong) UIButton *dislikeButton;     // 不喜欢按钮
+@property (nonatomic, strong) UILabel *dislikeLabel;       // 不喜欢数量标签
+@property (nonatomic, strong) UIStackView *likeStackView;  // 点赞容器
+@property (nonatomic, strong) UIStackView *dislikeStackView; // 不喜欢容器
+@property (nonatomic, strong) UIStackView *mainStackView;  // 主容器
 
-// 固定索引常量
-@property (nonatomic, assign, readonly) NSInteger likeIndex;
-@property (nonatomic, assign, readonly) NSInteger dislikeIndex;
+@property (nonatomic, assign) NSInteger likeNumber;
+@property (nonatomic, assign) NSInteger dislikeNumber;
+@property (nonatomic, assign) BOOL likeSelected;
+@property (nonatomic, assign) BOOL dislikeSelected;
 
 @end
 
@@ -27,135 +31,165 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _likeIndex = 0;
-        _dislikeIndex = 1;
+        _likeNumber = 0;
+        _dislikeNumber = 0;
+        _likeSelected = NO;
+        _dislikeSelected = NO;
         
-        [self setupItems];
         [self setupViews];
+        [self setupConstraints];
     }
     return self;
 }
 
-- (void)setupItems {
-    // 初始化左侧项目（点赞和不喜欢）
-    _leftItems = [NSMutableArray array];
+- (void)setupViews {
+    // 创建点赞按钮
+    _likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_likeButton setImage:[UIImage imageNamed:@"agree"] forState:UIControlStateNormal];
+    [_likeButton setImage:[UIImage imageNamed:@"agree_selected"] forState:UIControlStateSelected];
+    [_likeButton addTarget:self action:@selector(likeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     
-    // 点赞
-    SLNumberIconItem *likeItem = [SLNumberIconItem itemWithNumber:0 
-                                                      normalImage:[UIImage imageNamed:@"agree"] 
-                                                    selectedImage:[UIImage imageNamed:@"agree_selected"]];
-    likeItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    likeItem.iconColor = [SLColorManager caocaoButtonTextColor];
-    [_leftItems addObject:likeItem];
+    // 创建点赞数量标签
+    _likeLabel = [[UILabel alloc] init];
+    _likeLabel.text = @"赞";
+    _likeLabel.font = [UIFont systemFontOfSize:14];
+    _likeLabel.textColor = Color16(0x313131);
+    _likeLabel.textAlignment = NSTextAlignmentLeft;
     
-    // 不喜欢
-    SLNumberIconItem *dislikeItem = [SLNumberIconItem itemWithNumber:0 
-                                                         normalImage:[UIImage imageNamed:@"disagree"] 
-                                                       selectedImage:[UIImage imageNamed:@"disagree_selected"]];
-    dislikeItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    dislikeItem.iconColor = [SLColorManager caocaoButtonTextColor];
-    [_leftItems addObject:dislikeItem];
+    // 创建点赞容器
+    _likeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeButton, _likeLabel]];
+    _likeStackView.axis = UILayoutConstraintAxisHorizontal;
+    _likeStackView.spacing = 0;
+    _likeStackView.alignment = UIStackViewAlignmentBottom;
+    _likeStackView.distribution = UIStackViewDistributionFill;
+    
+    // 创建不喜欢按钮
+    _dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_dislikeButton setImage:[UIImage imageNamed:@"reply-icon"] forState:UIControlStateNormal];
+    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    
+    // 创建不喜欢数量标签
+    _dislikeLabel = [[UILabel alloc] init];
+    _dislikeLabel.text = @"回复";
+    _dislikeLabel.font = [UIFont systemFontOfSize:14];
+    _dislikeLabel.textColor = Color16(0x313131);
+    _dislikeLabel.textAlignment = NSTextAlignmentLeft;
+    
+    // 创建不喜欢容器
+    _dislikeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_dislikeButton, _dislikeLabel]];
+    _dislikeStackView.axis = UILayoutConstraintAxisHorizontal;
+    _dislikeStackView.spacing = 0;
+    _dislikeStackView.alignment = UIStackViewAlignmentBottom;
+    _dislikeStackView.distribution = UIStackViewDistributionFill;
+    
+    // 创建主容器
+    _mainStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeStackView, _dislikeStackView]];
+    _mainStackView.axis = UILayoutConstraintAxisHorizontal;
+    _mainStackView.spacing = 16.0;
+    _mainStackView.alignment = UIStackViewAlignmentBottom;
+    _mainStackView.distribution = UIStackViewDistributionFill;
+    
+    [self addSubview:_mainStackView];
 }
 
-- (void)setupViews {
-    // 创建左侧视图
-    _leftIconView = [[SLNumberIconView alloc] initWithFrame:CGRectZero items:_leftItems];
-    _leftIconView.delegate = self;
-    _leftIconView.spacing = 12.0;
-    _leftIconView.itemSpacing = 4.0;
-    _leftIconView.touchAreaExtension = 10.0;
-    [self addSubview:_leftIconView];
-    
-    // 创建右侧回复按钮
-    _replyButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [_replyButton setTitle:@"回复" forState:UIControlStateNormal];
-    [_replyButton setTitleColor:[SLColorManager caocaoButtonTextColor] forState:UIControlStateNormal];
-    _replyButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
-    [_replyButton addTarget:self action:@selector(replyButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:_replyButton];
-
-    // 计算"回复"文本的宽度
-    UILabel* label = [UILabel new];
-    label.text = @"回复";
-    label.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
-    CGSize replySize = [label sizeThatFits:CGSizeZero];
-    CGFloat replyWidth = replySize.width + 1;
-    
-    [_leftIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+- (void)setupConstraints {
+    [_mainStackView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.bottom.equalTo(self);
         make.left.equalTo(self);
-        make.right.equalTo(_replyButton.mas_left).offset(-10);
+        make.right.lessThanOrEqualTo(self);
     }];
-    [_replyButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.bottom.equalTo(self);
-        make.right.equalTo(self);
-        make.width.mas_equalTo(replyWidth);
+    
+    // 设置按钮尺寸
+    [_likeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.height.equalTo(@16);
+    }];
+    
+    [_dislikeButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.height.equalTo(@16);
     }];
 }
 
 #pragma mark - Actions
 
-- (void)replyButtonTapped {
-    if ([self.delegate respondsToSelector:@selector(interactionBarDidTapReply:)]) {
-        [self.delegate interactionBarDidTapReply:self];
+- (void)likeButtonTapped:(UIButton *)sender {
+    self.likeSelected = !self.likeSelected;
+    
+    // 如果点赞被选中，取消不喜欢的选中状态
+    if (self.likeSelected) {
+        self.dislikeSelected = NO;
     }
+    
+    [self updateButtonStates];
+    
+    if ([self.delegate respondsToSelector:@selector(interactionBar:didTapLikeWithSelected:)]) {
+        [self.delegate interactionBar:self didTapLikeWithSelected:self.likeSelected];
+    }
+}
+
+- (void)dislikeButtonTapped:(UIButton *)sender {
+    self.dislikeSelected = !self.dislikeSelected;
+    
+    // 如果不喜欢被选中，取消点赞的选中状态
+    if (self.dislikeSelected) {
+        self.likeSelected = NO;
+    }
+    
+    [self updateButtonStates];
+    
+    if ([self.delegate respondsToSelector:@selector(interactionBar:didTapDislikeWithSelected:)]) {
+        [self.delegate interactionBar:self didTapDislikeWithSelected:self.dislikeSelected];
+    }
+}
+
+- (void)updateButtonStates {
+    _likeButton.selected = self.likeSelected;
+    _dislikeButton.selected = self.dislikeSelected;
+    
+    // 更新颜色
+    UIColor *selectedColor = [UIColor systemBlueColor]; // 可以根据需要调整选中颜色
+    UIColor *normalColor = [SLColorManager caocaoButtonTextColor];
+    
+    _likeButton.tintColor = self.likeSelected ? selectedColor : normalColor;
+    _likeLabel.textColor = self.likeSelected ? selectedColor : normalColor;
+    
+    _dislikeButton.tintColor = self.dislikeSelected ? selectedColor : normalColor;
+    _dislikeLabel.textColor = self.dislikeSelected ? selectedColor : normalColor;
 }
 
 #pragma mark - Public Methods
 
 - (void)updateLikeNumber:(NSInteger)number {
-    [self.leftIconView updateNumber:number atIndex:self.likeIndex];
+    self.likeNumber = number;
+    if (number > 0) {
+        _likeLabel.text = [NSString stringWithFormat:@"%ld", (long)number];
+    } else {
+        _likeLabel.text = @"赞";
+    }
 }
 
 - (void)updateDislikeNumber:(NSInteger)number {
-    [self.leftIconView updateNumber:number atIndex:self.dislikeIndex];
+    self.dislikeNumber = number;
+    // 对于回复按钮，保持显示"回复"文本而不是数字
+    // 如果需要显示数字，可以取消下面的注释
+    // _dislikeLabel.text = [NSString stringWithFormat:@"%ld", (long)number];
 }
 
 - (void)setLikeSelected:(BOOL)selected {
-    [self.leftIconView setSelected:selected atIndex:self.likeIndex];
+    _likeSelected = selected;
+    [self updateButtonStates];
 }
 
 - (void)setDislikeSelected:(BOOL)selected {
-    [self.leftIconView setSelected:selected atIndex:self.dislikeIndex];
+    _dislikeSelected = selected;
+    [self updateButtonStates];
 }
 
 - (BOOL)isLikeSelected {
-    return [self.leftIconView isSelectedAtIndex:self.likeIndex];
+    return self.likeSelected;
 }
 
 - (BOOL)isDislikeSelected {
-    return [self.leftIconView isSelectedAtIndex:self.dislikeIndex];
-}
-
-#pragma mark - SLNumberIconViewDelegate
-
-- (void)numberIconView:(SLNumberIconView *)numberIconView didClickAtIndex:(NSInteger)index {
-    if (numberIconView == self.leftIconView) {
-        if (index == self.likeIndex) {
-            BOOL selected = [numberIconView isSelectedAtIndex:index];
-            
-            // 如果点赞被选中，取消不喜欢的选中状态
-            if (selected) {
-                [self.leftIconView setSelected:NO atIndex:self.dislikeIndex];
-            }
-            
-            if ([self.delegate respondsToSelector:@selector(interactionBar:didTapLikeWithSelected:)]) {
-                [self.delegate interactionBar:self didTapLikeWithSelected:selected];
-            }
-        } 
-        else if (index == self.dislikeIndex) {
-            BOOL selected = [numberIconView isSelectedAtIndex:index];
-            
-            // 如果不喜欢被选中，取消点赞的选中状态
-            if (selected) {
-                [self.leftIconView setSelected:NO atIndex:self.likeIndex];
-            }
-            
-            if ([self.delegate respondsToSelector:@selector(interactionBar:didTapDislikeWithSelected:)]) {
-                [self.delegate interactionBar:self didTapDislikeWithSelected:selected];
-            }
-        }
-    } 
+    return self.dislikeSelected;
 }
 
 @end
