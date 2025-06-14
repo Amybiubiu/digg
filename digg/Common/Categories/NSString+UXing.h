@@ -95,4 +95,6 @@
 
 - (NSAttributedString *)attributedStringFromHTML;
 
++ (NSString *)smartTimeFormatWith:(NSTimeInterval)gmtCreate;
+
 @end

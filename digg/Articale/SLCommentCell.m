@@ -162,10 +162,7 @@
     self.tagView.hidden = !(comment.userId == authorId);
     
     // 设置时间
-    NSDate *commentDate = [NSDate dateWithTimeIntervalSince1970:[comment.gmtCreate doubleValue]/1000];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-    self.timeLabel.text = [dateFormatter stringFromDate:commentDate];
+    self.timeLabel.text = self.timeLabel.text = [NSString smartTimeFormatWith:[comment.gmtCreate doubleValue]];
     
     // 设置内容
     if (comment.content.length > 0) {
