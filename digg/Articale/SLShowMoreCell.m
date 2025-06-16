@@ -35,6 +35,7 @@
 - (void)setupUI {
     self.line = [UIView new];
     self.line.backgroundColor = Color16(0xEEEEEE);
+    self.line.hidden = YES;
     [self.contentView addSubview:self.line];
     
     // 创建"展开更多评论"按钮
@@ -49,7 +50,7 @@
 - (void)setupConstraints {
     [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(8);
-        make.left.equalTo(self.contentView).offset(44);
+        make.left.equalTo(self.contentView).offset(98);
         make.height.mas_equalTo(20);
         make.bottom.equalTo(self.contentView).offset(-24);
     }];

@@ -36,7 +36,7 @@
 - (void)setupUI {
     // 头像
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 17;
+    self.avatarImageView.layer.cornerRadius = 12;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -48,7 +48,7 @@
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
     self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.usernameLabel.textColor = Color16A(0x333333, 0.6);
+    self.usernameLabel.textColor = Color16A(0x333333, 0.8);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图
@@ -60,7 +60,7 @@
     // 时间
     self.timeLabel = [[UILabel alloc] init];
     self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.timeLabel.textColor = Color16A(0x333333, 0.6);
+    self.timeLabel.textColor = Color16A(0x333333, 0.8);
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
@@ -87,7 +87,7 @@
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(16);
         make.left.equalTo(self.contentView).offset(62);
-        make.size.mas_equalTo(CGSizeMake(34, 34));
+        make.size.mas_equalTo(CGSizeMake(24, 24));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
@@ -161,7 +161,7 @@
         // 3. 设置前缀文本的样式
         // 设置整体颜色
         [attributedString addAttribute:NSForegroundColorAttributeName
-                                 value:Color16(0x313131)
+                                 value:Color16(0x333333)
                                  range:NSMakeRange(0, prefixString.length)];
 
         // 4. 设置 @username 的特殊颜色
@@ -169,7 +169,7 @@
         NSRange atRange = [prefixString rangeOfString:atString];
         if (atRange.location != NSNotFound) {
             [attributedString addAttribute:NSForegroundColorAttributeName
-                                     value:Color16(0x666666)
+                                     value:Color16A(0x333333, 0.6)
                                      range:atRange];
         }
 

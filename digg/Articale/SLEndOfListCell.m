@@ -34,6 +34,7 @@
     //分割条
     self.sectionSegment = [UIView new];
     self.sectionSegment.backgroundColor = Color16(0xEEEEEE);
+    self.sectionSegment.hidden = YES;
     [self.contentView addSubview:self.sectionSegment];
     
     // 创建左侧横线

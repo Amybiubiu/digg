@@ -38,11 +38,12 @@
     //分割条
     self.sectionSegment = [UIView new];
     self.sectionSegment.backgroundColor = Color16(0xEEEEEE);
+    self.sectionSegment.hidden = YES;
     [self.contentView addSubview:self.sectionSegment];
     
     // 头像
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 17;
+    self.avatarImageView.layer.cornerRadius = 20;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -54,7 +55,7 @@
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
     self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.usernameLabel.textColor = Color16A(0x333333, 0.6);
+    self.usernameLabel.textColor = Color16A(0x333333, 0.8);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图
@@ -100,7 +101,7 @@
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(16);
-        make.size.mas_equalTo(CGSizeMake(34, 34));
+        make.size.mas_equalTo(CGSizeMake(40, 40));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {

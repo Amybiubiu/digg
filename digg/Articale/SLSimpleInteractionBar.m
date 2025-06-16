@@ -45,48 +45,53 @@
 - (void)setupViews {
     // 创建点赞按钮
     _likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_likeButton setImage:[UIImage imageNamed:@"agree"] forState:UIControlStateNormal];
-    [_likeButton setImage:[UIImage imageNamed:@"agree_selected"] forState:UIControlStateSelected];
-    [_likeButton addTarget:self action:@selector(likeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_likeButton setImage:[UIImage imageNamed:@"like_unselected_icon"] forState:UIControlStateNormal];
+    [_likeButton setImage:[UIImage imageNamed:@"like_selected_icon"] forState:UIControlStateSelected];
+    [_likeButton addTarget:self action:@selector(likeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建点赞数量标签
     _likeLabel = [[UILabel alloc] init];
     _likeLabel.text = @"赞";
-    _likeLabel.font = [UIFont systemFontOfSize:14];
-    _likeLabel.textColor = Color16(0x313131);
+    _likeLabel.font = [UIFont systemFontOfSize:12];
+    _likeLabel.textColor = Color16A(0x333333, 0.8);
     _likeLabel.textAlignment = NSTextAlignmentLeft;
+    UITapGestureRecognizer* likeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeButtonTapped)];
+    [_dislikeLabel addGestureRecognizer:likeTap];
     
     // 创建点赞容器
     _likeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeButton, _likeLabel]];
     _likeStackView.axis = UILayoutConstraintAxisHorizontal;
-    _likeStackView.spacing = 0;
-    _likeStackView.alignment = UIStackViewAlignmentBottom;
+    _likeStackView.spacing = 2;
+    _likeStackView.alignment = UIStackViewAlignmentCenter;
     _likeStackView.distribution = UIStackViewDistributionFill;
     
     // 创建不喜欢按钮
     _dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_dislikeButton setImage:[UIImage imageNamed:@"reply-icon"] forState:UIControlStateNormal];
-    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建不喜欢数量标签
     _dislikeLabel = [[UILabel alloc] init];
     _dislikeLabel.text = @"回复";
-    _dislikeLabel.font = [UIFont systemFontOfSize:14];
-    _dislikeLabel.textColor = Color16(0x313131);
+    _dislikeLabel.font = [UIFont systemFontOfSize:12];
+    _dislikeLabel.textColor = Color16A(0x333333, 0.8);
     _dislikeLabel.textAlignment = NSTextAlignmentLeft;
+    _dislikeLabel.userInteractionEnabled = YES;
+    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dislikeButtonTapped)];
+    [_dislikeLabel addGestureRecognizer:tap];
     
     // 创建不喜欢容器
     _dislikeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_dislikeButton, _dislikeLabel]];
     _dislikeStackView.axis = UILayoutConstraintAxisHorizontal;
-    _dislikeStackView.spacing = 0;
-    _dislikeStackView.alignment = UIStackViewAlignmentBottom;
+    _dislikeStackView.spacing = 2;
+    _dislikeStackView.alignment = UIStackViewAlignmentCenter;
     _dislikeStackView.distribution = UIStackViewDistributionFill;
     
     // 创建主容器
     _mainStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeStackView, _dislikeStackView]];
     _mainStackView.axis = UILayoutConstraintAxisHorizontal;
     _mainStackView.spacing = 16.0;
-    _mainStackView.alignment = UIStackViewAlignmentBottom;
+    _mainStackView.alignment = UIStackViewAlignmentCenter;
     _mainStackView.distribution = UIStackViewDistributionFill;
     
     [self addSubview:_mainStackView];
@@ -111,7 +116,7 @@
 
 #pragma mark - Actions
 
-- (void)likeButtonTapped:(UIButton *)sender {
+- (void)likeButtonTapped {
     self.likeSelected = !self.likeSelected;
     
     // 如果点赞被选中，取消不喜欢的选中状态
@@ -126,7 +131,7 @@
     }
 }
 
-- (void)dislikeButtonTapped:(UIButton *)sender {
+- (void)dislikeButtonTapped {
     self.dislikeSelected = !self.dislikeSelected;
     
     // 如果不喜欢被选中，取消点赞的选中状态
@@ -136,24 +141,23 @@
     
     [self updateButtonStates];
     
-    if ([self.delegate respondsToSelector:@selector(interactionBar:didTapDislikeWithSelected:)]) {
-        [self.delegate interactionBar:self didTapDislikeWithSelected:self.dislikeSelected];
+    if ([self.delegate respondsToSelector:@selector(interactionBarDidTapReply:)]) {
+        [self.delegate interactionBarDidTapReply:self];
     }
 }
 
 - (void)updateButtonStates {
     _likeButton.selected = self.likeSelected;
-    _dislikeButton.selected = self.dislikeSelected;
-    
-    // 更新颜色
-    UIColor *selectedColor = [UIColor systemBlueColor]; // 可以根据需要调整选中颜色
-    UIColor *normalColor = [SLColorManager caocaoButtonTextColor];
+//    _dislikeButton.selected = self.dislikeSelected;
+
+    UIColor *selectedColor = Color16(0x333333);
+    UIColor *normalColor = Color16A(0x333333, 0.8);
     
     _likeButton.tintColor = self.likeSelected ? selectedColor : normalColor;
     _likeLabel.textColor = self.likeSelected ? selectedColor : normalColor;
     
-    _dislikeButton.tintColor = self.dislikeSelected ? selectedColor : normalColor;
-    _dislikeLabel.textColor = self.dislikeSelected ? selectedColor : normalColor;
+//    _dislikeButton.tintColor = self.dislikeSelected ? selectedColor : normalColor;
+//    _dislikeLabel.textColor = self.dislikeSelected ? selectedColor : normalColor;
 }
 
 #pragma mark - Public Methods
