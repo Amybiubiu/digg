@@ -44,13 +44,13 @@
     
     // 头像
     self.avatarBgView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.avatarBgView.layer.cornerRadius = 20;
+    self.avatarBgView.layer.cornerRadius = 19;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarBgView.backgroundColor = Color16A(0x000000, 0.08);
     [self.contentView addSubview:self.avatarBgView];
     
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 19;
+    self.avatarImageView.layer.cornerRadius = 18;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -108,11 +108,11 @@
     [self.avatarBgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(16);
-        make.size.mas_equalTo(CGSizeMake(40, 40));
+        make.size.mas_equalTo(CGSizeMake(38, 38));
     }];
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self.avatarBgView);
-        make.size.mas_equalTo(CGSizeMake(38, 38));
+        make.size.mas_equalTo(CGSizeMake(36, 36));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {

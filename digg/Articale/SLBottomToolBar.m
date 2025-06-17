@@ -29,12 +29,13 @@
 - (instancetype)initWithImage:(NSString *)normalImage selectedImage:(NSString *)selectedImage {
     self = [super init];
     if (self) {
+        self.userInteractionEnabled = YES;
+
         self.button = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.button setImage:[UIImage imageNamed:normalImage] forState:UIControlStateNormal];
         [self.button setImage:[UIImage imageNamed:selectedImage] forState:UIControlStateSelected];
         self.button.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        self.button.userInteractionEnabled = YES; // 确保按钮可以交
-        [self.button addTarget:self action:@selector(buttonTapped) forControlEvents:UIControlEventTouchUpInside];
+        self.button.userInteractionEnabled = NO; // 确保按钮可以交
         [self addSubview:self.button];
         
         self.countLabel = [[UILabel alloc] init];
@@ -53,6 +54,9 @@
             make.left.equalTo(self.button.mas_right).offset(8);
             make.centerY.equalTo(self.button);
         }];
+        
+        UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(buttonTapped)];
+        [self addGestureRecognizer:tap];
     }
     return self;
 }
