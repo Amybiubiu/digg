@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id<SLCustomNavigationBarDelegate> delegate;
 @property (nonatomic, strong) UIButton *moreButton;
 
+- (void)showBottomLine:(BOOL)show;
+
 @end
 
 NS_ASSUME_NONNULL_END

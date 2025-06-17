@@ -17,6 +17,7 @@
 
 @property (nonatomic, strong) UIView *sectionSegment;
 @property (nonatomic, strong) NSString* authorId;
+@property (nonatomic, strong) UIView *avatarBgView;
 
 @end
 
@@ -42,17 +43,21 @@
     [self.contentView addSubview:self.sectionSegment];
     
     // 头像
+    self.avatarBgView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.avatarBgView.layer.cornerRadius = 20;
+    self.avatarImageView.layer.masksToBounds = YES;
+    self.avatarBgView.backgroundColor = Color16A(0x000000, 0.08);
+    [self.contentView addSubview:self.avatarBgView];
+    
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 20;
+    self.avatarImageView.layer.cornerRadius = 19;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.avatarImageView.layer.borderColor = Color16(0x000000).CGColor;
-    self.avatarImageView.layer.borderWidth = 1;
     self.avatarImageView.userInteractionEnabled = YES;
      UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
     [self.avatarImageView addGestureRecognizer:tapGesture];
-    [self.contentView addSubview:self.avatarImageView];
+    [self.avatarBgView addSubview:self.avatarImageView];
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
@@ -100,10 +105,14 @@
         make.height.mas_equalTo(1);
     }];
     
-    [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+    [self.avatarBgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(16);
         make.size.mas_equalTo(CGSizeMake(40, 40));
+    }];
+    [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.avatarBgView);
+        make.size.mas_equalTo(CGSizeMake(38, 38));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {

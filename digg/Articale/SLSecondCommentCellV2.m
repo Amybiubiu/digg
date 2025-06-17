@@ -16,6 +16,7 @@
 @interface SLSecondCommentCellV2 () <SLSimpleInteractionBarDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) NSString* authorId;
+@property (nonatomic, strong) UIView *avatarBgView;
 
 @end
 
@@ -35,14 +36,18 @@
 
 - (void)setupUI {
     // 头像
+    self.avatarBgView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.avatarBgView.layer.cornerRadius = 12;
+    self.avatarImageView.layer.masksToBounds = YES;
+    self.avatarBgView.backgroundColor = Color16A(0x000000, 0.08);
+    [self.contentView addSubview:self.avatarBgView];
+
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 12;
+    self.avatarImageView.layer.cornerRadius = 11;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
-    self.avatarImageView.layer.borderColor = Color16A(0x000000, 0.08).CGColor;
-    self.avatarImageView.layer.borderWidth = 1;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
-    self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
+    self.avatarImageView.userInteractionEnabled = YES;
      UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
     [self.avatarImageView addGestureRecognizer:tapGesture];
     [self.contentView addSubview:self.avatarImageView];
@@ -86,10 +91,14 @@
 
 - (void)setupConstraints {
     // 设置约束
-    [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+    [self.avatarBgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(16);
         make.left.equalTo(self.contentView).offset(62);
         make.size.mas_equalTo(CGSizeMake(24, 24));
+    }];
+    [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.avatarBgView);
+        make.size.mas_equalTo(CGSizeMake(22, 22));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {

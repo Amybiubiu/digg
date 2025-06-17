@@ -92,6 +92,7 @@
 @property (nonatomic, strong) SLButtonWithCountView *commentView;
 @property (nonatomic, strong) SLButtonWithCountView *aiView;
 @property (nonatomic, strong) SLButtonWithCountView *shareView;
+@property (nonatomic, strong) UIView *topLineView;
 
 @end
 
@@ -106,7 +107,10 @@
 }
 
 - (void)setupUI {
-    self.backgroundColor = Color16(0xFCFCFC);
+    self.backgroundColor = [SLColorManager primaryBackgroundColor]; //Color16(0xFCFCFC);
+    self.topLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.topLineView.backgroundColor = Color16A(0x000000, 0.08);
+    [self addSubview:self.topLineView];
     
     // 创建UIStackView
     self.stackView = [[UIStackView alloc] init];
@@ -158,8 +162,14 @@
     }];
     
     [self.stackView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self);
+        make.top.equalTo(self.topLineView.mas_bottom);
+        make.left.right.equalTo(self);
         make.bottom.equalTo(self).offset(-kiPhoneXBottomMargin);
+    }];
+    
+    [self.topLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(self);
+        make.height.mas_equalTo(1);
     }];
 }
 
