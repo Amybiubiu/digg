@@ -266,6 +266,7 @@
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.showsVerticalScrollIndicator = NO;
         [_tableView registerClass:[SLHomePageNewsTableViewCellV3 class] forCellReuseIdentifier:kSLHomePageNewsTableViewCellID];
         _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         if (@available(iOS 15.0, *)) {

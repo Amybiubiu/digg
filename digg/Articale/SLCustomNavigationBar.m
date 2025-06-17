@@ -43,8 +43,6 @@
     self.moreButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.moreButton setImage:[UIImage imageNamed:@"more_btn_icon"] forState:UIControlStateNormal];
     [self.moreButton addTarget:self action:@selector(moreButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    self.moreButton.imageEdgeInsets = UIEdgeInsetsZero;
-    self.moreButton.contentEdgeInsets = UIEdgeInsetsMake(10, 10, 10, 10);
     [self addSubview:self.moreButton];
     
     // 设置导航栏内部组件约束

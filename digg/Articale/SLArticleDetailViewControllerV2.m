@@ -84,6 +84,8 @@
     
     // 初始化评论输入控制器
     self.commentVC = [[SLCommentInputViewController alloc] init];
+    
+    [self navigationBarMoreButtonTapped];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -999,7 +1001,7 @@
 }
 
 - (void)navigationBarMoreButtonTapped {
-    UIButton *moreButton = self.navigationBar.moreButton;
+//    UIButton *moreButton = self.navigationBar.moreButton;
 
     NSMutableArray *actions = [NSMutableArray array];
     
@@ -1043,8 +1045,8 @@
     }
     
     UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
-    moreButton.menu = menu;
-    moreButton.showsMenuAsPrimaryAction = YES;
+    self.navigationBar.moreButton.menu = menu;
+    self.navigationBar.moreButton.showsMenuAsPrimaryAction = YES;
 }
 
 #pragma mark - DZNEmptyDataSetDelegate
