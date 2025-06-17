@@ -102,7 +102,7 @@
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.contentView).offset(16);
+        make.top.equalTo(self.contentView).offset(17);
         make.left.equalTo(self.avatarImageView.mas_right).offset(12);
     }];
     

@@ -64,7 +64,7 @@
     }];
     [self.bottomLineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.left.right.equalTo(self);
-        make.height.mas_equalTo(1);
+        make.height.mas_equalTo(0.5);
     }];
 }
 

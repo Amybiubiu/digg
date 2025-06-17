@@ -169,7 +169,7 @@
     
     [self.topLineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.left.right.equalTo(self);
-        make.height.mas_equalTo(1);
+        make.height.mas_equalTo(0.5);
     }];
 }
 
