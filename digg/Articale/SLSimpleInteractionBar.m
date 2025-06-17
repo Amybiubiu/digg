@@ -47,7 +47,7 @@
     _likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_likeButton setImage:[UIImage imageNamed:@"like_unselected_icon"] forState:UIControlStateNormal];
     [_likeButton setImage:[UIImage imageNamed:@"like_selected_icon"] forState:UIControlStateSelected];
-    _likeButton.enabled = NO;
+    _likeButton.userInteractionEnabled = NO;
 //    [_likeButton addTarget:self action:@selector(likeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建点赞数量标签
@@ -71,7 +71,7 @@
     // 创建不喜欢按钮
     _dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_dislikeButton setImage:[UIImage imageNamed:@"reply-icon"] forState:UIControlStateNormal];
-    _dislikeButton.enabled = NO;
+    _dislikeButton.userInteractionEnabled = NO;
 //    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建不喜欢数量标签
