@@ -47,7 +47,8 @@
     _likeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_likeButton setImage:[UIImage imageNamed:@"like_unselected_icon"] forState:UIControlStateNormal];
     [_likeButton setImage:[UIImage imageNamed:@"like_selected_icon"] forState:UIControlStateSelected];
-    [_likeButton addTarget:self action:@selector(likeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    _likeButton.enabled = NO;
+//    [_likeButton addTarget:self action:@selector(likeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建点赞数量标签
     _likeLabel = [[UILabel alloc] init];
@@ -55,8 +56,6 @@
     _likeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     _likeLabel.textColor = Color16A(0x333333, 0.8);
     _likeLabel.textAlignment = NSTextAlignmentLeft;
-    UITapGestureRecognizer* likeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeButtonTapped)];
-    [_dislikeLabel addGestureRecognizer:likeTap];
     
     // 创建点赞容器
     _likeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeButton, _likeLabel]];
@@ -64,11 +63,16 @@
     _likeStackView.spacing = 2;
     _likeStackView.alignment = UIStackViewAlignmentCenter;
     _likeStackView.distribution = UIStackViewDistributionFill;
+    _likeStackView.userInteractionEnabled = YES;
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+        initWithTarget:self action:@selector(likeButtonTapped)];
+    [_likeStackView addGestureRecognizer:tap];
     
     // 创建不喜欢按钮
     _dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_dislikeButton setImage:[UIImage imageNamed:@"reply-icon"] forState:UIControlStateNormal];
-    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+    _dislikeButton.enabled = NO;
+//    [_dislikeButton addTarget:self action:@selector(dislikeButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     
     // 创建不喜欢数量标签
     _dislikeLabel = [[UILabel alloc] init];
@@ -76,9 +80,6 @@
     _dislikeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     _dislikeLabel.textColor = Color16A(0x333333, 0.8);
     _dislikeLabel.textAlignment = NSTextAlignmentLeft;
-    _dislikeLabel.userInteractionEnabled = YES;
-    UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dislikeButtonTapped)];
-    [_dislikeLabel addGestureRecognizer:tap];
     
     // 创建不喜欢容器
     _dislikeStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_dislikeButton, _dislikeLabel]];
@@ -86,6 +87,9 @@
     _dislikeStackView.spacing = 2;
     _dislikeStackView.alignment = UIStackViewAlignmentCenter;
     _dislikeStackView.distribution = UIStackViewDistributionFill;
+    _dislikeStackView.userInteractionEnabled = YES;
+    UITapGestureRecognizer* dislikeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dislikeButtonTapped)];
+    [_dislikeStackView addGestureRecognizer:dislikeTap];
     
     // 创建主容器
     _mainStackView = [[UIStackView alloc] initWithArrangedSubviews:@[_likeStackView, _dislikeStackView]];
