@@ -47,6 +47,8 @@
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatarImageView.layer.borderColor = Color16(0x000000).CGColor;
+    self.avatarImageView.layer.borderWidth = 1;
     self.avatarImageView.userInteractionEnabled = YES;
      UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
     [self.avatarImageView addGestureRecognizer:tapGesture];
@@ -54,8 +56,8 @@
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.usernameLabel.textColor = Color16A(0x333333, 0.8);
+    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+    self.usernameLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图

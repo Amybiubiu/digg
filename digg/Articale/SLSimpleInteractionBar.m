@@ -52,7 +52,7 @@
     // 创建点赞数量标签
     _likeLabel = [[UILabel alloc] init];
     _likeLabel.text = @"赞";
-    _likeLabel.font = [UIFont systemFontOfSize:12];
+    _likeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     _likeLabel.textColor = Color16A(0x333333, 0.8);
     _likeLabel.textAlignment = NSTextAlignmentLeft;
     UITapGestureRecognizer* likeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeButtonTapped)];
@@ -73,7 +73,7 @@
     // 创建不喜欢数量标签
     _dislikeLabel = [[UILabel alloc] init];
     _dislikeLabel.text = @"回复";
-    _dislikeLabel.font = [UIFont systemFontOfSize:12];
+    _dislikeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     _dislikeLabel.textColor = Color16A(0x333333, 0.8);
     _dislikeLabel.textAlignment = NSTextAlignmentLeft;
     _dislikeLabel.userInteractionEnabled = YES;

@@ -39,6 +39,8 @@
     self.avatarImageView.layer.cornerRadius = 12;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
+    self.avatarImageView.layer.borderColor = Color16A(0x000000, 0.08).CGColor;
+    self.avatarImageView.layer.borderWidth = 1;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
     self.avatarImageView.userInteractionEnabled = YES;  // 启用用户交互
      UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarImageTapped)];
@@ -47,8 +49,8 @@
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.usernameLabel.textColor = Color16A(0x333333, 0.8);
+    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+    self.usernameLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.usernameLabel];
     
     // 标签列表视图
@@ -60,7 +62,7 @@
     // 时间
     self.timeLabel = [[UILabel alloc] init];
     self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-    self.timeLabel.textColor = Color16A(0x333333, 0.8);
+    self.timeLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.timeLabel];
     
     // 内容
