@@ -39,8 +39,8 @@
     
     CGSize size = [self.titleLabel sizeThatFits:CGSizeZero];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(29);
-        make.left.right.equalTo(self);
+//        make.top.equalTo(self).offset(29);
+        make.top.left.right.equalTo(self);
         make.height.mas_equalTo(size.height);
     }];
     
@@ -124,7 +124,7 @@
     [self layoutIfNeeded];
     UILabel *lastLabel = [self.linkLabels lastObject];
     if (lastLabel) {
-        CGFloat height = CGRectGetMaxY(lastLabel.frame) + 24;
+        CGFloat height = CGRectGetMaxY(lastLabel.frame) + 16; //24;
         return MAX(height, 0);
     }
     
