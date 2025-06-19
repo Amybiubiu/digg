@@ -51,6 +51,7 @@
 @property (nonatomic, strong) SLArticleContentView *articleContentView;
 @property (nonatomic, strong) SLTagListView *tagListView;
 @property (nonatomic, strong) SLRelatedLinksView *relatedLinksView;
+@property (nonatomic, strong) UIView *headerBottonLineView;
 // 数据
 @property (nonatomic, strong) SLHomePageViewModel *homeViewModel;
 @property (nonatomic, strong) SLArticleDetailViewModel *viewModel;
@@ -207,6 +208,10 @@
     };
     [self.headerView addSubview:self.relatedLinksView];
     
+    self.headerBottonLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.headerBottonLineView.backgroundColor = Color16A(0x000000, 0.08);
+    [self.headerView addSubview:self.headerBottonLineView];
+    
     // 设置约束
     CGFloat margin = 16.0;
     
@@ -241,6 +246,11 @@
        make.height.mas_equalTo(0);
        make.bottom.equalTo(self.headerView);
    }];
+    
+    [self.headerBottonLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.left.right.equalTo(self);
+        make.height.mas_equalTo(0.5);
+    }];
 }
 
 // 添加阅读原文方法
