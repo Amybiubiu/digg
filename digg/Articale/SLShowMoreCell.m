@@ -50,7 +50,7 @@
 - (void)setupConstraints {
     [self.showMoreButton mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(8);
-        make.left.equalTo(self.contentView).offset(98);
+        make.left.equalTo(self.contentView).offset(96);
         make.height.mas_equalTo(20);
         make.bottom.equalTo(self.contentView).offset(-24);
     }];

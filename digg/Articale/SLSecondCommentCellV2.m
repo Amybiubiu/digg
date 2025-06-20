@@ -54,7 +54,7 @@
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.usernameLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.usernameLabel];
     
@@ -66,7 +66,7 @@
     
     // 时间
     self.timeLabel = [[UILabel alloc] init];
-    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
+    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.timeLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.timeLabel];
     
@@ -93,7 +93,7 @@
     // 设置约束
     [self.avatarBgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView).offset(16);
-        make.left.equalTo(self.contentView).offset(62);
+        make.left.equalTo(self.contentView).offset(60);
         make.size.mas_equalTo(CGSizeMake(24, 24));
     }];
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {

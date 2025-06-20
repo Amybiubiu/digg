@@ -44,13 +44,13 @@
     
     // 头像
     self.avatarBgView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.avatarBgView.layer.cornerRadius = 19;
+    self.avatarBgView.layer.cornerRadius = 18;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarBgView.backgroundColor = Color16A(0x000000, 0.08);
     [self.contentView addSubview:self.avatarBgView];
     
     self.avatarImageView = [[UIImageView alloc] init];
-    self.avatarImageView.layer.cornerRadius = 18;
+    self.avatarImageView.layer.cornerRadius = 17;
     self.avatarImageView.layer.masksToBounds = YES;
     self.avatarImageView.clipsToBounds = YES;
     self.avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -61,7 +61,7 @@
     
     // 用户名
     self.usernameLabel = [[UILabel alloc] init];
-    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
+    self.usernameLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     self.usernameLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.usernameLabel];
     
@@ -73,7 +73,7 @@
     
     // 时间
     self.timeLabel = [[UILabel alloc] init];
-    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
+    self.timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     self.timeLabel.textColor = Color16A(0x333333, 0.6);
     [self.contentView addSubview:self.timeLabel];
     
@@ -108,11 +108,11 @@
     [self.avatarBgView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.sectionSegment.mas_bottom).offset(16);
         make.left.equalTo(self.contentView).offset(16);
-        make.size.mas_equalTo(CGSizeMake(38, 38));
+        make.size.mas_equalTo(CGSizeMake(36, 36));
     }];
     [self.avatarImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self.avatarBgView);
-        make.size.mas_equalTo(CGSizeMake(36, 36));
+        make.size.mas_equalTo(CGSizeMake(34, 34));
     }];
     
     [self.usernameLabel mas_updateConstraints:^(MASConstraintMaker *make) {
