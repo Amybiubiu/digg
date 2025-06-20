@@ -248,7 +248,7 @@
    }];
     
     [self.headerBottonLineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.left.right.equalTo(self);
+        make.bottom.left.right.equalTo(self.headerView);
         make.height.mas_equalTo(0.5);
     }];
 }
