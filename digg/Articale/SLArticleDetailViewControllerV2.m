@@ -563,7 +563,7 @@
             [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
             
             // 显示成功提示
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -660,7 +660,7 @@
             [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
-        [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
+        [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 80];
         return cell;
     } else if (indexPath.row <= comment.expandedRepliesCount) { 
         // 展示二级评论
@@ -694,7 +694,7 @@
             [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
-        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 60];
+        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 112];
         return cell;
     } else { 
         // 最后一个 SLShowMoreCell
@@ -1149,7 +1149,7 @@
                 [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
 
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -1208,7 +1208,7 @@
                 [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
 
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -1401,12 +1401,14 @@
 
 - (void)deleteArticle {
     [SVProgressHUD show];
+    __weak typeof(self) weakSelf = self;
     [self.viewModel deleteArticle:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [SVProgressHUD dismiss];
         if (isSuccess) {
-            [SVProgressHUD showSuccessWithStatus:@"删除成功"];
+            [weakSelf.view sl_showToast:@"删除成功"];
             [self.navigationController popViewControllerAnimated:YES];
         } else {
-            [SVProgressHUD showErrorWithStatus:@"删除失败"];
+            [weakSelf.view sl_showToast:@"删除失败"];
         }
     }];
 }
@@ -1429,13 +1431,15 @@
 
 - (void)reportArticle {
     [SVProgressHUD show];
-    [self.viewModel reportContent:@"article" 
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel reportContent:@"article"
                             itemId:self.articleId 
                     resultHandler:^(BOOL isSuccess, NSError *error) {
+        [SVProgressHUD dismiss];
         if (isSuccess) {
-            [SVProgressHUD showSuccessWithStatus:@"举报成功"];
+            [weakSelf.view sl_showToast:@"举报成功"];
         } else {
-            [SVProgressHUD showErrorWithStatus:@"举报失败"];
+            [weakSelf.view sl_showToast:@"举报失败"];
         }
     }];
 }

@@ -17,6 +17,7 @@
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
 #import "SLArticleDetailViewControllerV2.h"
+#import "UIView+SLToast.h"
 
 #define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
@@ -358,7 +359,7 @@
 - (void)commitBtnClick {
     NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (title.length == 0) {
-        [SVProgressHUD showErrorWithStatus:@"请添加标题"];
+        [self.view sl_showToast:@"请添加标题"];
         return;
     }
     NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
