@@ -10,6 +10,11 @@
 
 @implementation SLColorManager
 
+// 主题色 - rgb(73, 119, 73) = #497749
++ (UIColor *)themeColor {
+    return Color16(0x497749);
+}
+
 // 适配暗黑模式的通用方法
 + (UIColor *)colorForLightMode:(UIColor *)lightColor darkMode:(UIColor *)darkColor {
     return [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
@@ -21,12 +26,19 @@
     }];
 }
 
+// 示例颜色：主背景颜色 - 已去除暗黑模式适配，固定为 #F3F1EE
++ (UIColor *)primaryBackgroundColor {
+    return Color16(0xF3F1EE);
+}
+
+/* 原来的暗黑模式适配代码 - 已注释
 // 示例颜色：主背景颜色
 + (UIColor *)primaryBackgroundColor {
     UIColor *lightColor = [UIColor whiteColor];
     UIColor *darkColor = Color16(0x131313);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
+*/
 
 //dark:0xFFFFFF & 0x333333
 + (UIColor *)primaryTextColor {
@@ -42,23 +54,44 @@
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
 
+// Tabbar背景色 - 已去除暗黑模式适配，固定为 #F3F1EE
++ (UIColor *)tabbarBackgroundColor {
+    return Color16(0xF3F1EE);
+}
+
+/* 原来的暗黑模式适配代码 - 已注释
 + (UIColor *)tabbarBackgroundColor {
     UIColor *lightColor = [UIColor whiteColor];
     UIColor *darkColor = Color16(0x282828);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
+*/
 
+// Tabbar普通文字颜色 - 已去除暗黑模式适配，固定为 #999999
++ (UIColor *)tabbarNormalTextColor {
+    return Color16(0x999999);
+}
+
+/* 原来的暗黑模式适配代码 - 已注释
 + (UIColor *)tabbarNormalTextColor {
     UIColor *lightColor = Color16(0x5B5B5B);
     UIColor *darkColor = Color16A(0xFFFFFF, 0.4);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
+*/
 
+// Tabbar选中文字颜色 - 已去除暗黑模式适配，固定为主题色 #497749
++ (UIColor *)tabbarSelectedTextColor {
+    return [SLColorManager themeColor];
+}
+
+/* 原来的暗黑模式适配代码 - 已注释
 + (UIColor *)tabbarSelectedTextColor {
     UIColor *lightColor = Color16(0x000000);
     UIColor *darkColor = Color16(0xFFFFFF);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
+*/
 
 + (UIColor *)categoryNormalTextColor {
     UIColor *lightColor = Color16(0x999999);

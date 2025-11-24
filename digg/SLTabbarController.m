@@ -47,7 +47,24 @@
 - (void)setupTabBarAppearance {
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     self.tabBar.backgroundColor = [SLColorManager tabbarBackgroundColor];
-    
+
+    // 设置 tabbar 文字样式
+    UIColor *normalTextColor = Color16(0x999999);  // #999999
+    UIColor *selectedTextColor = [SLColorManager themeColor];  // 主题色 #497749
+    UIFont *tabBarFont = [UIFont systemFontOfSize:15 weight:UIFontWeightBold];  // 15px, font-weight: 700
+
+    // 设置普通状态文字属性
+    [UITabBarItem.appearance setTitleTextAttributes:@{
+        NSForegroundColorAttributeName: normalTextColor,
+        NSFontAttributeName: tabBarFont
+    } forState:UIControlStateNormal];
+
+    // 设置选中状态文字属性
+    [UITabBarItem.appearance setTitleTextAttributes:@{
+        NSForegroundColorAttributeName: selectedTextColor,
+        NSFontAttributeName: tabBarFont
+    } forState:UIControlStateSelected];
+
     [self configureTabBarAppearance:self.tabBar];
 }
 
@@ -68,7 +85,8 @@
 
 - (UITabBarItemAppearance *)itemAppearanceWithNormalColor:(UIColor *)normalColor selectedColor:(UIColor *)selectedColor {
     UITabBarItemAppearance *itemAppearance = [[UITabBarItemAppearance alloc] init];
-    UIFont *tabBarFont = [UIFont systemFontOfSize:10 weight:UIFontWeightRegular];
+    // 修正为15pt，对应前端的15px视觉效果
+    UIFont *tabBarFont = [UIFont systemFontOfSize:15 weight:UIFontWeightBold];
     [itemAppearance.normal setTitleTextAttributes:@{
         NSForegroundColorAttributeName: normalColor,
         NSFontAttributeName: tabBarFont
@@ -110,21 +128,21 @@
     
     SLHomePageViewController *homeVC = [[SLHomePageViewController alloc] init];
     SLNavigationController *homeNavi = [self createRootNavi];
-    homeNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"首页" image:[UIImage imageNamed:@"home_unsel"] selectedImage:[UIImage imageNamed:@"home_selected"]];
+    homeNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"首页" image:nil selectedImage:nil];
     homeNavi.viewControllers = @[homeVC];
     self.homeNavi = homeNavi;
 
     self.noticeVC = [[SLConcernedViewController alloc] init];
     SLNavigationController *noticeNavi = [self createRootNavi];
     self.noticeNavi = noticeNavi;
-    noticeNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"关注" image:[UIImage imageNamed:@"notice_unsel"] selectedImage:[UIImage imageNamed:@"notice_selected"]];
+    noticeNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"关注" image:nil selectedImage:nil];
     noticeNavi.viewControllers = @[self.noticeVC];
     self.noticeVC.navigationController.navigationBar.hidden = YES;
 
     self.recordVC = [[SLRecordViewController alloc] init];
     SLNavigationController *recordNavi = [self createRootNavi];
     self.recordNavi = recordNavi;
-    recordNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"记录" image:[UIImage imageNamed:@"record_unsel"] selectedImage:[UIImage imageNamed:@"record_selected"]];
+    recordNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"记录" image:nil selectedImage:nil];
     recordNavi.viewControllers = @[self.recordVC];
     self.recordVC.navigationController.navigationBar.hidden = YES;
     
@@ -132,7 +150,7 @@
     userVC.userId = [SLUser defaultUser].userEntity.userId;
     SLNavigationController *userNavi = [self createRootNavi];
     self.mineNavi = userNavi;
-    userNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"我的" image:[UIImage imageNamed:@"mine_unsel"] selectedImage:[UIImage imageNamed:@"mine_selected"]];
+    userNavi.tabBarItem = [[UITabBarItem alloc] initWithTitle:@"我的" image:nil selectedImage:nil];
     userNavi.viewControllers = @[userVC];
     userVC.navigationController.navigationBar.hidden = YES;
 

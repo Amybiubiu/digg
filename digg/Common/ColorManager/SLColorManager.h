@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 // 获取颜色方法
 + (UIColor *)colorForLightMode:(UIColor *)lightColor darkMode:(UIColor *)darkColor;
 
+// 主题色
++ (UIColor *)themeColor;
+
 // 示例颜色 (可以添加更多颜色)
 + (UIColor *)primaryBackgroundColor;
 //dark:0xFFFFFF & 0x333333
