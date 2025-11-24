@@ -13,6 +13,7 @@
 @interface SLCustomNavigationBar ()
 
 @property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) UIView *bottomLineView;
 
 @end
 
@@ -28,7 +29,10 @@
 
 - (void)setupUI {
     self.backgroundColor = [SLColorManager primaryBackgroundColor];
-    
+    self.bottomLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.bottomLineView.backgroundColor = Color16A(0x000000, 0.08);
+    self.bottomLineView.hidden = YES;
+    [self addSubview:self.bottomLineView];
     // 返回按钮
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.backButton setImage:[UIImage imageNamed:@"left_back_icon"] forState:UIControlStateNormal];
@@ -53,9 +57,17 @@
     
     [self.moreButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self).offset(-16);
-        make.top.equalTo(self.backButton);
-        make.width.height.equalTo(@24);
+        make.centerY.equalTo(self.backButton);
+        make.width.height.equalTo(@44);
     }];
+    [self.bottomLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.left.right.equalTo(self);
+        make.height.mas_equalTo(0.5);
+    }];
+}
+
+- (void)showBottomLine:(BOOL)show {
+    self.bottomLineView.hidden = !show;
 }
 
 #pragma mark - Actions

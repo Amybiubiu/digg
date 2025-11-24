@@ -38,22 +38,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1CC569D1-19BC-4532-AC34-E7B2C6F2433C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1068"
-            endingLineNumber = "1068"
-            landmarkName = "-showToolbar:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "2479213D-7029-41F3-BE0A-767C88A31BEE"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -123,40 +107,10 @@
             filePath = "digg/Articale/SLArticleDetailViewControllerV2.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1102"
-            endingLineNumber = "1102"
-            landmarkName = "-submitReplyToComment:index:content:"
+            startingLineNumber = "1117"
+            endingLineNumber = "1117"
+            landmarkName = "-replyToComment:index:"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "677999FC-F50F-4A55-AA05-754A52D454FC - 83c0ca73202f618f"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[SLArticleDetailViewControllerV2 submitReplyToComment:index:content:]"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Articale/SLArticleDetailViewControllerV2.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1102"
-                  endingLineNumber = "1102">
-               </Location>
-               <Location
-                  uuid = "677999FC-F50F-4A55-AA05-754A52D454FC - 3f01cf0e5a09739b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__70-[SLArticleDetailViewControllerV2 submitReplyToComment:index:content:]_block_invoke"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Articale/SLArticleDetailViewControllerV2.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1103"
-                  endingLineNumber = "1103">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -204,6 +158,22 @@
             startingLineNumber = "169"
             endingLineNumber = "169"
             landmarkName = "-setEntity:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7A1D423B-D3D1-4CAB-BBE1-0FC5482AE88E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "digg/Views/ActionBar/SLNumberIconView.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "-layoutSubviews"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

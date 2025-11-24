@@ -275,6 +275,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineSpacing:5.0];
+    paragraphStyle.paragraphSpacing = 15.0;
     [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
     
     [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 
@@ -291,6 +292,41 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
                                     range:NSMakeRange(0, mutableAttributedString.length)];
     
     return mutableAttributedString;
+}
+
++ (NSString *)smartTimeFormatWith:(NSTimeInterval)gmtCreate {
+    NSDate *currentDate = [NSDate date];
+    NSDate *targetDate = [NSDate dateWithTimeIntervalSince1970:gmtCreate/1000];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    // 计算时间差
+    NSTimeInterval timeInterval = [currentDate timeIntervalSinceDate:targetDate];
+    
+    // 1小时以下显示分钟
+    if (timeInterval < 3600) {
+        NSInteger minutes = (NSInteger)(timeInterval / 60);
+        if (minutes <= 0) {
+            return @"刚刚";
+        }
+        return [NSString stringWithFormat:@"%ld分钟前", (long)minutes];
+    }
+    // 1天以下显示小时
+    else if (timeInterval < 86400) {
+        NSInteger hours = (NSInteger)(timeInterval / 3600);
+        return [NSString stringWithFormat:@"%ld小时前", (long)hours];
+    }
+    // 1年以下显示月-日
+    else if (timeInterval < 31536000) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"MM-dd"];
+        return [formatter stringFromDate:targetDate];
+    }
+    // 1年以上显示年月日
+    else {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        return [formatter stringFromDate:targetDate];
+    }
 }
 
 @end

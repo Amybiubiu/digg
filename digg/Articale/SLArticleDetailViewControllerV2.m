@@ -14,9 +14,9 @@
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
 #import <SDWebImage/SDWebImage.h>
-#import "SLCommentCellV2.h"
+#import "SLCommentCell.h"
 #import "SLShowMoreCell.h"
-#import "SLSecondCommentCell.h"
+#import "SLSecondCommentCellV2.h"
 #import "SLArticleTagCell.h"
 #import "SLWebViewController.h"
 #import "SVProgressHUD.h"
@@ -51,6 +51,7 @@
 @property (nonatomic, strong) SLArticleContentView *articleContentView;
 @property (nonatomic, strong) SLTagListView *tagListView;
 @property (nonatomic, strong) SLRelatedLinksView *relatedLinksView;
+@property (nonatomic, strong) UIView *headerBottonLineView;
 // 数据
 @property (nonatomic, strong) SLHomePageViewModel *homeViewModel;
 @property (nonatomic, strong) SLArticleDetailViewModel *viewModel;
@@ -80,10 +81,12 @@
     self.isLoadData = NO;
     self.homeViewModel = [[SLHomePageViewModel alloc] init];
     [self setupUI];
-    [self setupGestures];
+//    [self setupGestures];
     
     // 初始化评论输入控制器
     self.commentVC = [[SLCommentInputViewController alloc] init];
+    
+    [self navigationBarMoreButtonTapped];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -136,13 +139,13 @@
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.backgroundColor = UIColor.clearColor; //[SLColorManager primaryBackgroundColor];
+    self.tableView.backgroundColor = UIColor.clearColor;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.showsVerticalScrollIndicator = NO;
     self.tableView.estimatedRowHeight = 100.0;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
-    [self.tableView registerClass:[SLCommentCellV2 class] forCellReuseIdentifier:@"SLCommentCellV2"];
-    [self.tableView registerClass:[SLSecondCommentCell class] forCellReuseIdentifier:@"SLSecondCommentCell"];
+    [self.tableView registerClass:[SLCommentCell class] forCellReuseIdentifier:@"SLCommentCell"];
+    [self.tableView registerClass:[SLSecondCommentCellV2 class] forCellReuseIdentifier:@"SLSecondCommentCellV2"];
     [self.tableView registerClass:[SLShowMoreCell class] forCellReuseIdentifier:@"SLShowMoreCell"];
     [self.tableView registerClass:[SLEmptyCommentCell class] forCellReuseIdentifier:@"SLEmptyCommentCell"];
     [self.tableView registerClass:[SLEndOfListCell class] forCellReuseIdentifier:@"SLEndOfListCell"];
@@ -205,6 +208,10 @@
     };
     [self.headerView addSubview:self.relatedLinksView];
     
+    self.headerBottonLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.headerBottonLineView.backgroundColor = Color16A(0x000000, 0.08);
+    [self.headerView addSubview:self.headerBottonLineView];
+    
     // 设置约束
     CGFloat margin = 16.0;
     
@@ -239,6 +246,11 @@
        make.height.mas_equalTo(0);
        make.bottom.equalTo(self.headerView);
    }];
+    
+    [self.headerBottonLineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.left.right.equalTo(self.headerView);
+        make.height.mas_equalTo(0.5);
+    }];
 }
 
 // 添加阅读原文方法
@@ -551,7 +563,7 @@
             [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
             
             // 显示成功提示
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -619,9 +631,9 @@
     }
     SLCommentEntity *comment = self.viewModel.commentList[indexPath.section];
     if (indexPath.row == 0) {
-        SLCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCellV2"];
+        SLCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLCommentCell"];
         if (!cell) {
-            cell = [[SLCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCellV2"];
+            cell = [[SLCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLCommentCell"];
         }
         cell.section = indexPath.section;
         cell.row = indexPath.row;
@@ -648,13 +660,13 @@
             [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
-        [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 32];
+        [cell updateWithComment:comment authorId: self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 80];
         return cell;
     } else if (indexPath.row <= comment.expandedRepliesCount) { 
         // 展示二级评论
-        SLSecondCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SLSecondCommentCell"];
+        SLSecondCommentCellV2 *cell = [tableView dequeueReusableCellWithIdentifier:@"SLSecondCommentCellV2"];
         if (!cell) {
-            cell = [[SLSecondCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLSecondCommentCell"];
+            cell = [[SLSecondCommentCellV2 alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"SLSecondCommentCellV2"];
         }
         cell.section = indexPath.section;
         cell.row = indexPath.row;
@@ -682,7 +694,7 @@
             [weakSelf gotoProfilePage:commentEntity.userId];
         };
         
-        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 60];
+        [cell updateWithComment:replyComment authorId:self.viewModel.articleEntity.userId contentWidth:self.view.frame.size.width - 112];
         return cell;
     } else { 
         // 最后一个 SLShowMoreCell
@@ -764,218 +776,233 @@
 }
 
 #pragma mark - UIScrollViewDelegate
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    // 计算滚动速度
-    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
-    NSTimeInterval timeDiff = currentTime - self.lastScrollTime;
+    CGFloat currentOffsetY = scrollView.contentOffset.y;
     
-    if (timeDiff > 0) {
-        CGFloat distance = scrollView.contentOffset.y - self.lastContentOffset;
-        self.scrollVelocity = fabs(distance / timeDiff);
+    // 判断滚动方向
+    if (currentOffsetY > self.lastContentOffset) {
+        // 向上滚动
+        [self.navigationBar showBottomLine:YES];
+    } else if (currentOffsetY < self.lastContentOffset) {
+        // 向下滚动
+        [self.navigationBar showBottomLine:NO];
     }
     
-    self.lastScrollTime = currentTime;
-    
-    // 获取当前内容偏移量
-    CGFloat contentOffset = scrollView.contentOffset.y;
-    
-    // 保存上次偏移量，确保每次调用都能正确更新
-    CGFloat previousOffset = self.lastContentOffset;
-    self.lastContentOffset = contentOffset;
-    
-    // 滚动到顶部时显示导航栏和工具栏
-    if (contentOffset <= 0) {
-        [self updateBarsPosition:0.0 animated:NO];
-        return;
-    }
-
-    // 检测是否滚动到底部
-    CGFloat contentHeight = scrollView.contentSize.height;
-    CGFloat scrollViewHeight = scrollView.frame.size.height;
-    CGFloat bottomThreshold = 30.0; // 增加容差值，更可靠地检测底部
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - bottomThreshold);
-    
-    // 如果已经处于底部状态或者当前检测到底部
-    if (self.isAtBottomState || isAtBottom) {
-        // 确保状态标记设置为YES
-        if (!self.isAtBottomState) {
-            [self updateBarsPosition:0.0 animated:YES];
-            self.isAtBottomState = YES;
-        }
-        return;
-    }
-    
-    // 只有确定不在底部时才重置状态
-    if (contentOffset < contentHeight - scrollViewHeight - bottomThreshold - 20) {
-        self.isAtBottomState = NO;
-    }
-    
-    // 根据滚动方向调整进度
-    CGFloat diff = contentOffset - previousOffset;
-    
-    // 获取当前进度
-    CGFloat currentProgress;
-    if (self.isNavBarHidden) {
-        currentProgress = 1.0;
-    } else {
-        // 通过当前约束值计算进度
-        CGFloat navBarTop = self.navigationBar.frame.origin.y;
-        currentProgress = MAX(0, MIN(1, navBarTop / -NAVBAR_HEIGHT));
-    }
-    
-    CGFloat targetProgress = currentProgress;
-    
-    // 向下滚动（内容向上移动），增加进度（隐藏导航栏）
-    if (diff > 0) {
-        // 根据滚动速度调整进度增量
-        CGFloat increment = MIN(0.05, self.scrollVelocity / 500.0);
-        targetProgress = MIN(1.0, currentProgress + increment);
-    }
-    // 向上滚动（内容向下移动），减少进度（显示导航栏）
-    else if (diff < 0) {
-        // 根据滚动速度调整进度减量
-        CGFloat decrement = MIN(0.05, self.scrollVelocity / 500.0);
-        targetProgress = MAX(0.0, currentProgress - decrement);
-    }
-    
-    // 更新导航栏和底部工具栏位置，使用平滑过渡
-    [self updateBarsPosition:targetProgress animated:NO];
+    // 更新lastContentOffset
+    self.lastContentOffset = currentOffsetY;
 }
 
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    // 检测是否滚动到底部
-    CGFloat contentOffset = scrollView.contentOffset.y;
-    CGFloat contentHeight = scrollView.contentSize.height;
-    CGFloat scrollViewHeight = scrollView.frame.size.height;
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
-    
-    if (isAtBottom) {
-        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
-        if (!self.isAtBottomState) {
-            [self updateBarsPosition:0.0 animated:YES];
-            self.isAtBottomState = YES;
-        }
-        return;
-    }
-    
-    // 如果不会减速，则直接完成滚动
-    if (!decelerate) {
-        [self finishScrollingWithVelocity:self.scrollVelocity];
-    }
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    // 检测是否滚动到底部
-    CGFloat contentOffset = scrollView.contentOffset.y;
-    CGFloat contentHeight = scrollView.contentSize.height;
-    CGFloat scrollViewHeight = scrollView.frame.size.height;
-    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
-    
-    if (isAtBottom) {
-        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
-        if (!self.isAtBottomState) {
-            [self updateBarsPosition:0.0 animated:YES];
-            self.isAtBottomState = YES;
-        }
-        return;
-    } else {
-        // 不在底部时重置状态
-        self.isAtBottomState = NO;
-    }
-    
-    // 完成滚动，使用当前速度决定最终状态
-    [self finishScrollingWithVelocity:self.scrollVelocity];
-}
-
-// 更新导航栏和工具栏位置，添加透明度渐变效果
-- (void)updateBarsPosition:(CGFloat)progress animated:(BOOL)animated {
-    // 计算导航栏应该移动的距离
-    CGFloat navBarOffset = -NAVBAR_HEIGHT * progress;
-    CGFloat tabBarOffset = self.tabBarHeight * progress;
-    
-    // 更新导航栏位置
-    [self.navigationBar mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view).offset(navBarOffset);
-    }];
-    
-    // 更新底部工具栏位置
-    [self.toolbarView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.view).offset(tabBarOffset);
-    }];
-    
-    // 添加导航栏透明度渐变效果
-    self.navigationBar.alpha = 1.0 - progress;
-    
-    // 确保tableView不超过顶部安全区
-    UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, *)) {
-        safeAreaInsets = self.view.safeAreaInsets;
-    }
-    
-    // 调整tableView的顶部约束，确保不超过安全区
-    [self.tableView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view).offset(MAX(safeAreaInsets.top, NAVBAR_HEIGHT * (1.0 - progress)));
-    }];
-    
-    // 更新状态
-    self.isNavBarHidden = (progress >= 0.99);
-    self.isToolbarHidden = (progress >= 0.99);
-    
-   if (animated) {
-       // 使用弹性动画效果，更接近原生体验
-       [UIView animateWithDuration:0.3
-                             delay:0
-            usingSpringWithDamping:0.8
-             initialSpringVelocity:0.2
-                           options:UIViewAnimationOptionAllowUserInteraction
-                        animations:^{
-           [self.view layoutIfNeeded];
-       } completion:nil];
-   } else {
-       [self.view layoutIfNeeded];
-   }
-}
-
-// 根据最终速度决定导航栏和底部工具栏的最终状态
-- (void)finishScrollingWithVelocity:(CGFloat)velocity {
-    // 获取当前进度
-    CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
-    
-    // 快速滑动阈值
-    CGFloat fastScrollThreshold = 300.0;
-    
-    // 根据当前进度和速度决定最终状态
-    if (velocity > fastScrollThreshold) {
-        // 快速向下滑动，显示导航栏和工具栏
-        [self updateBarsPosition:0.0 animated:YES];
-    } else if (currentProgress < 0.1) {
-        [self updateBarsPosition:0.0 animated:YES];
-    } else if (currentProgress > 0.9) {
-        [self updateBarsPosition:1.0 animated:YES];
-    } else {
-        // 根据当前进度决定
-        if (currentProgress > 0.5) {
-            [self updateBarsPosition:1.0 animated:YES];
-        } else {
-            [self updateBarsPosition:0.0 animated:YES];
-        }
-    }
-}
-
-- (void)setupGestures {
-    // 添加点击手势，点击内容区域时显示/隐藏导航栏和工具栏
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    [self.tableView addGestureRecognizer:tapGesture];
-}
-
-- (void)handleTapGesture:(UITapGestureRecognizer *)gesture {
-    if (self.isNavBarHidden || self.isToolbarHidden) {
-        [self updateBarsPosition:0.0 animated:YES]; // 显示
-    } else {
-        [self updateBarsPosition:1.0 animated:YES]; // 隐藏
-    }
-}
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+//    // 计算滚动速度
+//    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
+//    NSTimeInterval timeDiff = currentTime - self.lastScrollTime;
+//    
+//    if (timeDiff > 0) {
+//        CGFloat distance = scrollView.contentOffset.y - self.lastContentOffset;
+//        self.scrollVelocity = fabs(distance / timeDiff);
+//    }
+//    
+//    self.lastScrollTime = currentTime;
+//    
+//    // 获取当前内容偏移量
+//    CGFloat contentOffset = scrollView.contentOffset.y;
+//    
+//    // 保存上次偏移量，确保每次调用都能正确更新
+//    CGFloat previousOffset = self.lastContentOffset;
+//    self.lastContentOffset = contentOffset;
+//    
+//    // 滚动到顶部时显示导航栏和工具栏
+//    if (contentOffset <= 0) {
+//        [self updateBarsPosition:0.0 animated:NO];
+//        return;
+//    }
+//
+//    // 检测是否滚动到底部
+//    CGFloat contentHeight = scrollView.contentSize.height;
+//    CGFloat scrollViewHeight = scrollView.frame.size.height;
+//    CGFloat bottomThreshold = 30.0; // 增加容差值，更可靠地检测底部
+//    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - bottomThreshold);
+//    
+//    // 如果已经处于底部状态或者当前检测到底部
+//    if (self.isAtBottomState || isAtBottom) {
+//        // 确保状态标记设置为YES
+//        if (!self.isAtBottomState) {
+//            [self updateBarsPosition:0.0 animated:YES];
+//            self.isAtBottomState = YES;
+//        }
+//        return;
+//    }
+//    
+//    // 只有确定不在底部时才重置状态
+//    if (contentOffset < contentHeight - scrollViewHeight - bottomThreshold - 20) {
+//        self.isAtBottomState = NO;
+//    }
+//    
+//    // 根据滚动方向调整进度
+//    CGFloat diff = contentOffset - previousOffset;
+//    
+//    // 获取当前进度
+//    CGFloat currentProgress;
+//    if (self.isNavBarHidden) {
+//        currentProgress = 1.0;
+//    } else {
+//        // 通过当前约束值计算进度
+//        CGFloat navBarTop = self.navigationBar.frame.origin.y;
+//        currentProgress = MAX(0, MIN(1, navBarTop / -NAVBAR_HEIGHT));
+//    }
+//    
+//    CGFloat targetProgress = currentProgress;
+//    
+//    // 向下滚动（内容向上移动），增加进度（隐藏导航栏）
+//    if (diff > 0) {
+//        // 根据滚动速度调整进度增量
+//        CGFloat increment = MIN(0.05, self.scrollVelocity / 500.0);
+//        targetProgress = MIN(1.0, currentProgress + increment);
+//    }
+//    // 向上滚动（内容向下移动），减少进度（显示导航栏）
+//    else if (diff < 0) {
+//        // 根据滚动速度调整进度减量
+//        CGFloat decrement = MIN(0.05, self.scrollVelocity / 500.0);
+//        targetProgress = MAX(0.0, currentProgress - decrement);
+//    }
+//    
+//    // 更新导航栏和底部工具栏位置，使用平滑过渡
+//    [self updateBarsPosition:targetProgress animated:NO];
+//}
+//
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+//    // 检测是否滚动到底部
+//    CGFloat contentOffset = scrollView.contentOffset.y;
+//    CGFloat contentHeight = scrollView.contentSize.height;
+//    CGFloat scrollViewHeight = scrollView.frame.size.height;
+//    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
+//    
+//    if (isAtBottom) {
+//        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
+//        if (!self.isAtBottomState) {
+//            [self updateBarsPosition:0.0 animated:YES];
+//            self.isAtBottomState = YES;
+//        }
+//        return;
+//    }
+//    
+//    // 如果不会减速，则直接完成滚动
+//    if (!decelerate) {
+//        [self finishScrollingWithVelocity:self.scrollVelocity];
+//    }
+//}
+//
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+//    // 检测是否滚动到底部
+//    CGFloat contentOffset = scrollView.contentOffset.y;
+//    CGFloat contentHeight = scrollView.contentSize.height;
+//    CGFloat scrollViewHeight = scrollView.frame.size.height;
+//    BOOL isAtBottom = (contentOffset >= contentHeight - scrollViewHeight - 20);
+//    
+//    if (isAtBottom) {
+//        // 滚动到底部时显示导航栏和底部工具栏，但避免重复触发
+//        if (!self.isAtBottomState) {
+//            [self updateBarsPosition:0.0 animated:YES];
+//            self.isAtBottomState = YES;
+//        }
+//        return;
+//    } else {
+//        // 不在底部时重置状态
+//        self.isAtBottomState = NO;
+//    }
+//    
+//    // 完成滚动，使用当前速度决定最终状态
+//    [self finishScrollingWithVelocity:self.scrollVelocity];
+//}
+//
+//// 更新导航栏和工具栏位置，添加透明度渐变效果
+//- (void)updateBarsPosition:(CGFloat)progress animated:(BOOL)animated {
+//    // 计算导航栏应该移动的距离
+//    CGFloat navBarOffset = -NAVBAR_HEIGHT * progress;
+//    CGFloat tabBarOffset = self.tabBarHeight * progress;
+//    
+//    // 更新导航栏位置
+//    [self.navigationBar mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self.view).offset(navBarOffset);
+//    }];
+//    
+//    // 更新底部工具栏位置
+//    [self.toolbarView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.bottom.equalTo(self.view).offset(tabBarOffset);
+//    }];
+//    
+//    // 添加导航栏透明度渐变效果
+//    self.navigationBar.alpha = 1.0 - progress;
+//    
+//    // 确保tableView不超过顶部安全区
+//    UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
+//    if (@available(iOS 11.0, *)) {
+//        safeAreaInsets = self.view.safeAreaInsets;
+//    }
+//    
+//    // 调整tableView的顶部约束，确保不超过安全区
+//    [self.tableView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self.view).offset(MAX(safeAreaInsets.top, NAVBAR_HEIGHT * (1.0 - progress)));
+//    }];
+//    
+//    // 更新状态
+//    self.isNavBarHidden = (progress >= 0.99);
+//    self.isToolbarHidden = (progress >= 0.99);
+//    
+//   if (animated) {
+//       // 使用弹性动画效果，更接近原生体验
+//       [UIView animateWithDuration:0.3
+//                             delay:0
+//            usingSpringWithDamping:0.8
+//             initialSpringVelocity:0.2
+//                           options:UIViewAnimationOptionAllowUserInteraction
+//                        animations:^{
+//           [self.view layoutIfNeeded];
+//       } completion:nil];
+//   } else {
+//       [self.view layoutIfNeeded];
+//   }
+//}
+//
+//// 根据最终速度决定导航栏和底部工具栏的最终状态
+//- (void)finishScrollingWithVelocity:(CGFloat)velocity {
+//    // 获取当前进度
+//    CGFloat currentProgress = fabs(self.navigationBar.frame.origin.y) / NAVBAR_HEIGHT;
+//    
+//    // 快速滑动阈值
+//    CGFloat fastScrollThreshold = 300.0;
+//    
+//    // 根据当前进度和速度决定最终状态
+//    if (velocity > fastScrollThreshold) {
+//        // 快速向下滑动，显示导航栏和工具栏
+//        [self updateBarsPosition:0.0 animated:YES];
+//    } else if (currentProgress < 0.1) {
+//        [self updateBarsPosition:0.0 animated:YES];
+//    } else if (currentProgress > 0.9) {
+//        [self updateBarsPosition:1.0 animated:YES];
+//    } else {
+//        // 根据当前进度决定
+//        if (currentProgress > 0.5) {
+//            [self updateBarsPosition:1.0 animated:YES];
+//        } else {
+//            [self updateBarsPosition:0.0 animated:YES];
+//        }
+//    }
+//}
+//
+//- (void)setupGestures {
+//    // 添加点击手势，点击内容区域时显示/隐藏导航栏和工具栏
+//    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
+//    [self.tableView addGestureRecognizer:tapGesture];
+//}
+//
+//- (void)handleTapGesture:(UITapGestureRecognizer *)gesture {
+//    if (self.isNavBarHidden || self.isToolbarHidden) {
+//        [self updateBarsPosition:0.0 animated:YES]; // 显示
+//    } else {
+//        [self updateBarsPosition:1.0 animated:YES]; // 隐藏
+//    }
+//}
 
 #pragma mark - SLCustomNavigationBarDelegate
 
@@ -984,7 +1011,7 @@
 }
 
 - (void)navigationBarMoreButtonTapped {
-    UIButton *moreButton = self.navigationBar.moreButton;
+//    UIButton *moreButton = self.navigationBar.moreButton;
 
     NSMutableArray *actions = [NSMutableArray array];
     
@@ -1028,8 +1055,8 @@
     }
     
     UIMenu *menu = [UIMenu menuWithTitle:@"" children:actions];
-    moreButton.menu = menu;
-    moreButton.showsMenuAsPrimaryAction = YES;
+    self.navigationBar.moreButton.menu = menu;
+    self.navigationBar.moreButton.showsMenuAsPrimaryAction = YES;
 }
 
 #pragma mark - DZNEmptyDataSetDelegate
@@ -1122,7 +1149,7 @@
                 [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
 
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -1181,7 +1208,7 @@
                 [weakSelf.tableView scrollToRowAtIndexPath:lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
 
-            [SVProgressHUD showSuccessWithStatus:@"评论成功"];
+            [weakSelf.view sl_showToast:@"评论已发布"];
         } else {
             [weakSelf gotoLoginPage];
         }
@@ -1196,11 +1223,11 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         
-        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+        if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+            SLCommentCell *commentCell = (SLCommentCell *)cell;
             [commentCell updateLikeStatus:commentEntity];
-        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+        } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+            SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
             [commentCell updateLikeStatus:commentEntity];
         }
         return;
@@ -1214,11 +1241,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1226,11 +1253,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1249,11 +1276,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1261,11 +1288,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1280,11 +1307,11 @@
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         
-        if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-            SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+        if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+            SLCommentCell *commentCell = (SLCommentCell *)cell;
             [commentCell updateLikeStatus:commentEntity];
-        } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-            SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+        } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+            SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
             [commentCell updateLikeStatus:commentEntity];
         }
         return;
@@ -1299,11 +1326,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1311,11 +1338,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1333,11 +1360,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
             } else if (needLogin) {
@@ -1345,11 +1372,11 @@
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
                 
-                if ([cell isKindOfClass:[SLCommentCellV2 class]] && row == 0) {
-                    SLCommentCellV2 *commentCell = (SLCommentCellV2 *)cell;
+                if ([cell isKindOfClass:[SLCommentCell class]] && row == 0) {
+                    SLCommentCell *commentCell = (SLCommentCell *)cell;
                     [commentCell updateLikeStatus:commentEntity];
-                } else if ([cell isKindOfClass:[SLSecondCommentCell class]] && row > 0) {
-                    SLSecondCommentCell *commentCell = (SLSecondCommentCell *)cell;
+                } else if ([cell isKindOfClass:[SLSecondCommentCellV2 class]] && row > 0) {
+                    SLSecondCommentCellV2 *commentCell = (SLSecondCommentCellV2 *)cell;
                     [commentCell updateLikeStatus:commentEntity];
                 }
                 return;
@@ -1374,12 +1401,14 @@
 
 - (void)deleteArticle {
     [SVProgressHUD show];
+    __weak typeof(self) weakSelf = self;
     [self.viewModel deleteArticle:self.articleId resultHandler:^(BOOL isSuccess, NSError *error) {
+        [SVProgressHUD dismiss];
         if (isSuccess) {
-            [SVProgressHUD showSuccessWithStatus:@"删除成功"];
+            [weakSelf.view sl_showToast:@"删除成功"];
             [self.navigationController popViewControllerAnimated:YES];
         } else {
-            [SVProgressHUD showErrorWithStatus:@"删除失败"];
+            [weakSelf.view sl_showToast:@"删除失败"];
         }
     }];
 }
@@ -1402,13 +1431,15 @@
 
 - (void)reportArticle {
     [SVProgressHUD show];
-    [self.viewModel reportContent:@"article" 
+    __weak typeof(self) weakSelf = self;
+    [self.viewModel reportContent:@"article"
                             itemId:self.articleId 
                     resultHandler:^(BOOL isSuccess, NSError *error) {
+        [SVProgressHUD dismiss];
         if (isSuccess) {
-            [SVProgressHUD showSuccessWithStatus:@"举报成功"];
+            [weakSelf.view sl_showToast:@"举报成功"];
         } else {
-            [SVProgressHUD showErrorWithStatus:@"举报失败"];
+            [weakSelf.view sl_showToast:@"举报失败"];
         }
     }];
 }
