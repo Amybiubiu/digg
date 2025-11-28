@@ -145,10 +145,23 @@
         
         [self.interactionBar mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.height.mas_equalTo(48);
-            make.top.equalTo(self.contentLabel.mas_bottom);
             make.left.equalTo(self.contentView).offset(offset);
-            make.right.equalTo(self.titleLabel);
             make.bottom.equalTo(self.contentView);
+            
+            // 判断是否为【小图模式】
+            if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
+                // 修改 1: 宽度占满 (对齐到 contentView，而不是 titleLabel)
+                make.right.equalTo(self.contentView).offset(-offset);
+                
+                // 修改 2: 顶部位置 (需要取 文本底部 和 图片底部 的最大值，防止遮挡图片)
+                // 使用 greaterThanOrEqualTo 可以让 masonry 自动选择更靠下的那个
+                make.top.greaterThanOrEqualTo(self.contentLabel.mas_bottom);
+                make.top.greaterThanOrEqualTo(self.smallImageView.mas_bottom);
+            } else {
+                // 原有逻辑：非小图模式，或者大图模式，宽度跟随标题/内容区域
+                make.top.equalTo(self.contentLabel.mas_bottom);
+                make.right.equalTo(self.titleLabel);
+            }
         }];
     } else {
         if (entiy.picSize == 0 && entiy.mainPicUrl.length > 0) {
@@ -168,7 +181,7 @@
             make.height.mas_equalTo(48);
             make.top.equalTo(self.titleLabel.mas_bottom);
             make.left.equalTo(self.contentView).offset(offset);
-            make.right.equalTo(self.titleLabel);
+            make.right.equalTo(self.contentView).offset(-offset);
             make.bottom.equalTo(self.contentView);
         }];
     }
@@ -181,12 +194,9 @@
     // 设置选中状态
     [self.interactionBar setSelected:entiy.liked forType:SLInteractionTypeLike];
     [self.interactionBar setSelected:entiy.disliked forType:SLInteractionTypeDislike];
-    
-    if (entiy.url.length == 0) {
-        [self.interactionBar hideItemForType:SLInteractionTypeCustom];
-    } else {
-        [self.interactionBar showItemForType:SLInteractionTypeCustom];
-    }
+
+    // 始终显示链接按钮，不根据URL隐藏
+    [self.interactionBar showItemForType:SLInteractionTypeCustom];
 }
 
 - (void)createViews{
@@ -333,10 +343,10 @@
     if (!_interactionBar) {
         _interactionBar = [[SLInteractionBar alloc] initWithFrame:CGRectZero
                                             interactionTypes:@[
-                                                @(SLInteractionTypeLike),
-                                                @(SLInteractionTypeDislike),
-                                                @(SLInteractionTypeComment),
-                                                @(SLInteractionTypeCustom)
+                                                @(SLInteractionTypeLike),      // 点赞
+                                                @(SLInteractionTypeComment),   // 评论
+                                                @(SLInteractionTypeCustom),    // 访问URL（复用custom类型）
+                                                @(SLInteractionTypeDislike)    // 点踩
                                             ]];
         _interactionBar.delegate = self;
     }

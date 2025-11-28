@@ -11,6 +11,7 @@
 #import "SLHomeTagView.h"
 #import "SLColorManager.h"
 #import "SLInteractionBar.h"
+#import "SLAlertManager.h"
 
 @interface SLHomePageNewsTableViewCellV2 () <SLInteractionBarDelegate>
 
@@ -112,7 +113,10 @@
     [self.interactionBar updateNumber:entiy.likeCnt forType:SLInteractionTypeLike];
     [self.interactionBar updateNumber:entiy.dislikeCnt forType:SLInteractionTypeDislike];
     [self.interactionBar updateNumber:entiy.commentsCnt forType:SLInteractionTypeComment];
-    
+
+    // 链接图标始终显示，不根据URL隐藏
+    [self.interactionBar showItemForType:SLInteractionTypeCustom]; // 始终显示链接按钮
+
     // 设置选中状态
     [self.interactionBar setSelected:entiy.liked forType:SLInteractionTypeLike];
     [self.interactionBar setSelected:entiy.disliked forType:SLInteractionTypeDislike];
@@ -189,12 +193,41 @@
                 [interactionBar updateNumber:self.entity.likeCnt forType:SLInteractionTypeLike];
             }
             break;
+        case SLInteractionTypeComment:
+            if (self.showDetailClick) {
+                self.showDetailClick(self.entity);
+            }
+            break;
+        case SLInteractionTypeCustom:
+            // 访问URL功能 - 有URL时显示确认弹窗打开链接，无URL时打开文章详情页
+            if (self.entity.url.length > 0) {
+                // 有URL时，显示确认弹窗并打开外部链接
+                SLCustomAlertView *alertView = [SLAlertManager showCustomAlertWithTitle:@"您确定要打开此链接吗？"
+                                                                   message:nil
+                                                                       url:[NSURL URLWithString:self.entity.url]
+                                                                   urlText:self.entity.url
+                                                              confirmTitle:@"是"
+                                                               cancelTitle:@"否"
+                                                            confirmHandler:^{
+                                                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:self.entity.url] options:@{} completionHandler:nil];
+                                                            }
+                                                             cancelHandler:^{
+                                                            }
+                                                         fromViewController:nil];
+                [alertView show];
+            } else {
+                // 没有URL时，打开文章详情页（内部页面）
+                if (self.showDetailClick) {
+                    self.showDetailClick(self.entity);
+                }
+            }
+            break;
         case SLInteractionTypeDislike:
             if (selected) {
                 if (self.dislikeClick) {
                     self.dislikeClick(self.entity);
                 }
-                
+
                 [interactionBar updateNumber:self.entity.likeCnt forType:SLInteractionTypeLike];
                 [interactionBar updateNumber:self.entity.dislikeCnt + 1 forType:SLInteractionTypeDislike];
                 [interactionBar setSelected:NO forType:SLInteractionTypeLike];
@@ -202,18 +235,8 @@
                 if (self.cancelDisLikeClick) {
                     self.cancelDisLikeClick(self.entity);
                 }
-                
+
                 [interactionBar updateNumber:self.entity.dislikeCnt forType:SLInteractionTypeDislike];
-            }
-            break;
-        case SLInteractionTypeComment:
-            if (self.showDetailClick) {
-                self.showDetailClick(self.entity);
-            }
-            break;
-        case SLInteractionTypeCustom:
-            if (self.checkDetailClick) {
-                self.checkDetailClick(self.entity);
             }
             break;
         default:
@@ -246,10 +269,10 @@
     if (!_interactionBar) {
         _interactionBar = [[SLInteractionBar alloc] initWithFrame:CGRectZero
                                             interactionTypes:@[
-                                                @(SLInteractionTypeLike),
-                                                @(SLInteractionTypeDislike),
-                                                @(SLInteractionTypeComment),
-                                                @(SLInteractionTypeCustom)
+                                                @(SLInteractionTypeLike),      // 点赞
+                                                @(SLInteractionTypeComment),   // 评论
+                                                @(SLInteractionTypeCustom),    // 访问URL（复用custom类型）
+                                                @(SLInteractionTypeDislike)    // 点踩
                                             ]];
         _interactionBar.delegate = self;
     }

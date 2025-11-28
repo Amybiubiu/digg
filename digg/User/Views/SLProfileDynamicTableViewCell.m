@@ -281,10 +281,10 @@
     if (!_interactionBar) {
         _interactionBar = [[SLInteractionBar alloc] initWithFrame:CGRectZero
                                             interactionTypes:@[
-                                                @(SLInteractionTypeLike),
-                                                @(SLInteractionTypeDislike),
-                                                @(SLInteractionTypeComment),
-                                                @(SLInteractionTypeCustom)
+                                                @(SLInteractionTypeLike),      // 点赞
+                                                @(SLInteractionTypeComment),   // 评论
+                                                @(SLInteractionTypeCustom),    // 访问URL（复用custom类型）
+                                                @(SLInteractionTypeDislike)    // 点踩
                                             ]];
         _interactionBar.delegate = self;
     }

@@ -37,6 +37,8 @@
 @property (nonatomic, copy) void (^clickHandler)(NSInteger index);
 @property (nonatomic, assign) CGFloat itemSpacing;
 @property (nonatomic, assign) CGFloat touchAreaExtension;
+// New property to enforce uniform size
+@property (nonatomic, assign) CGFloat iconSize;
 
 - (void)updateWithItem:(SLNumberIconItem *)item;
 - (CGSize)sizeThatFits:(CGSize)size;
@@ -50,25 +52,26 @@
     if (self) {
         _itemSpacing = 4.0;
         _touchAreaExtension = 10.0;
+        _iconSize = 16.0; // Default fallback
         
-        // 创建数字标签
+        // Create number label
         _numberLabel = [[UILabel alloc] init];
         _numberLabel.textAlignment = NSTextAlignmentLeft;
         _numberLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         [self addSubview:_numberLabel];
         
-        // 创建图标视图
+        // Create icon view
         _iconImageView = [[UIImageView alloc] init];
         _iconImageView.contentMode = UIViewContentModeScaleAspectFit;
         [self addSubview:_iconImageView];
         
-        // 创建自定义文本标签
+        // Create custom text label
         _customTextLabel = [[UILabel alloc] init];
         _customTextLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _customTextLabel.hidden = YES;
         [self addSubview:_customTextLabel];
         
-        // 创建透明按钮用于扩大点击区域
+        // Create touch button
         _touchButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _touchButton.backgroundColor = [UIColor clearColor];
         [_touchButton addTarget:self action:@selector(buttonTapped:) forControlEvents:UIControlEventTouchUpInside];
@@ -83,41 +86,35 @@
     CGFloat totalWidth = self.bounds.size.width;
     CGFloat height = self.bounds.size.height;
     
-    // 计算数字标签宽度
+    // Calculate number label width
     CGFloat numberWidth = NUMBER_LABLE_WIDTH;
-//    if (_item.number > 0) {
-//        numberWidth = [_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-//    }
     
-    // 处理图标 - 现在放在左侧
-    CGFloat iconWidth = 0;
+    // Handle Icon - Layout on the left
+    CGFloat currentIconWidth = 0;
     if (!_iconImageView.hidden) {
-        iconWidth = _iconImageView.image.size.width;
-        if (iconWidth == 0) {
-            iconWidth = height * 0.6; // 默认使用高度的60%作为宽度
+        // --- MODIFIED: Enforce fixed size instead of image size ---
+        currentIconWidth = self.iconSize;
+        if (currentIconWidth == 0) {
+             // Fallback just in case iconSize isn't set
+            currentIconWidth = height * 0.6;
         }
-        
-        _iconImageView.frame = CGRectMake(0, (height - iconWidth) / 2, iconWidth, iconWidth);
+
+        _iconImageView.frame = CGRectMake(0, (height - currentIconWidth) / 2, currentIconWidth, currentIconWidth);
     }
     
-    // 布局数字标签 - 现在放在右侧
-//    if (_item.number > 0) {
-        CGFloat numberX = iconWidth > 0 ? (iconWidth + _itemSpacing) : 0;
-        _numberLabel.frame = CGRectMake(numberX, 0, numberWidth, height);
-        // 将文本对齐方式改为左对齐，因为现在在右侧
-        _numberLabel.textAlignment = NSTextAlignmentLeft;
-//    } else {
-//        _numberLabel.frame = CGRectZero;
-//    }
+    // Layout Number Label - Layout on the right
+    CGFloat numberX = currentIconWidth > 0 ? (currentIconWidth + _itemSpacing) : 0;
+    _numberLabel.frame = CGRectMake(numberX, 0, numberWidth, height);
+    _numberLabel.textAlignment = NSTextAlignmentLeft;
     
-    // 处理自定义文本
+    // Handle Custom Text
     if (_customTextLabel && !_customTextLabel.hidden) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-        CGFloat textX = iconWidth > 0 ? (iconWidth + _itemSpacing) : 0;
+        CGFloat textX = currentIconWidth > 0 ? (currentIconWidth + _itemSpacing) : 0;
         _customTextLabel.frame = CGRectMake(textX, 0, textWidth, height);
     }
     
-    // 布局点击按钮 - 扩大点击区域
+    // Layout Touch Button
     _touchButton.frame = CGRectMake(-_touchAreaExtension, 
                                    -_touchAreaExtension, 
                                    totalWidth + _touchAreaExtension * 2, 
@@ -127,7 +124,7 @@
 - (void)updateWithItem:(SLNumberIconItem *)item {
     _item = item;
     
-    // 更新数字
+    // Update Number
     if (item.number > 0) {
         _numberLabel.text = [NSString stringWithFormat:@"%ld", (long)item.number];
         _numberLabel.textColor = item.numberColor;
@@ -136,7 +133,7 @@
         _numberLabel.hidden = YES;
     }
     
-    // 处理自定义文本
+    // Handle Custom Text
     NSString *customText = [item valueForKey:@"customText"];
     if (customText.length > 0) {
         _iconImageView.hidden = YES;
@@ -146,7 +143,7 @@
     } else {
         _customTextLabel.hidden = YES;
         
-        // 更新图标 - 即使数字为0，也显示图标
+        // Update Icon
         UIImage *image = item.isSelected && item.selectedImage ? item.selectedImage : item.normalImage;
         if (image) {
             _iconImageView.image = image;
@@ -164,29 +161,29 @@
     CGFloat width = 0;
     CGFloat height = size.height;
     
-    // 计算图标宽度 - 现在在左侧
-    CGFloat iconWidth = 0;
+    // Calculate Icon Width
+    CGFloat currentIconWidth = 0;
     NSString *customText = [_item valueForKey:@"customText"];
+    
     if (customText.length == 0 && !_iconImageView.hidden) {
-        iconWidth = _iconImageView.image.size.width;
-        if (iconWidth == 0) {
-            iconWidth = height * 0.6; // 默认使用高度的60%作为宽度
+        // --- MODIFIED: Use fixed size for calculation ---
+        currentIconWidth = self.iconSize;
+        if (currentIconWidth == 0) {
+            currentIconWidth = height * 0.6;
         }
-        width += iconWidth;
+        width += currentIconWidth;
         
-        // 如果有图标且有数字或自定义文本，添加间距
-//        if (_item.number > 0 || customText.length > 0) {
-            width += _itemSpacing;
-//        }
+        // Add spacing if we have an icon
+        width += _itemSpacing;
     }
     
-    // 计算数字宽度 - 现在在右侧
-//    if (_item.number > 0) {
-        CGFloat numberWidth = NUMBER_LABLE_WIDTH; //[_numberLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
+    // Calculate Number Width
+    // if (_item.number > 0) {
+        CGFloat numberWidth = NUMBER_LABLE_WIDTH;
         width += numberWidth;
-//    }
+    // }
     
-    // 处理自定义文本
+    // Handle Custom Text Width
     if (customText.length > 0) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
         width += textWidth;
@@ -214,10 +211,10 @@
 - (instancetype)initWithFrame:(CGRect)frame items:(NSArray<SLNumberIconItem *> *)items {
     self = [super initWithFrame:frame];
     if (self) {
-        _spacing = 2;//15.0;
+        _spacing = 2;
         _itemSpacing = 4.0;
         _fontSize = 12.0;
-        _iconSize = 16.0;
+        _iconSize = 16.0; // Ensure this is the desired uniform size
         _touchAreaExtension = 10.0;
         _itemViews = [NSMutableArray array];
         
@@ -231,25 +228,28 @@
 - (void)setItems:(NSArray<SLNumberIconItem *> *)items {
     _items = [items copy];
     
-    // 清除现有视图
+    // Clear existing views
     for (UIView *view in self.itemViews) {
         [view removeFromSuperview];
     }
     [self.itemViews removeAllObjects];
 
-    // 清除分隔点
     for (UIView *subview in [self.subviews copy]) {
         if (subview.tag >= 1000) {
             [subview removeFromSuperview];
         }
     }
     
-    // 创建新的项视图
+    // Create new item views
     for (NSInteger i = 0; i < items.count; i++) {
         SLNumberIconItem *item = items[i];
         SLNumberIconItemView *itemView = [[SLNumberIconItemView alloc] init];
         itemView.itemSpacing = self.itemSpacing;
         itemView.touchAreaExtension = self.touchAreaExtension;
+        
+        // --- MODIFIED: Pass the container's iconSize to the item ---
+        itemView.iconSize = self.iconSize; 
+        
         itemView.index = i;
         
         __weak typeof(self) weakSelf = self;
@@ -268,81 +268,70 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    // 先清除所有现有的分隔点
+    // Clear separators
     for (UIView *subview in [self.subviews copy]) {
         if (subview.tag >= 1000) {
             [subview removeFromSuperview];
         }
     }
-    
-    CGFloat x = 0;
+
     CGFloat height = self.bounds.size.height;
-    
+    CGFloat totalWidth = self.bounds.size.width;
+
+    // Collect visible items
+    NSMutableArray *visibleItemViews = [NSMutableArray array];
+    NSMutableArray *visibleItemSizes = [NSMutableArray array];
+
     for (NSInteger i = 0; i < self.itemViews.count; i++) {
         SLNumberIconItemView *itemView = self.itemViews[i];
         SLNumberIconItem *item = self.items[i];
-        
-        // 修改显示逻辑：只有当没有图标、没有自定义文本且未选中时才隐藏整个项
+
         NSString *customText = [item valueForKey:@"customText"];
         BOOL hasIcon = item.normalImage != nil;
         BOOL hasCustomText = customText.length > 0;
-        
+
         if (!hasIcon && !hasCustomText && !item.isSelected) {
             itemView.hidden = YES;
             continue;
         }
-        
+
         itemView.hidden = item.hidden;
-        
-        // 计算项视图大小
-        CGSize itemSize = [itemView sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)];
-        
-        // 设置项视图位置
-        itemView.frame = CGRectMake(x, 0, itemSize.width, height);
-        
-        // 更新下一个项的起始位置
-        x += itemSize.width;
-        
-        // 如果不是最后一个可见项，添加分隔点
-        if (i < self.itemViews.count - 1) {
-            // 检查下一个项是否可见
-            BOOL nextItemVisible = NO;
-            for (NSInteger j = i + 1; j < self.itemViews.count; j++) {
-                SLNumberIconItem *nextItem = self.items[j];
-                NSString *nextCustomText = [nextItem valueForKey:@"customText"];
-                BOOL nextHasIcon = nextItem.normalImage != nil;
-                BOOL nextHasCustomText = nextCustomText.length > 0;
-                
-                if (nextHasIcon || nextHasCustomText || nextItem.isSelected) {
-                    nextItemVisible = YES;
-                    break;
-                }
-            }
-            
-//            if (nextItemVisible) {
-//                // 添加分隔点
-//                UIView *separatorDot = [[UIView alloc] initWithFrame:CGRectMake(x + _spacing - DOT_WIDTH/2, height/2 - DOT_WIDTH/2, DOT_WIDTH, DOT_WIDTH)];
-//                separatorDot.backgroundColor = [UIColor clearColor]; //[SLColorManager categorySelectedTextColor];
-//                separatorDot.layer.cornerRadius = 1;
-//                separatorDot.tag = 1000 + i; // 使用tag标识分隔点
-//                [self addSubview:separatorDot];
-//                
-//                // 更新位置，考虑分隔点和间距
-//                x += _spacing * 2;
-//            }
+        if (!itemView.hidden) {
+            [visibleItemViews addObject:itemView];
+            // sizeThatFits will now calculate width based on the fixed iconSize
+            CGSize itemSize = [itemView sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)];
+            [visibleItemSizes addObject:[NSValue valueWithCGSize:itemSize]];
         }
     }
-    
-    // 移除多余的分隔点
-//    for (UIView *subview in self.subviews) {
-//        if (subview.tag >= 1000 && subview.tag < 1000 + self.itemViews.count) {
-//            NSInteger dotIndex = subview.tag - 1000;
-//            if (dotIndex >= self.itemViews.count - 1 || self.itemViews[dotIndex].hidden || self.itemViews[dotIndex+1].hidden) {
-//                [subview removeFromSuperview];
-//            }
-//        }
-//    }
+
+    if (visibleItemViews.count == 0) {
+        return;
+    }
+
+    CGFloat totalItemsWidth = 0;
+    for (NSValue *sizeValue in visibleItemSizes) {
+        totalItemsWidth += sizeValue.CGSizeValue.width;
+    }
+
+    // Space-between calculation (handles the 100% width requirement automatically)
+    CGFloat availableSpacing = totalWidth - totalItemsWidth;
+    CGFloat spacingBetweenItems = 0;
+
+    if (visibleItemViews.count > 1) {
+        spacingBetweenItems = availableSpacing / (visibleItemViews.count - 1);
+    }
+
+    CGFloat currentX = 0;
+    for (NSInteger i = 0; i < visibleItemViews.count; i++) {
+        SLNumberIconItemView *itemView = visibleItemViews[i];
+        CGSize itemSize = [visibleItemSizes[i] CGSizeValue];
+
+        itemView.frame = CGRectMake(currentX, 0, itemSize.width, height);
+        currentX += itemSize.width + spacingBetweenItems;
+    }
 }
+
+// ... rest of the existing methods (updateNumber, setSelected, etc.) remain unchanged ...
 
 - (void)updateNumber:(NSInteger)number atIndex:(NSInteger)index {
     if (index < 0 || index >= self.items.count) {
@@ -381,7 +370,6 @@
 }
 
 - (void)handleItemClickAtIndex:(NSInteger)index {
-    // 如果有选中图标，则切换选中状态
     SLNumberIconItem *item = self.items[index];
     if (item.selectedImage) {
         item.isSelected = !item.isSelected;
@@ -389,7 +377,6 @@
         [itemView updateWithItem:item];
     }
     
-    // 调用代理方法
     if ([self.delegate respondsToSelector:@selector(numberIconView:didClickAtIndex:)]) {
         [self.delegate numberIconView:self didClickAtIndex:index];
     }
@@ -400,7 +387,6 @@
         SLNumberIconItem *item = self.items[index];
         item.hidden = hidden;
         
-        // 直接设置对应视图的隐藏状态，而不是重新布局整个视图
         if (index < self.itemViews.count) {
             SLNumberIconItemView *itemView = self.itemViews[index];
             itemView.hidden = hidden;
