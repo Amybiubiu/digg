@@ -67,7 +67,9 @@
                                                       normalImage:[UIImage imageNamed:@"agree"]
                                                     selectedImage:[UIImage imageNamed:@"agree_selected"]];
     likeItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    likeItem.iconColor = [SLColorManager caocaoButtonTextColor];
+    // likeItem.iconColor = [SLColorManager caocaoButtonTextColor];
+    likeItem.interactionType = SLInteractionTypeLike;
+    likeItem.fixedWidth = 33.0; 
     [self.itemsDict setObject:likeItem forKey:@(SLInteractionTypeLike)];
 
     // 2. 评论
@@ -75,24 +77,17 @@
                                                          normalImage:[UIImage imageNamed:@"message"]
                                                        selectedImage:nil];
     commentItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    commentItem.iconColor = [SLColorManager caocaoButtonTextColor];
+    commentItem.interactionType = SLInteractionTypeComment;
+    commentItem.fixedWidth = 33.0;
     [self.itemsDict setObject:commentItem forKey:@(SLInteractionTypeComment)];
 
     // 3. 访问URL（新增功能）- 使用系统链接图标或check图标
-    UIImage *linkIcon = [UIImage systemImageNamed:@"link"];
-    if (!linkIcon) {
-        linkIcon = [UIImage imageNamed:@"check"];
-    }
-    // 确保链接图标存在，如果不存在则创建一个占位符
-    if (!linkIcon) {
-        linkIcon = [UIImage systemImageNamed:@"safari"]; // 备选系统图标
-    }
-
+    UIImage *linkIcon = [UIImage imageNamed:@"link"];
     SLNumberIconItem *linkItem = [SLNumberIconItem itemWithNumber:0
                                                        normalImage:linkIcon
                                                      selectedImage:nil];
     linkItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    linkItem.iconColor = [SLColorManager caocaoButtonTextColor];
+    linkItem.interactionType = SLInteractionTypeCustom;
     [self.itemsDict setObject:linkItem forKey:@(SLInteractionTypeCustom)];
 
     // 4. 点踩
@@ -100,7 +95,7 @@
                                                          normalImage:[UIImage imageNamed:@"disagree"]
                                                        selectedImage:[UIImage imageNamed:@"disagree_selected"]];
     dislikeItem.numberColor = [SLColorManager caocaoButtonTextColor];
-    dislikeItem.iconColor = [SLColorManager caocaoButtonTextColor];
+    dislikeItem.interactionType = SLInteractionTypeDislike;
     [self.itemsDict setObject:dislikeItem forKey:@(SLInteractionTypeDislike)];
 }
 
@@ -124,6 +119,12 @@
 }
 
 - (void)updateNumber:(NSInteger)number forType:(SLInteractionType)type {
+    // 增加特殊逻辑：对于点踩 (SLInteractionTypeDislike)，一直不显示数字
+    // 将 number 强制置为 0，通常 UI 控件在 count 为 0 时会自动隐藏数字标签
+    if (type == SLInteractionTypeDislike) {
+        number = 0;
+    }
+    
     NSInteger index = [self indexForType:type];
     if (index != NSNotFound) {
         [self.numberIconView updateNumber:number atIndex:index];

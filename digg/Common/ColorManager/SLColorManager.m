@@ -142,7 +142,7 @@
 }
 
 + (UIColor *)cellDivideLineColor {
-    UIColor *lightColor = Color16(0xEEEEEE);
+    UIColor *lightColor = Color16A(0x000000, 0.15);
     UIColor *darkColor = Color16A(0xFFFFFF, 0.1);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }
@@ -160,7 +160,7 @@
 }
 
 + (UIColor *)caocaoButtonTextColor {
-    UIColor *lightColor = Color16(0x999999);
+    UIColor *lightColor = Color16A(0x333333, 0.8);
     UIColor *darkColor = Color16A(0xFFFFFF, 0.5);
     return [self colorForLightMode:lightColor darkMode:darkColor];
 }

@@ -34,8 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) UIColor *numberColor;              // 数字颜色
 @property (nonatomic, strong) UIColor *iconColor;                // 图标颜色
 @property (nonatomic, assign) BOOL isSelected;                   // 是否选中状态
-@property (nonatomic, copy, nullable) NSString *customText;      // 自定义文本，用于"查看"等没有图标的项                 // 是否选中状态
+@property (nonatomic, copy, nullable) NSString *customText;      // 自定义文本，用于"查看"等没有图标的项
 @property (nonatomic, assign) BOOL hidden;
+@property (nonatomic, assign) NSInteger interactionType;           // 交互类型，用于特殊处理
+
+// --- 新增属性 ---
+@property (nonatomic, assign) CGFloat fixedWidth;                  // 固定宽度（例如设置 33.0），若 > 0 则忽略内容自适应
 
 /**
  * 创建数字图标项
