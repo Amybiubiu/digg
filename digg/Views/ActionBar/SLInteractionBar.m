@@ -69,7 +69,7 @@
     likeItem.numberColor = [SLColorManager caocaoButtonTextColor];
     // likeItem.iconColor = [SLColorManager caocaoButtonTextColor];
     likeItem.interactionType = SLInteractionTypeLike;
-    likeItem.fixedWidth = 33.0; 
+    likeItem.fixedWidth = 50.0; 
     [self.itemsDict setObject:likeItem forKey:@(SLInteractionTypeLike)];
 
     // 2. 评论
@@ -78,7 +78,9 @@
                                                        selectedImage:nil];
     commentItem.numberColor = [SLColorManager caocaoButtonTextColor];
     commentItem.interactionType = SLInteractionTypeComment;
-    commentItem.fixedWidth = 33.0;
+    commentItem.fixedWidth = 50.0;
+    // 当评论数为0时显示"评论"而不是数字
+    [commentItem setValue:@"评论" forKey:@"customText"];
     [self.itemsDict setObject:commentItem forKey:@(SLInteractionTypeComment)];
 
     // 3. 访问URL（新增功能）- 使用系统链接图标或check图标
@@ -124,11 +126,26 @@
     if (type == SLInteractionTypeDislike) {
         number = 0;
     }
-    
+
     NSInteger index = [self indexForType:type];
     if (index != NSNotFound) {
+        // 特殊处理：评论图标
+        if (type == SLInteractionTypeComment) {
+            SLNumberIconItem *item = [self itemForType:type];
+            if (item) {
+                if (number > 0) {
+                    // 有评论数时，清除customText，显示数字
+                    [item setValue:nil forKey:@"customText"];
+                } else {
+                    // 评论数为0时，显示"评论"文本
+                    [item setValue:@"评论" forKey:@"customText"];
+                }
+                item.number = number;
+            }
+        }
+
         [self.numberIconView updateNumber:number atIndex:index];
-        
+
         // 同时更新字典中的数据
         SLNumberIconItem *item = [self itemForType:type];
         if (item) {

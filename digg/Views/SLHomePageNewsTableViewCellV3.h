@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SLHomePageNewsTableViewCellV3 : UITableViewCell
 
+@property (nonatomic, assign) NSInteger pageStyle; // 0:今天, 1:发现, 2:为你
 - (void)updateWithEntity:(SLArticleTodayEntity *)entiy;
 
 @property (nonatomic, copy) void(^likeClick)(SLArticleTodayEntity *entity);

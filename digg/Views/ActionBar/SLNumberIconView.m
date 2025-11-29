@@ -7,9 +7,10 @@
 
 #import "SLNumberIconView.h"
 #import "SLColorManager.h"
+#import "SLInteractionBar.h"
 
 #define DOT_WIDTH 1
-#define NUMBER_LABLE_WIDTH 40
+#define NUMBER_LABLE_WIDTH 60
 
 @implementation SLNumberIconItem
 
@@ -96,7 +97,7 @@
     CGFloat contentStartX = currentIconWidth > 0 ? (currentIconWidth + _itemSpacing) : 0;
     
     // Number Label Layout
-    // 修改逻辑：如果设置了 fixedWidth，Label 的宽度应填充剩余空间，而不是固定 40
+    // 修改逻辑：如果设置了 fixedWidth ，Label 的宽度应填充剩余空间，而不是固定 40
     CGFloat currentNumberWidth = NUMBER_LABLE_WIDTH;
     if (self.item.fixedWidth > 0) {
         currentNumberWidth = totalWidth - contentStartX; // 填满剩余空间
@@ -108,7 +109,16 @@
     // Custom Text Layout
     if (_customTextLabel && !_customTextLabel.hidden) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-        _customTextLabel.frame = CGRectMake(contentStartX, 0, textWidth, height);
+
+        // 特殊处理：评论图标需要同时显示图标和文本
+        if (_item.interactionType == SLInteractionTypeComment && !_iconImageView.hidden) {
+            // 图标和文本并排显示，文本在图标右侧
+            CGFloat iconWidth = currentIconWidth > 0 ? currentIconWidth : height * 0.6;
+            _customTextLabel.frame = CGRectMake(iconWidth + _itemSpacing, 0, textWidth, height);
+        } else {
+            // 纯文本显示
+            _customTextLabel.frame = CGRectMake(contentStartX, 0, textWidth, height);
+        }
     }
     
     // Touch Button Layout
@@ -132,10 +142,31 @@
     
     NSString *customText = [item valueForKey:@"customText"];
     if (customText.length > 0) {
-        _iconImageView.hidden = YES;
-        _customTextLabel.text = customText;
-        _customTextLabel.textColor = item.numberColor;
-        _customTextLabel.hidden = NO;
+        // 特殊处理：评论图标需要同时显示图标和文本
+        if (item.interactionType == SLInteractionTypeComment) {
+            // 评论图标：有数字时显示数字，无数字时显示文本
+            if (item.number > 0) {
+                // 有数字时，隐藏customText，显示数字
+                _customTextLabel.hidden = YES;
+            } else {
+                // 无数字时，显示customText
+                _customTextLabel.text = customText;
+                _customTextLabel.textColor = item.numberColor;
+                _customTextLabel.hidden = NO;
+            }
+            _iconImageView.hidden = NO; // 始终显示图标
+            UIImage *image = item.isSelected && item.selectedImage ? item.selectedImage : item.normalImage;
+            if (image) {
+                _iconImageView.image = image;
+                _iconImageView.tintColor = item.iconColor;
+            }
+        } else {
+            // 其他图标：隐藏图标，只显示文本
+            _iconImageView.hidden = YES;
+            _customTextLabel.text = customText;
+            _customTextLabel.textColor = item.numberColor;
+            _customTextLabel.hidden = NO;
+        }
     } else {
         _customTextLabel.hidden = YES;
         UIImage *image = item.isSelected && item.selectedImage ? item.selectedImage : item.normalImage;
@@ -188,7 +219,21 @@
     
     if (customText.length > 0) {
         CGFloat textWidth = [_customTextLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, height)].width;
-        width += textWidth;
+
+        // 特殊处理：评论图标需要同时显示图标和文本
+        if ([_item respondsToSelector:@selector(interactionType)] && _item.interactionType == SLInteractionTypeComment) {
+            // 图标和文本并排显示，需要计算图标宽度
+            CGFloat iconWidth = self.iconSize;
+            if (iconWidth == 0) {
+                iconWidth = height * 0.6;
+            }
+            width += iconWidth; // 图标宽度
+            width += _itemSpacing; // 图标和文本间距
+            width += textWidth; // 文本宽度
+        } else {
+            // 纯文本显示
+            width += textWidth;
+        }
     }
     
     return CGSizeMake(width, height);

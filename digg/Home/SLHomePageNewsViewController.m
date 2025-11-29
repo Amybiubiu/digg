@@ -145,6 +145,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SLHomePageNewsTableViewCellV3 *cell = [tableView dequeueReusableCellWithIdentifier:kSLHomePageNewsTableViewCellID forIndexPath:indexPath];
     if (cell) {
+        cell.pageStyle = self.pageStyle; // 设置页面类型
         SLArticleTodayEntity *entity = [self.viewModel.dataArray objectAtIndex:indexPath.row];
         [cell updateWithEntity:entity];
         @weakobj(self);
