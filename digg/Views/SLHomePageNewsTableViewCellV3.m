@@ -8,7 +8,7 @@
 #import "SLHomePageNewsTableViewCellV3.h"
 #import <Masonry/Masonry.h>
 #import "SLGeneralMacro.h"
-#import "SLHomeTagViewV2.h"
+// #import "SLHomeTagViewV2.h"  // 不再使用 SLHomeTagViewV2
 #import "SLColorManager.h"
 #import "SLInteractionBar.h"
 #import "SDWebImage/SDWebImage.h"
@@ -21,7 +21,9 @@
 @property (nonatomic, strong) UILabel *timeLabel; 
 @property (nonatomic, strong) SLInteractionBar *interactionBar;
 @property (nonatomic, strong) UIView *lineView;
-@property (nonatomic, strong) SLHomeTagViewV2 *tagView;
+@property (nonatomic, strong) UIView *tagContainer;  // 标签容器视图，统一管理点击事件
+@property (nonatomic, strong) UILabel *tagView;
+@property (nonatomic, strong) UIImageView *labelImg;  // 标签图片
 @property (nonatomic, strong) SLArticleTodayEntity *entity;
 @property (nonatomic, strong) UIImageView* smallImageView;
 @property (nonatomic, strong) UIImageView* bigImageView;
@@ -66,10 +68,13 @@
     CGFloat topPadding;
     
     if (showHeaderTag) {
-        self.tagView.hidden = NO;
-        self.timeLabel.hidden = NO;
-        
-        [self.tagView updateWithLabel:entiy.label];
+        self.tagContainer.hidden = NO;  // 显示整个容器
+
+        // 直接设置标签文本，不再使用 SLHomeTagViewV2
+        self.tagView.text = entiy.label;
+
+        // 加载标签图片
+        [self.labelImg sd_setImageWithURL:[NSURL URLWithString:@"https://img2.doubanio.com/icon/ul2167870-11.jpg"]];
         
         // ====== 修复代码开始 ======
         // 将时间戳 (double) 转换为 字符串 (NSString)
@@ -94,18 +99,32 @@
         self.timeLabel.text = [dateFormatter stringFromDate:date];
         // ====== 修复代码结束 ======
         
-        // 更新 Tag 布局：单独一行，顶部对齐 content
-        [self.tagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        // 更新容器布局：顶部对齐 contentView
+        [self.tagContainer mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.contentView).offset(hPadding);
             make.top.equalTo(self.contentView).offset(hPadding);
-            make.height.equalTo(@20);
+            make.right.lessThanOrEqualTo(self.contentView).offset(-hPadding);
+            make.bottom.equalTo(self.labelImg.mas_bottom); // 容器底部对齐图片底部
         }];
-        
+
+        // 更新图片布局：容器内最左侧
+        [self.labelImg mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.tagContainer);
+            make.top.equalTo(self.tagContainer);
+            make.size.mas_equalTo(CGSizeMake(24, 24));
+        }];
+
+        // 更新 Tag 布局：在图片右侧，保持间距
+        [self.tagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.labelImg.mas_right).offset(8);  // 图片和标签间距 8pt
+            make.centerY.equalTo(self.labelImg);
+        }];
+
         // 更新 Time 布局：在 Tag 右侧，垂直居中
         [self.timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.tagView.mas_right).offset(8);
             make.centerY.equalTo(self.tagView);
-            make.right.lessThanOrEqualTo(self.contentView).offset(-hPadding);
+            make.right.lessThanOrEqualTo(self.tagContainer);
         }];
         
         // 下方内容的锚点为 TagView 的底部，间距设为 12
@@ -113,9 +132,8 @@
         topPadding = 12;
         
     } else {
-        self.tagView.hidden = YES;
-        self.timeLabel.hidden = YES;
-        
+        self.tagContainer.hidden = YES;  // 隐藏整个容器
+
         // 下方内容的锚点为 ContentView 的顶部，间距设为 16
         topAnchorAttribute = self.contentView.mas_top;
         topPadding = 16;
@@ -263,22 +281,19 @@
     [self.contentView addSubview:self.contentLabel];
     [self.contentView addSubview:self.interactionBar];
     [self.contentView addSubview:self.lineView];
-    [self.contentView addSubview:self.tagView];
-    // 添加 TimeLabel
-    [self.contentView addSubview:self.timeLabel];
+    [self.contentView addSubview:self.tagContainer];  // 添加容器
+    [self.tagContainer addSubview:self.labelImg];  // 在容器内添加图片
+    [self.tagContainer addSubview:self.tagView];
+    [self.tagContainer addSubview:self.timeLabel];
     
     // 初始化约束，具体位置在 updateWithEntity 中根据数据重设
     CGFloat offset = 16;
-    
-    [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
+
+    [self.tagContainer mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
         make.top.equalTo(self.contentView).offset(offset);
-        make.height.equalTo(@20);
     }];
     
-    [self.tagView setContentCompressionResistancePriority:UILayoutPriorityRequired
-                                            forAxis:UILayoutConstraintAxisHorizontal];
-
     [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.contentView).offset(offset);
         make.right.equalTo(self.contentView).offset(-offset);
@@ -354,7 +369,7 @@
         _timeLabel = [[UILabel alloc] init];
         _timeLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
         _timeLabel.textColor = [UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0]; // 浅灰色
-        _timeLabel.hidden = YES;
+        _timeLabel.userInteractionEnabled = NO; // 容器处理点击事件，label 不需要单独处理
     }
     return _timeLabel;
 }
@@ -402,11 +417,37 @@
     return _lineView;
 }
 
-- (SLHomeTagViewV2 *)tagView {
-    if (!_tagView) {
-        _tagView = [[SLHomeTagViewV2 alloc] init];
+- (UIView *)tagContainer {
+    if (!_tagContainer) {
+        _tagContainer = [[UIView alloc] init];
+        _tagContainer.backgroundColor = [UIColor clearColor];
         UITapGestureRecognizer* tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tagClick)];
-        [_tagView addGestureRecognizer:tap];
+        // 阻止事件继续传递给父视图（cell），避免触发 didSelectRowAtIndexPath
+        tap.cancelsTouchesInView = YES;
+        [_tagContainer addGestureRecognizer:tap];
+        _tagContainer.userInteractionEnabled = YES; // 确保可以接收点击事件
+    }
+    return _tagContainer;
+}
+
+- (UIImageView *)labelImg {
+    if (!_labelImg) {
+        _labelImg = [[UIImageView alloc] init];
+        _labelImg.contentMode = UIViewContentModeScaleAspectFill;
+        _labelImg.layer.masksToBounds = YES;
+        _labelImg.layer.cornerRadius = 12; // 24pt 的一半，实现 50% 圆角
+        // 移除单独的手势识别器，由容器统一管理
+    }
+    return _labelImg;
+}
+
+- (UILabel *)tagView {
+    if (!_tagView) {
+        _tagView = [[UILabel alloc] init];
+        _tagView.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium]; // 14px, font-weight: 500
+        _tagView.textColor = [UIColor colorWithRed:0x33/255.0 green:0x3D/255.0 blue:0x42/255.0 alpha:1.0]; // #333D42
+        _tagView.backgroundColor = [UIColor clearColor]; // 无背景色
+        // 移除单独的手势识别器，由容器统一管理
     }
     return _tagView;
 }

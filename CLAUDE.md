@@ -55,10 +55,48 @@ xcodebuild -workspace digg.xcworkspace -scheme digg -configuration Release archi
 
 ### Navigation Structure
 The app uses a tab-based navigation with 4 main sections managed by `SLTabbarController`:
+
+#### Main Tab Bar Controllers
 1. **首页 (Home)**: `SLHomePageViewController` - Content feed with segmented tabs (今天/发现/为你)
+   - Contains: `SLHomePageNewsViewController` (今天/发现 tabs), `SLHomeWebViewController` (为你 tab)
 2. **关注 (Following)**: `SLConcernedViewController` - User's followed content (requires login)
 3. **记录 (Record)**: `SLRecordViewController` - Content creation (requires login)
 4. **我的 (Profile)**: `SLProfileViewController` - User profile and settings
+   - Contains: `SLEditProfileViewController` (profile editing)
+
+#### All View Controllers by Category
+
+**Home & Content**
+- `SLHomePageViewController` - Main home page with tab segments
+- `SLHomePageNewsViewController` - News list for 今天/发现 tabs
+- `SLHomeWebViewController` - Web-based content for 为你 tab
+- `SLArticleDetailViewControllerV2` - Article detail page
+
+**User & Profile**
+- `SLProfileViewController` - User profile page
+- `SLEditProfileViewController` - Profile editing page
+- `SLConcernedViewController` - Following/followers content
+
+**Content Creation**
+- `SLRecordViewController` - Content creation/record page
+
+**Tag Management**
+- `SLTagListContainerViewController` - Tag list management
+
+**Common & Shared**
+- `SLWebViewController` - Base web view controller
+- `SLCommentInputViewController` - Comment input modal
+- `SLAddLinkViewController` - Add link dialog
+- `CaocaoRootViewController` - Base controller with loading states
+- `SLNavigationController` - Custom navigation controller
+
+**Third Party Integrations**
+- `TZImagePickerController` - Image picker (from TZImagePickerController library)
+- `TZPhotoPickerController` - Photo selection
+- `TZPhotoPreviewController` - Photo preview
+- `TZVideoPlayerController` - Video player
+- `TZVideoCropController` - Video cropping
+- `TZGifPhotoPreviewController` - GIF preview
 
 ### Key Design Patterns
 - **MVVM**: ViewModels handle business logic (see `SLHomePageViewModel`)
