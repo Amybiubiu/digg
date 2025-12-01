@@ -17,6 +17,7 @@
 #import <WebKit/WebKit.h>
 #import "SLProfileViewController.h"
 #import "SLColorManager.h"
+#import "SLWebViewController.h"
 
 // --- 自定义 Tab 按钮 ---
 @interface SLCustomTabButton : UIButton
@@ -245,13 +246,18 @@
     homeNavi.viewControllers = @[homeVC];
     self.homeNavi = homeNavi;
 
-    self.noticeVC = [[SLConcernedViewController alloc] init];
+    // 关注
+    //  self.noticeVC = [[SLConcernedViewController alloc] init];
+    SLWebViewController *noticeVC = [[SLWebViewController alloc] init];
+    [noticeVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/follow",H5BaseUrl]];
+    noticeVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *noticeNavi = [self createRootNavi];
     self.noticeNavi = noticeNavi;
     noticeNavi.tabBarItem = [[UITabBarItem alloc] init];
-    noticeNavi.viewControllers = @[self.noticeVC];
-    self.noticeVC.navigationController.navigationBar.hidden = YES;
+    noticeNavi.viewControllers = @[noticeVC];
+    noticeVC.navigationController.navigationBar.hidden = YES;
 
+    // 记录
     self.recordVC = [[SLRecordViewController alloc] init];
     SLNavigationController *recordNavi = [self createRootNavi];
     self.recordNavi = recordNavi;
@@ -259,8 +265,12 @@
     recordNavi.viewControllers = @[self.recordVC];
     self.recordVC.navigationController.navigationBar.hidden = YES;
     
-    SLProfileViewController *userVC = [[SLProfileViewController alloc] init];
-    userVC.userId = [SLUser defaultUser].userEntity.userId;
+    // 用户
+    SLWebViewController *userVC = [[SLWebViewController alloc] init];
+    [userVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/my",H5BaseUrl]];
+    userVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
+    // SLProfileViewController *userVC = [[SLProfileViewController alloc] init];
+    // userVC.userId = [SLUser defaultUser].userEntity.userId;
     SLNavigationController *userNavi = [self createRootNavi];
     self.mineNavi = userNavi;
     userNavi.tabBarItem = [[UITabBarItem alloc] init];

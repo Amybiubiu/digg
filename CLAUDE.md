@@ -115,6 +115,13 @@ API endpoints are configured in `EnvConfigHeader.h`:
 - API services: `http://39.106.147.0`
 - App services: `http://47.96.25.87:9000`
 
+### H5 Content Loading Pattern
+The app uses a standard pattern for loading H5 content through `SLWebViewController`:
+```objc
+[userVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/my",H5BaseUrl]];
+```
+This pattern constructs URLs by appending the specific path (e.g., `/my`, `/login`) to the `H5BaseUrl` macro defined in `EnvConfigHeader.h`.
+
 ### Important Technical Details
 - **Workspace**: Always use `digg.xcworkspace` (not `.xcodeproj`) after `pod install`
 - **Minimum iOS**: 14.0+ (deployment target)
