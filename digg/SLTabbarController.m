@@ -157,26 +157,31 @@
 // 按钮点击事件
 - (void)customTabBtnClicked:(UIButton *)sender {
     NSInteger index = sender.tag;
-    
+
     // 1. 模拟 UITabBarControllerDelegate 的 shouldSelect 检查
     UIViewController *targetVC = self.viewControllers[index];
     BOOL shouldSelect = YES;
-    
+
     if ([self.delegate respondsToSelector:@selector(tabBarController:shouldSelectViewController:)]) {
         shouldSelect = [self.delegate tabBarController:self shouldSelectViewController:targetVC];
     }
-    
+
     if (!shouldSelect) {
         return;
     }
-    
+
     // 2. 切换控制器
     self.selectedIndex = index;
-    
+
     // 3. 更新 UI 状态
     [self updateCustomTabBarState:index];
-    
-    // 4. 通知代理 didSelect
+
+    // 4. 刷新关注(1)和我的(3)页面的webview
+    if (index == 1 || index == 3) {
+        [self refreshWebViewForTab:index];
+    }
+
+    // 5. 通知代理 didSelect
     if ([self.delegate respondsToSelector:@selector(tabBarController:didSelectViewController:)]) {
         [self.delegate tabBarController:self didSelectViewController:targetVC];
     }
@@ -307,6 +312,19 @@
     dvc.hidesBottomBarWhenPushed = YES;
     dvc.isLoginPage = YES;
     [currentNav presentViewController:dvc animated:YES completion:nil];
+}
+
+// 刷新指定tab的webview - 向H5发送refreshPageData消息
+- (void)refreshWebViewForTab:(NSInteger)tabIndex {
+    UINavigationController *navi = self.viewControllers[tabIndex];
+    if (navi && navi.viewControllers.count > 0) {
+        UIViewController *topVC = navi.viewControllers[0];
+        if ([topVC isKindOfClass:[SLWebViewController class]]) {
+            SLWebViewController *webVC = (SLWebViewController *)topVC;
+            // 向H5发送refreshPageData消息
+            [webVC sendRefreshPageDataMessage];
+        }
+    }
 }
 
 @end

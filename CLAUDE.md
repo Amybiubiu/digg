@@ -137,5 +137,95 @@ This pattern constructs URLs by appending the specific path (e.g., `/my`, `/logi
 - **Animation**: Facebook's pop library
 - **Keyboard**: IQKeyboardManager
 
+## Native iOS to H5 Communication Protocol
+
+This application implements bidirectional communication between native iOS and H5 content using **WebViewJavascriptBridge** library.
+
+### Communication Architecture
+
+**Primary Bridge Implementation**: `SLWebViewController.m` lines 272-494
+- Uses WebViewJavascriptBridge for JavaScript ↔ Native communication
+- Implements `WKScriptMessageHandler` protocol
+- Supports both synchronous and asynchronous communication patterns
+
+### Native → H5 Communication
+
+**Method Calls from Native to JavaScript:**
+```objc
+[bridge callHandler:@"handlerName" data:params responseCallback:^(id responseData) {
+    // Handle response from JavaScript
+}];
+```
+
+**Key Native-to-H5 Handlers:**
+- `onCommentInputClose`: Comment submission callback
+- Document title extraction via `evaluateJavaScript`
+
+### H5 → Native Communication
+
+**Registered Message Handlers:**
+```objc
+[bridge registerHandler:@"openRecord" handler:^
+(id data) {
+    // Handle response from JavaScript
+}]
+```
+1. **Navigation Handlers:**
+   - `backToHomePage`: Navigate to home screen
+   - `page_back`: Go back one page
+   - `closeH5`: Close current H5 page
+   - `jumpToH5`: Navigate to new H5 URL (supports internal/external URLs)
+
+2. **User Authentication:**
+   - `userLogin`: Handle user login with token/userId
+   - `userLogout`: Handle user logout
+
+3. **Content Navigation:**
+   - `openUserPage`: Open user profile page
+   - `openRecord`: Open content creation page
+   - `openTagDetail`: Open tag detail page
+   - `openArticlePage`: Open article detail page
+
+4. **UI Interactions:**
+   - `openCommentInput`: Show comment input modal with placeholder/lastInput
+
+### Authentication Integration
+
+**Token-Based Authentication via Cookies:**
+```objc
+// Cookie injection pattern in SLWebViewController.m
+NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
+cookieProps[NSHTTPCookieName] = @"bp-token";
+cookieProps[NSHTTPCookieValue] = token;
+cookieProps[NSHTTPCookieDomain] = [NSURL URLWithString:url].host;
+cookieProps[NSHTTPCookiePath] = @"/";
+```
+
+**Login Flow:**
+1. H5 calls `userLogin` handler with userId and token
+2. Native saves user info to `SLUser.defaultUser`
+3. Posts `WebViewShouldReloadAfterLogin` notification
+4. Other webviews refresh automatically
+
+### WebView Configuration
+
+**Shared Configuration:**
+- Shared `WKProcessPool` for cookie persistence
+- Default `WKWebsiteDataStore` for shared storage
+- Custom User Agent: `infoflow` suffix
+- JavaScript capabilities enabled
+- Allows inline media playback
+
+### Implementation Pattern
+
+**Standard H5 Loading Pattern:**
+```objc
+[userVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/path", H5BaseUrl]];
+```
+
+**URL Construction:**
+- H5BaseUrl: `http://39.106.147.0` (from EnvConfigHeader.h)
+- Append specific paths: `/my`, `/login`, etc.
+
 ### Authentication Flow
 Login is required for Following and Record tabs. Authentication state is managed through `SLUser` singleton with automatic restoration from local storage. Login flows use web-based authentication through `SLWebViewController`.

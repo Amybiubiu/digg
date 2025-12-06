@@ -65,6 +65,12 @@
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self setupUI];
     [self.hideView setHidden:NO];
+
+    // 添加登录成功通知监听
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleLoginSuccess:)
+                                                 name:NEUserDidLoginNotification
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -901,6 +907,16 @@
         _hideView.backgroundColor = [SLColorManager primaryBackgroundColor];
     }
     return _hideView;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NEUserDidLoginNotification object:nil];
+}
+
+- (void)handleLoginSuccess:(NSNotification *)notification {
+    // 登录成功后更新userId并刷新UI
+    self.userId = [SLUser defaultUser].userEntity.userId;
+    [self updateUI];
 }
 
 @end
