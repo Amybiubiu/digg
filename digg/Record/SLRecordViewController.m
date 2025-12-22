@@ -618,7 +618,7 @@
 
 - (void)gotoLoginPage {
     SLWebViewController *dvc = [[SLWebViewController alloc] init];
-    [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login", H5BaseUrl]];
+    [dvc startLoadRequestWithUrl:LOGIN_PAGE_URL];
     dvc.hidesBottomBarWhenPushed = YES;
     dvc.isLoginPage = YES;
     [self presentViewController:dvc animated:YES completion:nil];

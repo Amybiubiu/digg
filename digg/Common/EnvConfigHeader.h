@@ -8,9 +8,23 @@
 #ifndef EnvConfigHeader_h
 #define EnvConfigHeader_h
 
-#define H5BaseUrl @"http://39.106.147.0"
-#define ApiBaseUrl @"http://39.106.147.0"
-#define APPBaseUrl @"http://47.96.25.87:9000"
+#import <UIKit/UIKit.h>
 
+#define H5BaseUrl @"http://39.106.147.0"
+#define APPBaseUrl @"http://115.159.103.82:8001"
+
+//首页H5 URL链接
+static NSString * const HOME_TODAY_PAGE_URL = H5BaseUrl @"/home/today";
+static NSString * const HOME_RECENT_PAGE_URL = H5BaseUrl @"/home/recent";
+static NSString * const HOME_FORYOU_PAGE_URL = H5BaseUrl @"/home/forYou";
+
+//关注
+static NSString * const FOLLOW_PAGE_URL = H5BaseUrl @"/follow";
+
+//我的
+static NSString * const MY_PAGE_URL = H5BaseUrl @"/my";
+
+//登陆
+static NSString * const LOGIN_PAGE_URL = H5BaseUrl @"/login";
 
 #endif /* EnvConfigHeader_h */

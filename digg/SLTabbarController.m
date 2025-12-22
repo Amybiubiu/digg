@@ -173,8 +173,8 @@
     // 3. 更新 UI 状态
     [self updateCustomTabBarState:index];
 
-    // 4. 刷新关注(1)和我的(3)页面的webview
-    if (index == 1 || index == 3) {
+    // 4. 刷新首页(0)、关注(1)和我的(3)页面的webview
+    if (index == 0 || index == 1 || index == 3) {
         [self refreshWebViewForTab:index];
     }
 
@@ -251,7 +251,7 @@
     // 关注
     //  self.noticeVC = [[SLConcernedViewController alloc] init];
     SLWebViewController *noticeVC = [[SLWebViewController alloc] init];
-    [noticeVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/follow",H5BaseUrl]];
+    [noticeVC startLoadRequestWithUrl:FOLLOW_PAGE_URL];
     noticeVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *noticeNavi = [self createRootNavi];
     self.noticeNavi = noticeNavi;
@@ -269,7 +269,7 @@
     
     // 用户
     SLWebViewController *userVC = [[SLWebViewController alloc] init];
-    [userVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/my",H5BaseUrl]];
+    [userVC startLoadRequestWithUrl:MY_PAGE_URL];
     userVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *userNavi = [self createRootNavi];
     self.mineNavi = userNavi;
@@ -302,7 +302,7 @@
 
 - (void)jumpToLogin {
     SLWebViewController *dvc = [[SLWebViewController alloc] init];
-    [dvc startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/login",H5BaseUrl]];
+    [dvc startLoadRequestWithUrl:LOGIN_PAGE_URL];
     UINavigationController *currentNav = self.selectedViewController;
     dvc.hidesBottomBarWhenPushed = YES;
     dvc.isLoginPage = YES;
@@ -314,7 +314,10 @@
     UINavigationController *navi = self.viewControllers[tabIndex];
     if (navi && navi.viewControllers.count > 0) {
         UIViewController *topVC = navi.viewControllers[0];
-        if ([topVC isKindOfClass:[SLWebViewController class]]) {
+        if (tabIndex == 0 && [topVC isKindOfClass:[SLHomePageViewController class]]) {
+            SLHomePageViewController *homeVC = (SLHomePageViewController *)topVC;
+            [homeVC refreshCurrentPage];
+        } else if ([topVC isKindOfClass:[SLWebViewController class]]) {
             SLWebViewController *webVC = (SLWebViewController *)topVC;
             // 向H5发送refreshPageData消息
             [webVC sendRefreshPageDataMessage];
