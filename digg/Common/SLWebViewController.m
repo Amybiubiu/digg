@@ -17,15 +17,11 @@
 #import <WebViewJavascriptBridge/WebViewJavascriptBridge.h>
 #import "SLGeneralMacro.h"
 #import "SLUser.h"
-#import "SLProfileViewController.h"
 #import "SLRecordViewController.h"
 #import "SLColorManager.h"
 #import "SLAlertManager.h"
-#import "SLTrackingManager.h"
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
-#import "SLTagListContainerViewController.h"
-#import "SLArticleDetailViewControllerV2.h"
 
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
@@ -91,7 +87,6 @@
         self.navigationController.navigationBar.barTintColor = UIColor.whiteColor;
         self.navigationController.navigationBar.hidden = NO;
     }
-    [[SLTrackingManager sharedInstance] trackPageViewBegin:self uniqueIdentifier:self.requestUrl];
 
     // 监听登录后刷新通知
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -116,7 +111,6 @@
         self.navigationController.navigationBar.barTintColor = nil;
         self.navigationController.navigationBar.hidden = YES;
     }
-    [[SLTrackingManager sharedInstance] trackPageViewEnd:self uniqueIdentifier:self.requestUrl parameters:nil];
 
     // 移除通知监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebViewShouldReloadAfterLogin" object:nil];
@@ -307,7 +301,6 @@
         NSLog(@"userLogin called with: %@", data);
 
         NSString *userId = [NSString stringWithFormat:@"%@",[data objectForKey:@"userId"]];
-        [[SLTrackingManager sharedInstance] setUserId:userId];
         NSString *token = [NSString stringWithFormat:@"%@",[data objectForKey:@"token"]];
         SLUserEntity *entity = [[SLUserEntity alloc] init];
         entity.token = token;
@@ -360,7 +353,6 @@
                                               confirmTitle:@"是"
                                                cancelTitle:@"否"
                                             confirmHandler:^{
-                                                [[SLTrackingManager sharedInstance] trackEvent:@"OPEN_DETAIL_FROM_WEB" parameters:@{@"url": url}];
                                                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url] options:@{} completionHandler:nil];
                                             }
                                              cancelHandler:^{
@@ -394,10 +386,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
                 NSString *uid = [[dic objectForKey:@"uid"] stringValue];
-                SLProfileViewController *dvc = [[SLProfileViewController alloc] init];
-                dvc.userId = uid;
-                dvc.fromWeb = YES;
-                [self.navigationController pushViewController:dvc animated:YES];
+                //TODO:
             });
         }
         responseCallback(data);
@@ -492,11 +481,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
                 NSString *tag = [[dic objectForKey:@"tag"] stringValue];
-                SLTagListContainerViewController* vc = [SLTagListContainerViewController new];
-                vc.label = tag;
-                vc.source = @"article";
-                vc.hidesBottomBarWhenPushed = YES;
-                [self.navigationController pushViewController:vc animated:YES];
+                //TODO:标签详情
             });
         }
         responseCallback(data);
@@ -508,10 +493,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSDictionary *dic = (NSDictionary *)data;
                 NSString *articleId = [[dic objectForKey:@"id"] stringValue];
-                SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
-                vc.articleId = articleId;
-                vc.hidesBottomBarWhenPushed = YES;
-                [self.navigationController pushViewController:vc animated:YES];
+                //TODO：文章详情
             });
         }
         responseCallback(data);

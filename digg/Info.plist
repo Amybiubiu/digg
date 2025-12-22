@@ -7,7 +7,7 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-    <key>UIDesignRequiresCompatibility</key>
-    <true/>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 </dict>
 </plist>

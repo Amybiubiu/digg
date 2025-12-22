@@ -9,13 +9,11 @@
 #import "SLNavigationController.h"
 #import "SLHomePageViewController.h"
 #import "SLRecordViewController.h"
-#import "SLConcernedViewController.h"
 #import "SLHomeWebViewController.h"
 #import "EnvConfigHeader.h"
 #import "SLUser.h"
 #import "SLGeneralMacro.h"
 #import <WebKit/WebKit.h>
-#import "SLProfileViewController.h"
 #import "SLColorManager.h"
 #import "SLWebViewController.h"
 
@@ -32,7 +30,6 @@
 
 @property (nonatomic, strong) SLNavigationController *homeNavi;
 @property (nonatomic, strong) SLNavigationController *noticeNavi;
-@property (nonatomic, strong) SLConcernedViewController *noticeVC;
 @property (nonatomic, strong) SLNavigationController *recordNavi;
 @property (nonatomic, strong) SLRecordViewController *recordVC;
 @property (nonatomic, strong) SLNavigationController *mineNavi;
@@ -274,8 +271,6 @@
     SLWebViewController *userVC = [[SLWebViewController alloc] init];
     [userVC startLoadRequestWithUrl:[NSString stringWithFormat:@"%@/my",H5BaseUrl]];
     userVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
-    // SLProfileViewController *userVC = [[SLProfileViewController alloc] init];
-    // userVC.userId = [SLUser defaultUser].userEntity.userId;
     SLNavigationController *userNavi = [self createRootNavi];
     self.mineNavi = userNavi;
     userNavi.tabBarItem = [[UITabBarItem alloc] init];

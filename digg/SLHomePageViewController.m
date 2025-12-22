@@ -9,7 +9,6 @@
 #import "SLGeneralMacro.h"
 #import <JXCategoryView/JXCategoryView.h>
 #import <JXCategoryView/JXCategoryListContainerView.h>
-#import "SLHomepageNewsViewController.h"
 #import "UIView+CommonKit.h"
 #import "SLHomeWebViewController.h"
 #import "SLHomePageViewModel.h"
@@ -104,8 +103,6 @@
 
 // 返回各个列表菜单下的实例，该实例需要遵守并实现 <JXCategoryListContentViewDelegate> 协议
 - (id<JXCategoryListContentViewDelegate>)listContainerView:(JXCategoryListContainerView *)listContainerView initListForIndex:(NSInteger)index {
-//    SLHomePageNewsViewController *list = [[SLHomePageNewsViewController alloc] init];
-//    list.pageStyle = index;
     
     NSString *targetTitle = self.titles[index];
     id<JXCategoryListContentViewDelegate> list = _listCache[targetTitle];
@@ -115,22 +112,9 @@
     } else {
         UIViewController *dvc;
         if (index == 0) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
+           
         }else if (index == 1) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
-//            SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
-////            发现
-//            NSString *url = [NSString stringWithFormat:@"%@/home/recent",H5BaseUrl];
-//            [vc startLoadRequestWithUrl:url];
-//            dvc = vc;
+            
         }else if (index == 2) {
             SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
 //            发现

@@ -16,7 +16,6 @@
 #import "SLColorManager.h"
 #import "UIView+Associated.h"
 #import "digg-Swift.h"
-#import "SLArticleDetailViewControllerV2.h"
 #import "UIView+SLToast.h"
 
 #define FIELD_DEFAULT_HEIGHT 60
@@ -341,10 +340,7 @@
 }
 
 - (void)gotoH5Page:(NSString *)articleId {
-    SLArticleDetailViewControllerV2* vc = [SLArticleDetailViewControllerV2 new];
-    vc.articleId = articleId;
-    vc.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:vc animated:YES];
+    //TODO:文章详情
 }
 
 #pragma mark - Actions

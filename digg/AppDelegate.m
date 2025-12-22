@@ -9,8 +9,6 @@
 #import "SLTabbarController.h"
 #import "SLUser.h"
 #import "IQKeyboardManager.h"
-#import "TMViewTrackerManager.h"
-#import "ViewTrackerProxy.h"
 #import <UMCommon/UMCommon.h>
 
 @interface AppDelegate ()<UIApplicationDelegate>
@@ -25,7 +23,6 @@
     [UMConfigure initWithAppkey:@"680205bdbc47b67d8340d966" channel:@"Internal"];
 
     [[IQKeyboardManager sharedManager] setEnable:YES];
-    [[TMViewTrackerManager sharedManager] setCommitProtocol:[ViewTrackerProxy new]];
 
     [[SLUser defaultUser] loadUserInfoFromLocal];
     SLTabbarController *rootVC = [[SLTabbarController alloc] init];

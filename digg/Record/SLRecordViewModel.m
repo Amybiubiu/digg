@@ -10,7 +10,6 @@
 #import "SLGeneralMacro.h"
 #import "EnvConfigHeader.h"
 #import <YYModel/YYModel.h>
-#import "SLProfileEntity.h"
 #import "SLUser.h"
 
 @implementation SLRecordViewModel
