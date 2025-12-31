@@ -628,7 +628,7 @@
         _wkwebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
         _wkwebView.backgroundColor = [UIColor clearColor];
         [_wkwebView setOpaque:NO];
-        _wkwebView.scrollView.bounces = NO;
+        _wkwebView.scrollView.bounces = YES;
         _wkwebView.navigationDelegate = self;
         _wkwebView.allowsBackForwardNavigationGestures = YES;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
