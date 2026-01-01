@@ -10,7 +10,8 @@
 
 #import <UIKit/UIKit.h>
 
-#define H5BaseUrl @"http://39.106.147.0"
+// #define H5BaseUrl @"http://39.106.147.0"
+#define H5BaseUrl @"http://198.18.0.1:5173"
 #define APPBaseUrl @"http://115.159.103.82:8001"
 
 //首页H5 URL链接

@@ -13,6 +13,24 @@
 
 @implementation SLHomeWebViewController
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // Tab 中的常驻页面不应该复用 WebView
+        self.shouldReuseWebView = NO;
+    }
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // Tab 中的常驻页面不应该复用 WebView
+        self.shouldReuseWebView = NO;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.

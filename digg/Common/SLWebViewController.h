@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isShowProgress;
 @property (nonatomic, assign) BOOL isLoginPage;
 @property (nonatomic, assign) BOOL needsRefresh;
+@property (nonatomic, assign) BOOL shouldReuseWebView; // 是否应该复用 WebView（默认 YES）
 @property (nonatomic, copy) void(^loginSucessCallback) ();
 
 - (void)startLoadRequestWithUrl:(NSString *)url;
@@ -22,6 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reload;
 - (void)smartRefresh;
 - (void)sendRefreshPageDataMessage;
+
+// Cookie 管理
++ (void)syncGlobalTokenCookie;
+
+// WebView 共享资源
++ (WKProcessPool *)sharedProcessPool;
 
 @end
 

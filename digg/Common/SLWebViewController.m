@@ -22,6 +22,7 @@
 #import "SLAlertManager.h"
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
+#import "SLWebViewPool.h"
 
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
@@ -31,6 +32,10 @@
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) UIProgressView* progressView;
 @property (nonatomic, strong) SLCommentInputViewController *commentVC;
+
+// 性能监控
+@property (nonatomic, assign) NSTimeInterval loadStartTime;
+@property (nonatomic, assign) NSTimeInterval requestStartTime;
 
 @end
 
@@ -46,9 +51,66 @@
     return _sharedPool;
 }
 
+// 同步全局 Token Cookie
++ (void)syncGlobalTokenCookie {
+    static NSString *_lastSyncedToken = nil;
+
+    NSString *token = [SLUser defaultUser].userEntity.token;
+
+    // 如果没有 token 或 token 没变化，不需要重新注入
+    if (stringIsEmpty(token) || [token isEqualToString:_lastSyncedToken]) {
+        return;
+    }
+
+    // 注入 Cookie 到全局 store (异步，但不阻塞后续操作)
+    WKHTTPCookieStore *cookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
+
+    // 为常用域名注入 Cookie
+    NSArray *domains = @[
+        @"39.106.147.0",  // H5 域名
+        @"47.96.25.87"    // API 域名
+    ];
+
+    for (NSString *domain in domains) {
+        NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
+        cookieProps[NSHTTPCookieName] = @"bp-token";
+        cookieProps[NSHTTPCookieValue] = token;
+        cookieProps[NSHTTPCookieDomain] = domain;
+        cookieProps[NSHTTPCookiePath] = @"/";
+        cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
+
+        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
+
+        [cookieStore setCookie:cookie completionHandler:^{
+            NSLog(@"[SLWebViewController] 全局 Cookie 已同步到域名: %@", domain);
+        }];
+    }
+
+    _lastSyncedToken = token;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        // 默认允许复用 WebView（可被子类覆盖）
+        _shouldReuseWebView = YES;
+    }
+    return self;
+}
+
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        // 默认允许复用 WebView（可被子类覆盖）
+        _shouldReuseWebView = YES;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];;
     [self.view addSubview:self.wkwebView];
@@ -72,12 +134,14 @@
             make.edges.equalTo(self.view);
         }];
     }
-    [self setupDefailUA];
-    
+
+    // 移除这里的 Bridge 初始化，改为延迟初始化（在真正需要时才初始化）
+    // [self setupDefailUA];
+
     if (self.navigationController.interactivePopGestureRecognizer != nil) {
         [self.wkwebView.scrollView.panGestureRecognizer shouldRequireFailureOfGestureRecognizer:self.navigationController.interactivePopGestureRecognizer];
     }
-    
+
     self.commentVC = [[SLCommentInputViewController alloc] init];
 }
 
@@ -114,17 +178,51 @@
 
     // 移除通知监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebViewShouldReloadAfterLogin" object:nil];
+
+    // 如果是被 pop 了（不在导航栈中）且允许复用，提前归还 WebView
+    if (self.shouldReuseWebView && ![self.navigationController.viewControllers containsObject:self]) {
+        if (self.wkwebView) {
+            NSLog(@"[SLWebViewController] 页面已被移除，提前归还 WebView");
+            [[SLWebViewPool sharedPool] enqueueWebView:self.wkwebView];
+            _wkwebView = nil;
+        }
+    }
+}
+
+// 内存警告时释放不可见页面的 WebView
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+
+    // 如果页面不可见且允许复用，释放 WebView 节省内存
+    if (self.shouldReuseWebView && !self.isViewLoaded && self.wkwebView) {
+        NSLog(@"[SLWebViewController] 收到内存警告，释放不可见页面的 WebView");
+        [[SLWebViewPool sharedPool] enqueueWebView:self.wkwebView];
+        _wkwebView = nil;
+    }
 }
 
 - (void)dealloc {
+    NSLog(@"[SLWebViewController] dealloc 被调用，准备归还 WebView");
+
     [self.bridge setWebViewDelegate:nil];
-    if ([self isViewLoaded]) {
-        [self.wkwebView removeObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress))];
+    if ([self isViewLoaded] && self.isShowProgress) {
+        @try {
+            [self.wkwebView removeObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress))];
+        } @catch (NSException *exception) {
+            NSLog(@"[SLWebViewController] 移除观察者异常: %@", exception);
+        }
     }
 
-    // if you have set either WKWebView delegate also set these to nil here
+    // 清理 delegate
     [self.wkwebView setNavigationDelegate:nil];
     [self.wkwebView setUIDelegate:nil];
+
+    // 归还 WebView 到池中复用
+    if (self.shouldReuseWebView && self.wkwebView) {
+        NSLog(@"[SLWebViewController] 归还 WebView 到池中");
+        [[SLWebViewPool sharedPool] enqueueWebView:self.wkwebView];
+        _wkwebView = nil;
+    }
 }
 
 - (void)reload {
@@ -158,9 +256,9 @@
         return;
     }
 
-    // 使用新的请求重新加载，忽略缓存
+    // 使用新的请求重新加载，忽略本地缓存
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[self addThemeToURL:self.requestUrl]
-                                                           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:30];
 
     // 重新注入token cookie
@@ -238,23 +336,22 @@
 
 // 核心辅助方法 - 修复异步竞争条件
 - (void)forceSyncCookieAndReload:(NSHTTPCookie *)cookie {
-    // A. 清理缓存和旧Cookie (解决"抓包没有新请求"和Cookie冲突的问题)
-    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies]];
+    // A. 只清理旧Cookie，保留资源缓存以提升性能
+    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeCookies]];
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:[NSDate dateWithTimeIntervalSince1970:0] completionHandler:^{
 
-        // B. 注入 Cookie (解决"未登录"的问题) - 确保异步完成后再加载
+        // B. 注入新 Cookie
         WKHTTPCookieStore *cookieStore = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
 
         [cookieStore setCookie:cookie completionHandler:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"[SLWebViewController] 缓存和旧Cookie已清理，新Cookie(bp-token)已注入，开始加载");
+                NSLog(@"[SLWebViewController] 旧Cookie已清理，新Cookie(bp-token)已注入，开始加载");
 
-                // C. 重新加载 - 使用loadRequest而不是reload，确保使用新Cookie
+                // C. 重新加载 - 使用协议缓存策略，利用资源缓存提升速度
                 NSString *targetUrl = self.wkwebView.URL.absoluteString ?: self.requestUrl;
                 if (targetUrl) {
                     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:targetUrl]];
-                    // 强制不使用缓存策略，确保使用新Cookie
-                    request.cachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
+                    request.cachePolicy = NSURLRequestUseProtocolCachePolicy;
                     [self.wkwebView loadRequest:request];
                 }
             });
@@ -264,7 +361,8 @@
 
 // 退出登录时用的辅助方法
 - (void)clearCacheAndReload {
-    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies]];
+    // 退出登录只需清理 Cookie，保留资源缓存
+    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeCookies]];
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:[NSDate dateWithTimeIntervalSince1970:0] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.wkwebView reload];
@@ -306,12 +404,15 @@
         entity.token = token;
         entity.userId = userId;
         [[SLUser defaultUser] saveUserInfo:entity];
+
+        // 立即同步全局 Cookie
+        [[self class] syncGlobalTokenCookie];
+
         if (self.loginSucessCallback) {
             self.loginSucessCallback();
         }
         responseCallback(data);
 
-        // 🌟修复：使用通知机制统一处理登录后的刷新，避免直接reload
         // 发送通知，让其他WebView也刷新
         [[NSNotificationCenter defaultCenter] postNotificationName:@"WebViewShouldReloadAfterLogin" object:nil];
 
@@ -503,21 +604,17 @@
     if (self.isSetUA) {
         return;
     }
-    
+
+    // 初始化 JS Bridge（耗时操作，但必需）
     self.bridge = [WebViewJavascriptBridge bridgeForWebView:self.wkwebView];
     [self.bridge setWebViewDelegate:self];
     [self jsBridgeMethod];
-    
-    NSString *defaultUserAgent = [[NSUserDefaults standardUserDefaults] objectForKey:@"digg_default_userAgent"];
-    if (stringIsEmpty(defaultUserAgent)) {
-        NSString *model = [UIDevice currentDevice].model;
-        NSString *systemVersion = [[UIDevice currentDevice].systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"];
-        defaultUserAgent = [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU iPhone OS %@ like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16B92", model, systemVersion];
-    };
-    NSString *modifiedUserAgent = [NSString stringWithFormat:@"%@ infoflow", defaultUserAgent];
-    NSLog(@"设置 ua = %@",modifiedUserAgent);
-    self.wkwebView.customUserAgent = modifiedUserAgent;
+
+    // UA 已在 WebView 创建时设置，无需重复设置
+    // （从池中获取的 WebView 已经有正确的 UA）
+
     self.isSetUA = YES;
+    NSLog(@"[SLWebViewController] Bridge 初始化完成");
 }
 
 - (void)startLoadRequestWithUrl:(NSString *)url {
@@ -535,37 +632,26 @@
 
         return;
     }
-    [self setupDefailUA];
+
+    // 不在这里初始化 Bridge，避免阻塞页面加载
+    // Bridge 将在页面加载完成后异步初始化
+
     self.requestUrl = url;
     NSLog(@"加载的url = %@",url);
 
-    // 🌟修复：确保Cookie注入完成后再加载页面
-    NSString *token = [SLUser defaultUser].userEntity.token;
-    if (!stringIsEmpty(token)) {
-        WKHTTPCookieStore *cookieStore = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
+    // 记录加载开始时间
+    self.loadStartTime = [[NSDate date] timeIntervalSince1970];
 
-        NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
-        cookieProps[NSHTTPCookieName] = @"bp-token";
-        cookieProps[NSHTTPCookieValue] = token;
-        cookieProps[NSHTTPCookieDomain] = [NSURL URLWithString:url].host;
-        cookieProps[NSHTTPCookiePath] = @"/";
-        cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
+    // 同步全局 Cookie（异步但不阻塞）
+    [[self class] syncGlobalTokenCookie];
 
-        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
+    // 直接加载，不等待 Cookie 注入完成（全局 Cookie 会自动生效）
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url]
+                                                   cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                               timeoutInterval:30];
+    [self.wkwebView loadRequest:request];
 
-        // 🌟关键修复：等待Cookie注入完成后再加载页面
-        [cookieStore setCookie:cookie completionHandler:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"[SLWebViewController] Token Cookie已注入，开始加载页面");
-                NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:30];
-                [self.wkwebView loadRequest:request];
-            });
-        }];
-    } else {
-        // 没有token时直接加载
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
-        [self.wkwebView loadRequest:request];
-    }
+    NSLog(@"[性能] 开始加载页面: %@", url);
 }
 
 - (NSURL *)addThemeToURL:(NSString *)url {
@@ -613,27 +699,57 @@
 
 - (WKWebView *)wkwebView{
     if (!_wkwebView) {
-        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+        // 如果不允许复用（常驻页面），每次都创建新的 WebView
+        if (!self.shouldReuseWebView) {
+            _wkwebView = [self createNewWebView];
+            NSLog(@"[SLWebViewController] 常驻页面，创建独立 WebView");
+        } else {
+            // 从池中获取 WebView，大幅提升性能
+            _wkwebView = [[SLWebViewPool sharedPool] dequeueWebView];
+        }
 
-        // 🌟核心修复：共享进程池 + 共享 Cookie 存储
-        configuration.processPool = [[self class] sharedProcessPool];
-        configuration.websiteDataStore = [WKWebsiteDataStore defaultDataStore];
-
-        WKPreferences *preferences = [[WKPreferences alloc] init];
-        preferences.javaScriptCanOpenWindowsAutomatically = YES;
-        configuration.preferences = preferences;
-        configuration.allowsInlineMediaPlayback = YES;
-
-
-        _wkwebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
-        _wkwebView.backgroundColor = [UIColor clearColor];
-        [_wkwebView setOpaque:NO];
-        _wkwebView.scrollView.bounces = YES;
+        // 设置 delegate（每次使用时都需要设置）
         _wkwebView.navigationDelegate = self;
-        _wkwebView.allowsBackForwardNavigationGestures = YES;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
     }
     return _wkwebView;
+}
+
+- (WKWebView *)createNewWebView {
+    WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+
+    // 共享进程池和数据存储
+    configuration.processPool = [[self class] sharedProcessPool];
+    configuration.websiteDataStore = [WKWebsiteDataStore defaultDataStore];
+
+    WKPreferences *preferences = [[WKPreferences alloc] init];
+    preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    configuration.preferences = preferences;
+    configuration.allowsInlineMediaPlayback = YES;
+
+    WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
+    webView.backgroundColor = [UIColor clearColor];
+    [webView setOpaque:NO];
+    webView.scrollView.bounces = YES;
+    webView.allowsBackForwardNavigationGestures = YES;
+
+    // 提前设置 UA（避免每次使用都设置）
+    NSString *defaultUserAgent = [[NSUserDefaults standardUserDefaults] objectForKey:@"digg_default_userAgent"];
+    if (!defaultUserAgent || defaultUserAgent.length == 0) {
+        NSString *model = [UIDevice currentDevice].model;
+        NSString *systemVersion = [[UIDevice currentDevice].systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"];
+        defaultUserAgent = [NSString stringWithFormat:@"Mozilla/5.0 (%@; CPU iPhone OS %@ like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16B92", model, systemVersion];
+    }
+    NSString *modifiedUserAgent = [NSString stringWithFormat:@"%@ infoflow", defaultUserAgent];
+    webView.customUserAgent = modifiedUserAgent;
+
+    // Enable Web Inspector for iOS 16.4+
+    if (@available(iOS 16.4, *)) {
+        webView.inspectable = YES;
+    }
+
+    NSLog(@"[SLWebViewController] 创建独立 WebView，已设置 UA");
+    return webView;
 }
 
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message{
@@ -657,8 +773,29 @@
     }
 }
 
-#pragma makr - WKNavigationDelegate
+#pragma mark - WKNavigationDelegate
+// 开始加载
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
+    self.requestStartTime = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval timeSinceLoad = self.requestStartTime - self.loadStartTime;
+    NSLog(@"[性能] 开始请求网络 (+%.0fms)", timeSinceLoad * 1000);
+}
+
+// 接收到响应
+- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval requestTime = now - self.requestStartTime;
+    NSTimeInterval totalTime = now - self.loadStartTime;
+    NSLog(@"[性能] 收到服务器响应 (+%.0fms，总计%.0fms)", requestTime * 1000, totalTime * 1000);
+}
+
+// 加载完成
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval renderTime = now - self.requestStartTime;
+    NSTimeInterval totalTime = now - self.loadStartTime;
+    NSLog(@"[性能] ✅ 页面加载完成 (渲染%.0fms，总计%.0fms)", renderTime * 1000, totalTime * 1000);
+
     if (self.isShowProgress) {
         @weakobj(self);
         [webView evaluateJavaScript:@"document.title" completionHandler:^(id _Nullable title, NSError* _Nullable error) {
@@ -668,6 +805,24 @@
             }
         }];
     }
+
+    // 页面加载完成后，异步初始化 Bridge（不阻塞主线程）
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setupDefailUA];
+        });
+    });
+}
+
+// 加载失败
+- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    NSTimeInterval totalTime = [[NSDate date] timeIntervalSince1970] - self.loadStartTime;
+    NSLog(@"[性能] ❌ 页面加载失败 (总计%.0fms): %@", totalTime * 1000, error.localizedDescription);
+}
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    NSTimeInterval totalTime = [[NSDate date] timeIntervalSince1970] - self.loadStartTime;
+    NSLog(@"[性能] ❌ 请求失败 (总计%.0fms): %@", totalTime * 1000, error.localizedDescription);
 }
 
 @end
