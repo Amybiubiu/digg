@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04153D9C2F067A440069A2FE /* SLWebViewPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 04153D9B2F067A440069A2FE /* SLWebViewPool.m */; };
 		344242782D55FE190081B948 /* SLColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 344242772D55FE190081B948 /* SLColorManager.m */; };
 		345C0AA22DAA287B005FCCDB /* UIView+Associated.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C0AA12DAA287B005FCCDB /* UIView+Associated.m */; };
 		345C11E12DABD7BF005FCCDB /* UIFont+PingFang.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C11E02DABD7BF005FCCDB /* UIFont+PingFang.m */; };
@@ -136,6 +137,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04153D9A2F067A440069A2FE /* SLWebViewPool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLWebViewPool.h; sourceTree = "<group>"; };
+		04153D9B2F067A440069A2FE /* SLWebViewPool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLWebViewPool.m; sourceTree = "<group>"; };
 		344242762D55FE190081B948 /* SLColorManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLColorManager.h; sourceTree = "<group>"; };
 		344242772D55FE190081B948 /* SLColorManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLColorManager.m; sourceTree = "<group>"; };
 		345C0AA02DAA287B005FCCDB /* UIView+Associated.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+Associated.h"; sourceTree = "<group>"; };
@@ -744,6 +747,8 @@
 			children = (
 				34D3930E2F0A5EE400D21364 /* SLWebViewPreloaderManager.h */,
 				34D3930F2F0A5EE400D21364 /* SLWebViewPreloaderManager.m */,
+				04153D9A2F067A440069A2FE /* SLWebViewPool.h */,
+				04153D9B2F067A440069A2FE /* SLWebViewPool.m */,
 				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
 				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
@@ -968,6 +973,7 @@
 				34D2EBD02D3942880067CC05 /* RZHtml.swift in Sources */,
 				E7A3B6E92CC0AB6F00BB7304 /* UIImage+CommonKit.m in Sources */,
 				34D2EB9A2D3941DE0067CC05 /* TZImageManager.m in Sources */,
+				04153D9C2F067A440069A2FE /* SLWebViewPool.m in Sources */,
 				349A12082EF8E88B0000402E /* SLHomeTagView.m in Sources */,
 				34D2EB9B2D3941DE0067CC05 /* TZAssetCell.m in Sources */,
 				34D2EB9C2D3941DE0067CC05 /* TZVideoCropController.m in Sources */,

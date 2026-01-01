@@ -50,6 +50,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];;
     [self.view addSubview:self.wkwebView];
@@ -160,9 +161,9 @@
         return;
     }
 
-    // 使用新的请求重新加载，忽略缓存
+    // 使用新的请求重新加载，忽略本地缓存
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[self addThemeToURL:self.requestUrl]
-                                                           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                                           cachePolicy:NSURLRequestReloadIgnoringLocalCacheData
                                                        timeoutInterval:30];
 
     // 重新注入token cookie
@@ -220,23 +221,22 @@
 
 // 核心辅助方法 - 修复异步竞争条件
 - (void)forceSyncCookieAndReload:(NSHTTPCookie *)cookie {
-    // A. 清理缓存和旧Cookie (解决"抓包没有新请求"和Cookie冲突的问题)
-    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies]];
+    // A. 只清理旧Cookie，保留资源缓存以提升性能
+    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeCookies]];
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:[NSDate dateWithTimeIntervalSince1970:0] completionHandler:^{
 
-        // B. 注入 Cookie (解决"未登录"的问题) - 确保异步完成后再加载
+        // B. 注入新 Cookie
         WKHTTPCookieStore *cookieStore = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
 
         [cookieStore setCookie:cookie completionHandler:^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"[SLWebViewController] 缓存和旧Cookie已清理，新Cookie(bp-token)已注入，开始加载");
+                NSLog(@"[SLWebViewController] 旧Cookie已清理，新Cookie(bp-token)已注入，开始加载");
 
-                // C. 重新加载 - 使用loadRequest而不是reload，确保使用新Cookie
+                // C. 重新加载 - 使用协议缓存策略，利用资源缓存提升速度
                 NSString *targetUrl = self.wkwebView.URL.absoluteString ?: self.requestUrl;
                 if (targetUrl) {
                     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:targetUrl]];
-                    // 强制不使用缓存策略，确保使用新Cookie
-                    request.cachePolicy = NSURLRequestReloadIgnoringLocalAndRemoteCacheData;
+                    request.cachePolicy = NSURLRequestUseProtocolCachePolicy;
                     [self.wkwebView loadRequest:request];
                 }
             });
@@ -246,7 +246,8 @@
 
 // 退出登录时用的辅助方法
 - (void)clearCacheAndReload {
-    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeCookies]];
+    // 退出登录只需清理 Cookie，保留资源缓存
+    NSSet *websiteDataTypes = [NSSet setWithArray:@[WKWebsiteDataTypeCookies]];
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:websiteDataTypes modifiedSince:[NSDate dateWithTimeIntervalSince1970:0] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.wkwebView reload];
@@ -293,7 +294,6 @@
         }
         responseCallback(data);
 
-        // 🌟修复：使用通知机制统一处理登录后的刷新，避免直接reload
         // 发送通知，让其他WebView也刷新
         [[NSNotificationCenter defaultCenter] postNotificationName:@"WebViewShouldReloadAfterLogin" object:nil];
 
