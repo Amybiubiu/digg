@@ -12,8 +12,6 @@
 
 @interface SLHomeTagView ()
 
-@property (nonatomic, strong) UILabel *tagLabel;
-
 @end
 
 @implementation SLHomeTagView
@@ -47,7 +45,7 @@
         _tagLabel = [[UILabel alloc] init];
         _tagLabel.textColor = [SLColorManager tagTextColor];
         _tagLabel.textAlignment = NSTextAlignmentCenter;
-        _tagLabel.font = [UIFont boldSystemFontOfSize:12];
+        _tagLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
     }
     return _tagLabel;
 }

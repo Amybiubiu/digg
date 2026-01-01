@@ -9,6 +9,7 @@
 #import "NSString+UXing.h"
 #import <sys/xattr.h>
 #import <CommonCrypto/CommonDigest.h>
+#import "SLGeneralMacro.h"
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -204,7 +205,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 - (CGSize)sizeForFont:(UIFont *)font size:(CGSize)size mode:(NSLineBreakMode)lineBreakMode {
     CGSize result;
-    if (!font) font = [UIFont systemFontOfSize:12];
+    if (!font) font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
     if ([self respondsToSelector:@selector(boundingRectWithSize:options:attributes:context:)]) {
         NSMutableDictionary *attr = [NSMutableDictionary new];
         attr[NSFontAttributeName] = font;
@@ -245,6 +246,86 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
         NSDateFormatter *fullFormatter = [[NSDateFormatter alloc] init];
         [fullFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
         return [fullFormatter stringFromDate:targetDate];
+    }
+}
+
+- (NSAttributedString *)attributedStringFromHTML {
+    if (!self) return nil;
+    
+    NSData *htmlData = [self dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSDictionary *options = @{
+        NSDocumentTypeDocumentOption: NSHTMLTextDocumentType,
+        NSCharacterEncodingDocumentOption: @(NSUTF8StringEncoding)
+    };
+    
+    NSError *error = nil;
+    NSAttributedString *attributedString = [[NSAttributedString alloc]
+        initWithData: htmlData
+            options: options
+            documentAttributes: nil
+            error: &error];
+    
+    if (error) {
+        NSLog(@"HTML 转换错误: %@", error.localizedDescription);
+        return nil;
+    }
+    
+    // 增加行间距处理
+    NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineSpacing:5.0];
+    paragraphStyle.paragraphSpacing = 15.0;
+    [paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+    
+    [mutableAttributedString addAttribute:NSParagraphStyleAttributeName 
+                                    value:paragraphStyle 
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+
+    // 设置字体和颜色
+    [mutableAttributedString addAttribute:NSFontAttributeName
+                                    value:[UIFont systemFontOfSize:14 weight:UIFontWeightRegular]
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+    
+    [mutableAttributedString addAttribute:NSForegroundColorAttributeName
+                                    value:Color16(0x313131)
+                                    range:NSMakeRange(0, mutableAttributedString.length)];
+    
+    return mutableAttributedString;
+}
+
++ (NSString *)smartTimeFormatWith:(NSTimeInterval)gmtCreate {
+    NSDate *currentDate = [NSDate date];
+    NSDate *targetDate = [NSDate dateWithTimeIntervalSince1970:gmtCreate/1000];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    
+    // 计算时间差
+    NSTimeInterval timeInterval = [currentDate timeIntervalSinceDate:targetDate];
+    
+    // 1小时以下显示分钟
+    if (timeInterval < 3600) {
+        NSInteger minutes = (NSInteger)(timeInterval / 60);
+        if (minutes <= 0) {
+            return @"刚刚";
+        }
+        return [NSString stringWithFormat:@"%ld分钟前", (long)minutes];
+    }
+    // 1天以下显示小时
+    else if (timeInterval < 86400) {
+        NSInteger hours = (NSInteger)(timeInterval / 3600);
+        return [NSString stringWithFormat:@"%ld小时前", (long)hours];
+    }
+    // 1年以下显示月-日
+    else if (timeInterval < 31536000) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"MM-dd"];
+        return [formatter stringFromDate:targetDate];
+    }
+    // 1年以上显示年月日
+    else {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd"];
+        return [formatter stringFromDate:targetDate];
     }
 }
 

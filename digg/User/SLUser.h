@@ -8,9 +8,9 @@
 #import <Foundation/Foundation.h>
 #import "SLUserEntity.h"
 
-extern NSString *const NEUserDidLogoutNotification; //用户登出成功的通知
-extern NSString *const NEUserDidLoginNotification;  //用户登录成功的通知
-extern NSString *const NEUserInfoDidUpdateNotification;  //用户信息更新的通知
+extern NSString * _Nullable const NEUserDidLogoutNotification; //用户登出成功的通知
+extern NSString * _Nullable const NEUserDidLoginNotification;  //用户登录成功的通知
+extern NSString * _Nullable const NEUserInfoDidUpdateNotification;  //用户信息更新的通知
 
 NS_ASSUME_NONNULL_BEGIN
 

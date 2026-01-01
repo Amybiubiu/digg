@@ -15,12 +15,12 @@
 
 
 
-- (void)encodeWithCoder:(nonnull NSCoder *)coder { 
+- (void)encodeWithCoder:(nonnull NSCoder *)coder {
     [coder encodeObject:self.userId forKey:@"userId"];
     [coder encodeObject:self.token forKey:@"token"];
 }
 
-- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder { 
+- (nullable instancetype)initWithCoder:(nonnull NSCoder *)coder {
     if (self = [super init]) {
         NSString *userId = [coder decodeObjectForKey:@"userId"];
         NSString *token = [coder decodeObjectForKey:@"token"];

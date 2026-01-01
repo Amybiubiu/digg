@@ -49,11 +49,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>QuicklySwift.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>RZColorfulSwift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -70,6 +65,21 @@
 			<false/>
 		</dict>
 		<key>SnapKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UMAPM.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UMCommon.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>UMDevice.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

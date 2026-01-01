@@ -1,1 +1,0 @@
-../../../Target Support Files/QuicklySwift/QuicklySwift-umbrella.h

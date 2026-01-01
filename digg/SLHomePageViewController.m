@@ -9,15 +9,14 @@
 #import "SLGeneralMacro.h"
 #import <JXCategoryView/JXCategoryView.h>
 #import <JXCategoryView/JXCategoryListContainerView.h>
-#import "SLHomepageNewsViewController.h"
 #import "UIView+CommonKit.h"
 #import "SLHomeWebViewController.h"
 #import "SLHomePageViewModel.h"
 #import "SLColorManager.h"
+#import "EnvConfigHeader.h"
 
 @interface SLHomePageViewController ()<JXCategoryViewDelegate,JXCategoryListContainerViewDelegate>
 @property (nonatomic, strong) NSArray *titles;
-@property (nonatomic, strong) UIButton *searchBtn;
 @property (nonatomic, strong) JXCategoryNumberView *categoryView;
 @property (nonatomic, strong) JXCategoryListContainerView *listContainerView;
 @property (nonatomic, assign) BOOL isNeedIndicatorPositionChangeItem;
@@ -35,14 +34,14 @@
     self.navigationController.navigationBar.hidden = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self.view addSubview:self.categoryView];
-    [self.view addSubview:self.searchBtn];
     [self.view addSubview:self.listContainerView];
     self.titles = @[@"今天", @"发现", @"为你"];
+    self.listCache = [NSMutableDictionary dictionary];
 
-    CGFloat categoryViewHeight = 44;
+    CGFloat categoryViewHeight = 30;
+    CGFloat categoryViewSpacing = 8;
     self.categoryView.frame = CGRectMake(0, STATUSBAR_HEIGHT, self.view.bounds.size.width-categoryViewHeight, categoryViewHeight);
-    self.searchBtn.frame = CGRectMake(self.view.bounds.size.width - 24 - 16, STATUSBAR_HEIGHT+9, 24, 24);
-    self.listContainerView.frame = CGRectMake(0, categoryViewHeight+STATUSBAR_HEIGHT, self.view.bounds.size.width, self.view.bounds.size.height-(categoryViewHeight+STATUSBAR_HEIGHT)-self.tabBarController.tabBar.frame.size.height);
+    self.listContainerView.frame = CGRectMake(0, categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing, self.view.bounds.size.width, self.view.bounds.size.height-(categoryViewHeight+STATUSBAR_HEIGHT+categoryViewSpacing)-self.tabBarController.tabBar.frame.size.height);
     self.myCategoryView.titles = self.titles;
     self.myCategoryView.counts = @[@0, @0, @0];
     self.myCategoryView.numberLabelOffset = CGPointMake(-2, 5);
@@ -54,7 +53,7 @@
     };
     
     JXCategoryIndicatorLineView *lineView = [[JXCategoryIndicatorLineView alloc] init];
-    lineView.indicatorColor = Color16(0xFF1852);
+    lineView.indicatorColor = Color16(0x15932A);
     lineView.indicatorWidth = 28;
     self.myCategoryView.indicators = @[lineView];
 }
@@ -69,13 +68,6 @@
             [self.myCategoryView reloadDataWithoutListContainer];
         }
     }];
-}
-
-- (void)searchBtnAction:(id)sender{
-    SLWebViewController *web = [[SLWebViewController alloc] init];
-    [web startLoadRequestWithUrl:@"http://39.106.147.0/post/31516"];
-    web.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:web animated:YES];
 }
 
 - (JXCategoryNumberView *)myCategoryView {
@@ -113,8 +105,6 @@
 
 // 返回各个列表菜单下的实例，该实例需要遵守并实现 <JXCategoryListContentViewDelegate> 协议
 - (id<JXCategoryListContentViewDelegate>)listContainerView:(JXCategoryListContainerView *)listContainerView initListForIndex:(NSInteger)index {
-//    SLHomePageNewsViewController *list = [[SLHomePageNewsViewController alloc] init];
-//    list.pageStyle = index;
     
     NSString *targetTitle = self.titles[index];
     id<JXCategoryListContentViewDelegate> list = _listCache[targetTitle];
@@ -122,33 +112,29 @@
         //②之前已经初始化了对应的list，就直接返回缓存的list，无需再次初始化
         return list;
     } else {
-        UIViewController *dvc;
+        SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
+        NSString *url = @"";
         if (index == 0) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
-        }else if (index == 1) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
-//            SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
-////            发现
-//            NSString *url = [NSString stringWithFormat:@"%@/home/recent",H5BaseUrl];
-//            [vc startLoadRequestWithUrl:url];
-//            dvc = vc;
-        }else if (index == 2) {
-            SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
-//            发现
-            NSString *url = [NSString stringWithFormat:@"%@/home/forYou",H5BaseUrl];
-            [vc startLoadRequestWithUrl:url];
-            dvc = vc;
+            url = HOME_TODAY_PAGE_URL;
+        } else if (index == 1) {
+            url = HOME_RECENT_PAGE_URL;
+        } else if (index == 2) {
+            url = HOME_FORYOU_PAGE_URL;
         }
-        
-        return dvc;
+        [vc startLoadRequestWithUrl:url];
+        _listCache[targetTitle] = vc;
+        return vc;
+    }
+}
+
+- (void)refreshCurrentPage {
+    NSInteger index = self.categoryView.selectedIndex;
+    if (index < self.titles.count) {
+        NSString *targetTitle = self.titles[index];
+        SLHomeWebViewController *vc = (SLHomeWebViewController *)_listCache[targetTitle];
+        if (vc && [vc isKindOfClass:[SLHomeWebViewController class]]) {
+            [vc sendRefreshPageDataMessage];
+        }
     }
 }
 
@@ -157,11 +143,11 @@
 - (JXCategoryBaseView *)categoryView {
     if (!_categoryView) {
         _categoryView = [self preferredCategoryView];
-        _categoryView.numberBackgroundColor = [UIColor colorWithRed:255.0 / 255 green:24.0 / 255 blue:82.0 / 255 alpha:1];
+        _categoryView.numberBackgroundColor = Color16(0x14932A);
         _categoryView.delegate = self;
         _categoryView.titleColorGradientEnabled = YES;
         _categoryView.titleLabelZoomEnabled = YES;
-        _categoryView.titleFont = [UIFont boldSystemFontOfSize:18];
+        _categoryView.titleFont = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
         _categoryView.titleLabelZoomScale = 1.125;
         _categoryView.titleSelectedColor = [SLColorManager categorySelectedTextColor];
         _categoryView.titleColor = [SLColorManager categoryNormalTextColor];
@@ -178,17 +164,9 @@
 - (JXCategoryListContainerView *)listContainerView {
     if (!_listContainerView) {
         _listContainerView = [[JXCategoryListContainerView alloc] initWithType:JXCategoryListContainerType_ScrollView delegate:self];
+        _listContainerView.backgroundColor = [SLColorManager primaryBackgroundColor];
     }
     return _listContainerView;
-}
-
-- (UIButton *)searchBtn{
-    if (!_searchBtn) {
-        _searchBtn = [[UIButton alloc] init];
-        [_searchBtn setImage:[UIImage imageNamed:@"notice"] forState:UIControlStateNormal];
-        [_searchBtn addTarget:self action:@selector(searchBtnAction:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _searchBtn;
 }
 
 - (SLHomePageViewModel *)viewModel{

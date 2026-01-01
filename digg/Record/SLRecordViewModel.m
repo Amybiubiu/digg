@@ -10,7 +10,6 @@
 #import "SLGeneralMacro.h"
 #import "EnvConfigHeader.h"
 #import <YYModel/YYModel.h>
-#import "SLProfileEntity.h"
 #import "SLUser.h"
 
 @implementation SLRecordViewModel
@@ -28,19 +27,26 @@
     NSMutableDictionary* parameters = [NSMutableDictionary new];
     parameters[@"title"] = title;
     parameters[@"url"] = url;
-    parameters[@"content"] = content;
+    NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    parameters[@"content"] = trimmedContent;
     parameters[@"htmlContent"] = htmlContent;
     parameters[@"labels"] = labels;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            
             NSData* data = (NSData*)responseObject;
             NSString *articleId = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             handler(YES, articleId);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO, error.description);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error.description);
+                }
+            }
         }
     }];
 }
@@ -59,19 +65,28 @@
     parameters[@"articleId"] = articleId;
     parameters[@"title"] = title;
     parameters[@"url"] = url;
-    parameters[@"content"] = content;
+     NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    parameters[@"content"] = trimmedContent;
     parameters[@"htmlContent"] = htmlContent;
     parameters[@"labels"] = labels;
+    parameters[@"userId"] = [SLUser defaultUser].userEntity.userId;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (handler) {
-            
             NSData* data = (NSData*)responseObject;
-            NSString *articleId = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            handler(YES, articleId);
+            NSString *resultStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            BOOL result = [resultStr isEqualToString:@"true"] || [resultStr isEqualToString:@"1"];
+            handler(result, articleId);
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (handler) {
-            handler(NO, error.description);
+            BOOL needLogin = NO;
+            NSHTTPURLResponse *response = error.userInfo[AFNetworkingOperationFailingURLResponseErrorKey];
+            if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+                needLogin = response.statusCode == 401;
+                if (needLogin) {
+                    handler(NO, error.description);
+                }
+            }
         }
     }];
 }
