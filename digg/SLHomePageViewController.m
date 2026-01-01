@@ -9,11 +9,11 @@
 #import "SLGeneralMacro.h"
 #import <JXCategoryView/JXCategoryView.h>
 #import <JXCategoryView/JXCategoryListContainerView.h>
-#import "SLHomepageNewsViewController.h"
 #import "UIView+CommonKit.h"
 #import "SLHomeWebViewController.h"
 #import "SLHomePageViewModel.h"
 #import "SLColorManager.h"
+#import "EnvConfigHeader.h"
 
 @interface SLHomePageViewController ()<JXCategoryViewDelegate,JXCategoryListContainerViewDelegate>
 @property (nonatomic, strong) NSArray *titles;
@@ -36,6 +36,7 @@
     [self.view addSubview:self.categoryView];
     [self.view addSubview:self.listContainerView];
     self.titles = @[@"今天", @"发现", @"为你"];
+    self.listCache = [NSMutableDictionary dictionary];
 
     CGFloat categoryViewHeight = 30;
     CGFloat categoryViewSpacing = 8;
@@ -104,8 +105,6 @@
 
 // 返回各个列表菜单下的实例，该实例需要遵守并实现 <JXCategoryListContentViewDelegate> 协议
 - (id<JXCategoryListContentViewDelegate>)listContainerView:(JXCategoryListContainerView *)listContainerView initListForIndex:(NSInteger)index {
-//    SLHomePageNewsViewController *list = [[SLHomePageNewsViewController alloc] init];
-//    list.pageStyle = index;
     
     NSString *targetTitle = self.titles[index];
     id<JXCategoryListContentViewDelegate> list = _listCache[targetTitle];
@@ -113,33 +112,29 @@
         //②之前已经初始化了对应的list，就直接返回缓存的list，无需再次初始化
         return list;
     } else {
-        UIViewController *dvc;
+        SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
+        NSString *url = @"";
         if (index == 0) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
-        }else if (index == 1) {
-            SLHomePageNewsViewController *listVC = [[SLHomePageNewsViewController alloc] init];
-            listVC.pageStyle = index;
-            //①自己缓存已经初始化的列表
-            _listCache[targetTitle] = listVC;
-            dvc = listVC;
-//            SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
-////            发现
-//            NSString *url = [NSString stringWithFormat:@"%@/home/recent",H5BaseUrl];
-//            [vc startLoadRequestWithUrl:url];
-//            dvc = vc;
-        }else if (index == 2) {
-            SLHomeWebViewController *vc = [[SLHomeWebViewController alloc] init];
-//            发现
-            NSString *url = [NSString stringWithFormat:@"%@/home/forYou",H5BaseUrl];
-            [vc startLoadRequestWithUrl:url];
-            dvc = vc;
+            url = HOME_TODAY_PAGE_URL;
+        } else if (index == 1) {
+            url = HOME_RECENT_PAGE_URL;
+        } else if (index == 2) {
+            url = HOME_FORYOU_PAGE_URL;
         }
-        
-        return dvc;
+        [vc startLoadRequestWithUrl:url];
+        _listCache[targetTitle] = vc;
+        return vc;
+    }
+}
+
+- (void)refreshCurrentPage {
+    NSInteger index = self.categoryView.selectedIndex;
+    if (index < self.titles.count) {
+        NSString *targetTitle = self.titles[index];
+        SLHomeWebViewController *vc = (SLHomeWebViewController *)_listCache[targetTitle];
+        if (vc && [vc isKindOfClass:[SLHomeWebViewController class]]) {
+            [vc sendRefreshPageDataMessage];
+        }
     }
 }
 

@@ -54,52 +54,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "802E714D-7E76-4921-BAFD-DEADF2AC4B17"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "digg/Record/SLRecordViewModel.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "-updateRecord:link:content:htmlContent:labels:articleId:resultHandler:"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "802E714D-7E76-4921-BAFD-DEADF2AC4B17 - 85dbf6ff6d4dcd9c"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[SLRecordViewModel updateRecord:link:content:htmlContent:labels:articleId:resultHandler:]"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Record/SLRecordViewModel.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "74"
-                  endingLineNumber = "74">
-               </Location>
-               <Location
-                  uuid = "802E714D-7E76-4921-BAFD-DEADF2AC4B17 - 3974e60646459863"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__90-[SLRecordViewModel updateRecord:link:content:htmlContent:labels:articleId:resultHandler:]_block_invoke"
-                  moduleName = "digg.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/tbao/Documents/OtherProject/digg/digg/Record/SLRecordViewModel.m"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "75"
-                  endingLineNumber = "75">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "677999FC-F50F-4A55-AA05-754A52D454FC"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -164,16 +118,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7A1D423B-D3D1-4CAB-BBE1-0FC5482AE88E"
+            uuid = "4C4EA07F-0075-483E-AFCB-E78102FE5B81"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "digg/Views/ActionBar/SLNumberIconView.m"
+            filePath = "digg/Views/SLHomePageNewsTableViewCellV2.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "117"
-            endingLineNumber = "117"
-            landmarkName = "-layoutSubviews"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "-interactionBar:didTapItemWithType:selected:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B9A909BF-72C7-483E-9F47-48F014BA62A3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "digg/Tag/SLTagListContainerViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "-tableView:cellForRowAtIndexPath:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
