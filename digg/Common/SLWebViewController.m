@@ -111,6 +111,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    NSLog(@"🔵 [DEBUG] viewDidLoad - URL: %@, shouldReuseWebView: %d, WebView exists: %d",
+          self.requestUrl ?: @"nil", self.shouldReuseWebView, self.wkwebView != nil);
+
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];;
     [self.view addSubview:self.wkwebView];
@@ -147,6 +150,27 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    BOOL isInStack = [self.navigationController.viewControllers containsObject:self];
+    NSInteger stackDepth = self.navigationController.viewControllers.count;
+
+    NSLog(@"🟢 [DEBUG] viewWillAppear - URL: %@, WebView: %@, shouldReuse: %d, inStack: %d, stackDepth: %ld",
+          self.requestUrl ?: @"nil",
+          self.wkwebView ? [NSString stringWithFormat:@"exists(%@)", self.wkwebView.URL ?: @"no URL"] : @"nil",
+          self.shouldReuseWebView,
+          isInStack,
+          (long)stackDepth);
+
+    // 如果 WebView 被回收了，重新加载（解决手势返回白屏问题）
+    if (!self.wkwebView && !stringIsEmpty(self.requestUrl)) {
+        NSLog(@"⚠️ [DEBUG] WebView 被回收，重新加载: %@", self.requestUrl);
+        [self startLoadRequestWithUrl:self.requestUrl];
+    } else if (self.wkwebView) {
+        NSLog(@"✅ [DEBUG] WebView 存在，URL: %@", self.wkwebView.URL);
+    } else {
+        NSLog(@"❌ [DEBUG] WebView 和 requestUrl 都为空！");
+    }
+
     if (self.isShowProgress) {
         self.navigationController.navigationBar.barTintColor = UIColor.whiteColor;
         self.navigationController.navigationBar.hidden = NO;
@@ -162,6 +186,10 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    NSLog(@"🟢🟢 [DEBUG] viewDidAppear - WebView: %@, isLoading: %d",
+          self.wkwebView ? @"exists" : @"nil",
+          self.wkwebView.isLoading);
+
     // 检查是否需要刷新，如果需要则调用刷新逻辑
     if (self.needsRefresh) {
         [self sendRefreshPageDataMessage];
@@ -171,6 +199,13 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
+    BOOL isInStack = [self.navigationController.viewControllers containsObject:self];
+    NSLog(@"🟡 [DEBUG] viewWillDisappear - URL: %@, WebView: %@, inStack: %d",
+          self.requestUrl ?: @"nil",
+          self.wkwebView ? @"exists" : @"nil",
+          isInStack);
+
     if (self.isShowProgress) {
         self.navigationController.navigationBar.barTintColor = nil;
         self.navigationController.navigationBar.hidden = YES;
@@ -178,14 +213,40 @@
 
     // 移除通知监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebViewShouldReloadAfterLogin" object:nil];
+}
 
-    // 如果是被 pop 了（不在导航栈中）且允许复用，提前归还 WebView
-    if (self.shouldReuseWebView && ![self.navigationController.viewControllers containsObject:self]) {
-        if (self.wkwebView) {
-            NSLog(@"[SLWebViewController] 页面已被移除，提前归还 WebView");
-            [[SLWebViewPool sharedPool] enqueueWebView:self.wkwebView];
-            _wkwebView = nil;
-        }
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+
+    BOOL isInStack = [self.navigationController.viewControllers containsObject:self];
+    NSLog(@"🟡🟡 [DEBUG] viewDidDisappear - URL: %@, WebView: %@, shouldReuse: %d, inStack: %d",
+          self.requestUrl ?: @"nil",
+          self.wkwebView ? @"exists" : @"nil",
+          self.shouldReuseWebView,
+          isInStack);
+
+    // 对于使用池的页面，延迟回收（既避免转场动画问题，又能及时回收）
+    if (self.shouldReuseWebView && !isInStack && self.wkwebView) {
+        NSLog(@"⏳ [DEBUG] 页面已移除，0.5秒后回收 WebView");
+
+        // 延迟 0.5 秒回收，确保转场动画完全结束
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) return;
+
+            // 再次检查是否还不在栈中（防止被重新加入）
+            BOOL stillNotInStack = ![strongSelf.navigationController.viewControllers containsObject:strongSelf];
+            if (stillNotInStack && strongSelf.wkwebView) {
+                NSLog(@"♻️ [DEBUG] 延迟回收：归还 WebView 到池中");
+                [[SLWebViewPool sharedPool] enqueueWebView:strongSelf.wkwebView];
+                strongSelf->_wkwebView = nil;
+            } else {
+                NSLog(@"🔄 [DEBUG] 延迟回收：页面重新进入栈或 WebView 已回收，跳过");
+            }
+        });
+    } else {
+        NSLog(@"🔒 [DEBUG] 保留 WebView (shouldReuse: %d, inStack: %d)", self.shouldReuseWebView, isInStack);
     }
 }
 
@@ -193,11 +254,16 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 
-    // 如果页面不可见且允许复用，释放 WebView 节省内存
-    if (self.shouldReuseWebView && !self.isViewLoaded && self.wkwebView) {
-        NSLog(@"[SLWebViewController] 收到内存警告，释放不可见页面的 WebView");
+    // 更保守的策略：只有页面已从导航栈移除时才回收，避免手势返回白屏
+    // 如果页面还在栈中（用户可能返回），保留 WebView
+    BOOL isInNavigationStack = [self.navigationController.viewControllers containsObject:self];
+
+    if (self.shouldReuseWebView && !isInNavigationStack && self.wkwebView) {
+        NSLog(@"[SLWebViewController] 收到内存警告且页面已移除，释放 WebView");
         [[SLWebViewPool sharedPool] enqueueWebView:self.wkwebView];
         _wkwebView = nil;
+    } else if (self.wkwebView) {
+        NSLog(@"[SLWebViewController] 收到内存警告但页面仍在导航栈中，保留 WebView");
     }
 }
 
@@ -637,21 +703,49 @@
     // Bridge 将在页面加载完成后异步初始化
 
     self.requestUrl = url;
-    NSLog(@"加载的url = %@",url);
 
     // 记录加载开始时间
-    self.loadStartTime = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval startTime = [[NSDate date] timeIntervalSince1970];
+    self.loadStartTime = startTime;
+    NSLog(@"[性能] ========== 开始加载页面 ==========");
+    NSLog(@"[性能] URL: %@", url);
+    NSLog(@"[性能] shouldReuseWebView: %d", self.shouldReuseWebView);
+
+    // 获取 WebView（可能从池中获取或创建新的）
+    NSTimeInterval beforeWebView = [[NSDate date] timeIntervalSince1970];
+    WKWebView *webView = self.wkwebView;
+    NSTimeInterval afterWebView = [[NSDate date] timeIntervalSince1970];
+    NSLog(@"[性能] ⏱ 获取 WebView 耗时: %.0fms", (afterWebView - beforeWebView) * 1000);
 
     // 同步全局 Cookie（异步但不阻塞）
+    NSTimeInterval beforeCookie = [[NSDate date] timeIntervalSince1970];
     [[self class] syncGlobalTokenCookie];
+    NSTimeInterval afterCookie = [[NSDate date] timeIntervalSince1970];
+    NSLog(@"[性能] ⏱ Cookie 同步耗时: %.0fms", (afterCookie - beforeCookie) * 1000);
 
-    // 直接加载，不等待 Cookie 注入完成（全局 Cookie 会自动生效）
+    // 如果使用 WebView 池，可能有旧内容，先隐藏避免闪现
+    if (self.shouldReuseWebView && webView.URL && ![webView.URL.absoluteString isEqualToString:@"about:blank"]) {
+        webView.hidden = YES;
+        NSLog(@"[性能] ⚠️ WebView 有旧内容，先隐藏: %@", webView.URL);
+    }
+
+    // 构建请求
+    NSTimeInterval beforeRequest = [[NSDate date] timeIntervalSince1970];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url]
                                                    cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                timeoutInterval:30];
-    [self.wkwebView loadRequest:request];
+    NSTimeInterval afterRequest = [[NSDate date] timeIntervalSince1970];
+    NSLog(@"[性能] ⏱ 构建请求耗时: %.0fms", (afterRequest - beforeRequest) * 1000);
 
-    NSLog(@"[性能] 开始加载页面: %@", url);
+    // 发起加载
+    NSTimeInterval beforeLoad = [[NSDate date] timeIntervalSince1970];
+    [webView loadRequest:request];
+    NSTimeInterval afterLoad = [[NSDate date] timeIntervalSince1970];
+    NSLog(@"[性能] ⏱ 调用 loadRequest 耗时: %.0fms", (afterLoad - beforeLoad) * 1000);
+
+    NSTimeInterval totalPrep = afterLoad - startTime;
+    NSLog(@"[性能] ⏱ 总准备时间: %.0fms", totalPrep * 1000);
+    NSLog(@"[性能] ========================================");
 }
 
 - (NSURL *)addThemeToURL:(NSString *)url {
@@ -702,16 +796,20 @@
         // 如果不允许复用（常驻页面），每次都创建新的 WebView
         if (!self.shouldReuseWebView) {
             _wkwebView = [self createNewWebView];
-            NSLog(@"[SLWebViewController] 常驻页面，创建独立 WebView");
+            NSLog(@"🆕 [DEBUG] 常驻页面，创建独立 WebView - URL: %@", self.requestUrl ?: @"nil");
         } else {
             // 从池中获取 WebView，大幅提升性能
             _wkwebView = [[SLWebViewPool sharedPool] dequeueWebView];
+            NSLog(@"♻️ [DEBUG] 从池中获取 WebView - URL: %@, WebView URL: %@",
+                  self.requestUrl ?: @"nil",
+                  _wkwebView.URL ?: @"nil");
         }
 
         // 设置 delegate（每次使用时都需要设置）
         _wkwebView.navigationDelegate = self;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
     }
+    // 移除了 else 分支中的日志，减少日志噪音
     return _wkwebView;
 }
 
@@ -794,7 +892,21 @@
     NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
     NSTimeInterval renderTime = now - self.requestStartTime;
     NSTimeInterval totalTime = now - self.loadStartTime;
-    NSLog(@"[性能] ✅ 页面加载完成 (渲染%.0fms，总计%.0fms)", renderTime * 1000, totalTime * 1000);
+
+    NSLog(@"[性能] ========== 页面加载完成 ==========");
+    NSLog(@"[性能] ✅ 渲染耗时: %.0fms", renderTime * 1000);
+    NSLog(@"[性能] ✅ 总计耗时: %.0fms", totalTime * 1000);
+    NSLog(@"[性能] URL: %@", webView.URL);
+
+    // 显示 WebView（可能之前被隐藏了）
+    if (webView.hidden) {
+        NSTimeInterval beforeShow = [[NSDate date] timeIntervalSince1970];
+        webView.hidden = NO;
+        NSTimeInterval afterShow = [[NSDate date] timeIntervalSince1970];
+        NSLog(@"[性能] 👁 显示 WebView 耗时: %.0fms", (afterShow - beforeShow) * 1000);
+    }
+
+    NSLog(@"[性能] ========================================");
 
     if (self.isShowProgress) {
         @weakobj(self);
@@ -818,6 +930,11 @@
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     NSTimeInterval totalTime = [[NSDate date] timeIntervalSince1970] - self.loadStartTime;
     NSLog(@"[性能] ❌ 页面加载失败 (总计%.0fms): %@", totalTime * 1000, error.localizedDescription);
+
+    // 即使加载失败也显示 WebView
+    if (webView.hidden) {
+        webView.hidden = NO;
+    }
 }
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {

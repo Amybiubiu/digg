@@ -60,6 +60,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    // 修复手势返回白屏问题：检查并恢复当前子页面的 WebView
+    [self checkAndRestoreCurrentChildWebView];
+
     @weakobj(self);
     [self.viewModel getForYouRedPoint:^(NSInteger number, NSError *error) {
         if (!error) {
@@ -68,6 +72,35 @@
             [self.myCategoryView reloadDataWithoutListContainer];
         }
     }];
+}
+
+- (void)checkAndRestoreCurrentChildWebView {
+    NSInteger currentIndex = self.categoryView.selectedIndex;
+    if (currentIndex >= self.titles.count) {
+        return;
+    }
+
+    NSString *targetTitle = self.titles[currentIndex];
+    SLHomeWebViewController *currentVC = (SLHomeWebViewController *)_listCache[targetTitle];
+
+    if (currentVC && [currentVC isKindOfClass:[SLHomeWebViewController class]]) {
+        NSLog(@"🔧 [DEBUG] 检查子页面 WebView - title: %@", targetTitle);
+
+        // 直接访问 wkwebView 属性会触发 getter，如果为 nil 会自动创建
+        // 但我们需要检查是否需要重新加载内容
+        if ([currentVC respondsToSelector:@selector(wkwebView)]) {
+            WKWebView *webView = [currentVC performSelector:@selector(wkwebView)];
+            NSURL *currentURL = webView.URL;
+
+            NSLog(@"🔧 [DEBUG] 子页面 WebView URL: %@", currentURL ?: @"nil");
+
+            // 如果 WebView 存在但 URL 为空，说明内容被清空了，需要重新加载
+            if (webView && !currentURL) {
+                NSLog(@"⚠️ [DEBUG] 子页面 WebView 内容为空，触发重新加载");
+                [currentVC viewWillAppear:NO];
+            }
+        }
+    }
 }
 
 - (JXCategoryNumberView *)myCategoryView {
