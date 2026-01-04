@@ -22,6 +22,7 @@
 #import "SLAlertManager.h"
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
+#import "SLWebViewPreloaderManager.h"
 
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
@@ -613,24 +614,13 @@
 
 - (WKWebView *)wkwebView{
     if (!_wkwebView) {
-        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
-
-        // 🌟核心修复：共享进程池 + 共享 Cookie 存储
-        configuration.processPool = [[self class] sharedProcessPool];
-        configuration.websiteDataStore = [WKWebsiteDataStore defaultDataStore];
-
-        WKPreferences *preferences = [[WKPreferences alloc] init];
-        preferences.javaScriptCanOpenWindowsAutomatically = YES;
-        configuration.preferences = preferences;
-        configuration.allowsInlineMediaPlayback = YES;
-
-
-        _wkwebView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
+        _wkwebView = [[SLWebViewPreloaderManager shared] dequeuePreheatedWebViewWithFrame:CGRectZero];
         _wkwebView.backgroundColor = [UIColor clearColor];
         [_wkwebView setOpaque:NO];
         _wkwebView.scrollView.bounces = YES;
         _wkwebView.navigationDelegate = self;
-        _wkwebView.allowsBackForwardNavigationGestures = YES;
+        // 禁用 WebView 内部的侧滑返回，防止与原生导航控制器的侧滑冲突或历史栈混乱
+        _wkwebView.allowsBackForwardNavigationGestures = NO;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
     }
     return _wkwebView;

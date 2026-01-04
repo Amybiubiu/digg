@@ -16,6 +16,7 @@
 #import <WebKit/WebKit.h>
 #import "SLColorManager.h"
 #import "SLWebViewController.h"
+#import "SLWebViewPreloaderManager.h"
 
 // --- 自定义 Tab 按钮 ---
 @interface SLCustomTabButton : UIButton
@@ -49,6 +50,7 @@
     // 1. 基础设置
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     self.delegate = self; // 保持 delegate 以处理登录拦截逻辑
+    [SLWebViewPreloaderManager shared];
     
     // 2. 创建子控制器
     [self createTabbarControllers];

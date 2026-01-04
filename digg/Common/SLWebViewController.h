@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reload;
 - (void)smartRefresh;
 - (void)sendRefreshPageDataMessage;
+
++ (WKProcessPool *)sharedProcessPool;
 
 @end
 

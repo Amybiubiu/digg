@@ -108,6 +108,7 @@
 		34D2EBD62D3943660067CC05 /* SLRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD52D3943660067CC05 /* SLRecordViewController.m */; };
 		34D2EBD82D394A8B0067CC05 /* HowToUseDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBD72D394A8B0067CC05 /* HowToUseDemo.swift */; };
 		34D2EBDE2D3A01410067CC05 /* SLRecordViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */; };
+		34D393102F0A5EE500D21364 /* SLWebViewPreloaderManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D3930F2F0A5EE400D21364 /* SLWebViewPreloaderManager.m */; };
 		703F132D482FE46A6379243D /* libPods-digg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E828F1163A81AA53E358E2FB /* libPods-digg.a */; };
 		E76A45B92CB8C06F008B2746 /* CaocaoButton.m in Sources */ = {isa = PBXBuildFile; fileRef = E76A45B82CB8C06F008B2746 /* CaocaoButton.m */; };
 		E76A45BC2CB8C08D008B2746 /* UIView+CommonKit.m in Sources */ = {isa = PBXBuildFile; fileRef = E76A45BB2CB8C08D008B2746 /* UIView+CommonKit.m */; };
@@ -272,6 +273,8 @@
 		34D2EBDB2D394C760067CC05 /* digg-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "digg-Bridging-Header.h"; sourceTree = "<group>"; };
 		34D2EBDC2D3A01410067CC05 /* SLRecordViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLRecordViewModel.h; sourceTree = "<group>"; };
 		34D2EBDD2D3A01410067CC05 /* SLRecordViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLRecordViewModel.m; sourceTree = "<group>"; };
+		34D3930E2F0A5EE400D21364 /* SLWebViewPreloaderManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLWebViewPreloaderManager.h; sourceTree = "<group>"; };
+		34D3930F2F0A5EE400D21364 /* SLWebViewPreloaderManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLWebViewPreloaderManager.m; sourceTree = "<group>"; };
 		44262EF495A884D327C8F69E /* Pods-digg.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digg.debug.xcconfig"; path = "Target Support Files/Pods-digg/Pods-digg.debug.xcconfig"; sourceTree = "<group>"; };
 		C0C36A29D1E20E9D246DAEB5 /* Pods-digg.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-digg.release.xcconfig"; path = "Target Support Files/Pods-digg/Pods-digg.release.xcconfig"; sourceTree = "<group>"; };
 		E76A45B72CB8C06F008B2746 /* CaocaoButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CaocaoButton.h; sourceTree = "<group>"; };
@@ -734,6 +737,8 @@
 		E7769EBD2CB798E700AE84F4 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				34D3930E2F0A5EE400D21364 /* SLWebViewPreloaderManager.h */,
+				34D3930F2F0A5EE400D21364 /* SLWebViewPreloaderManager.m */,
 				34A951502DB121B500579CC6 /* SLCommentInputViewController.h */,
 				34A951512DB121B500579CC6 /* SLCommentInputViewController.m */,
 				34A071192D732F9E006BC583 /* Alert */,
@@ -889,6 +894,7 @@
 				34D2EBC32D3942880067CC05 /* RZRichTextViewModel.swift in Sources */,
 				34D2EBC42D3942880067CC05 /* RZLinkInputViewController.swift in Sources */,
 				34D2EBC52D3942880067CC05 /* RZInputAccessoryItem.swift in Sources */,
+				34D393102F0A5EE500D21364 /* SLWebViewPreloaderManager.m in Sources */,
 				34D2EBC62D3942880067CC05 /* RZAttachmentInfo.swift in Sources */,
 				34D2EBC72D3942880067CC05 /* RZInputAccessoryView.swift in Sources */,
 				34D2EBC82D3942880067CC05 /* RZCss.swift in Sources */,
