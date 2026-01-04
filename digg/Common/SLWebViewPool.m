@@ -35,21 +35,24 @@
 
 - (WKWebView *)dequeueWebView {
     __block WKWebView *webView = nil;
+    __block BOOL fromPool = NO;
 
     dispatch_sync(self.poolQueue, ^{
         if (self.availableWebViews.count > 0) {
             webView = [self.availableWebViews firstObject];
             [self.availableWebViews removeObjectAtIndex:0];
-            NSLog(@"[WebViewPool] 从池中获取 WebView，剩余: %lu", (unsigned long)self.availableWebViews.count);
+            fromPool = YES;
+            NSLog(@"[WebViewPool] ✅ 从池中复用 WebView，剩余: %lu", (unsigned long)self.availableWebViews.count);
         }
     });
 
     if (!webView) {
         // 池中没有，创建新的
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"[WebViewPool] 池中无可用 WebView，创建新实例");
-        });
+        NSLog(@"[WebViewPool] 🆕 池中无可用 WebView，创建新实例");
         webView = [self createNewWebView];
+    } else {
+        // 从池中获取的 WebView，重新显示
+        webView.hidden = NO;
     }
 
     return webView;
@@ -68,7 +71,13 @@
         // 清理 WebView 状态（但保留 UA 和 Bridge）
         dispatch_async(dispatch_get_main_queue(), ^{
             [webView stopLoading];
+
+            // 隐藏 WebView，避免在清空时显示内容
+            webView.hidden = YES;
+
+            // 清空内容
             [webView loadHTMLString:@"<html></html>" baseURL:nil];
+
             // 只清理 delegate，不清理 customUserAgent 和 bridge
             webView.navigationDelegate = nil;
             webView.UIDelegate = nil;

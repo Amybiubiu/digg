@@ -51,6 +51,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    NSLog(@"🔵 [DEBUG] viewDidLoad - URL: %@, shouldReuseWebView: %d, WebView exists: %d",
+          self.requestUrl ?: @"nil", self.shouldReuseWebView, self.wkwebView != nil);
+
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];;
     [self.view addSubview:self.wkwebView];
@@ -85,6 +88,27 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    BOOL isInStack = [self.navigationController.viewControllers containsObject:self];
+    NSInteger stackDepth = self.navigationController.viewControllers.count;
+
+    NSLog(@"🟢 [DEBUG] viewWillAppear - URL: %@, WebView: %@, shouldReuse: %d, inStack: %d, stackDepth: %ld",
+          self.requestUrl ?: @"nil",
+          self.wkwebView ? [NSString stringWithFormat:@"exists(%@)", self.wkwebView.URL ?: @"no URL"] : @"nil",
+          self.shouldReuseWebView,
+          isInStack,
+          (long)stackDepth);
+
+    // 如果 WebView 被回收了，重新加载（解决手势返回白屏问题）
+    if (!self.wkwebView && !stringIsEmpty(self.requestUrl)) {
+        NSLog(@"⚠️ [DEBUG] WebView 被回收，重新加载: %@", self.requestUrl);
+        [self startLoadRequestWithUrl:self.requestUrl];
+    } else if (self.wkwebView) {
+        NSLog(@"✅ [DEBUG] WebView 存在，URL: %@", self.wkwebView.URL);
+    } else {
+        NSLog(@"❌ [DEBUG] WebView 和 requestUrl 都为空！");
+    }
+
     if (self.isShowProgress) {
         self.navigationController.navigationBar.barTintColor = UIColor.whiteColor;
         self.navigationController.navigationBar.hidden = NO;
@@ -100,6 +124,10 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    NSLog(@"🟢🟢 [DEBUG] viewDidAppear - WebView: %@, isLoading: %d",
+          self.wkwebView ? @"exists" : @"nil",
+          self.wkwebView.isLoading);
+
     // 检查是否需要刷新，如果需要则调用刷新逻辑
     if (self.needsRefresh) {
         [self sendRefreshPageDataMessage];
@@ -109,6 +137,13 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
+    BOOL isInStack = [self.navigationController.viewControllers containsObject:self];
+    NSLog(@"🟡 [DEBUG] viewWillDisappear - URL: %@, WebView: %@, inStack: %d",
+          self.requestUrl ?: @"nil",
+          self.wkwebView ? @"exists" : @"nil",
+          isInStack);
+
     if (self.isShowProgress) {
         self.navigationController.navigationBar.barTintColor = nil;
         self.navigationController.navigationBar.hidden = YES;
@@ -594,6 +629,7 @@
         _wkwebView.allowsBackForwardNavigationGestures = NO;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
     }
+    // 移除了 else 分支中的日志，减少日志噪音
     return _wkwebView;
 }
 

@@ -36,7 +36,7 @@
             }
         }
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"req error = %@",error);
+        // NSLog(@"req error = %@",error);
         if (handler) {
             handler(0, error);
         }

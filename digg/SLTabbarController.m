@@ -277,6 +277,7 @@
     //  self.noticeVC = [[SLConcernedViewController alloc] init];
     SLWebViewController *noticeVC = [[SLWebViewController alloc] init];
     [noticeVC ensureUAAndTokenIfNeeded];
+    noticeVC.shouldReuseWebView = NO; // Tab 常驻页面，禁止回收 WebView
     [noticeVC startLoadRequestWithUrl:FOLLOW_PAGE_URL];
     noticeVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *noticeNavi = [self createRootNavi];
@@ -296,6 +297,7 @@
     // 用户
     SLWebViewController *userVC = [[SLWebViewController alloc] init];
     [userVC ensureUAAndTokenIfNeeded];
+    userVC.shouldReuseWebView = NO; // Tab 常驻页面，禁止回收 WebView
     [userVC startLoadRequestWithUrl:MY_PAGE_URL];
     userVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *userNavi = [self createRootNavi];
