@@ -57,6 +57,7 @@
 @property (nonatomic, strong) UIButton *imageDeleteOverlayButton;
 @property (nonatomic, assign) NSInteger selectedImageIndex;
 @property (nonatomic, strong) SLPageControlView *pageControl;
+@property (nonatomic, strong) UIView *accessoryView;
 
 @end
 
@@ -72,8 +73,12 @@
     self.selectedImages = [NSMutableArray array];
     self.textViewContentHeight = 300;
     [self setupUI];
-    [self setupInputAccessoryView];
+    [self setupAccessoryView];
     self.tagInputField.hidden = YES;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
     if (self.isEdit) {
         [self.leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
 
@@ -895,7 +900,6 @@
         _textView.returnKeyType = UIReturnKeyDefault;
         
         [self setupContentPlaceholder];
-        [self setupInputAccessoryView];
     }
     return _textView;
 }
@@ -972,42 +976,100 @@
     }];
 }
 
-- (void)setupInputAccessoryView {
-    UIView *accessoryView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 44)];
-    accessoryView.backgroundColor = [UIColor whiteColor];
+- (void)setupAccessoryView {
+    self.accessoryView = [[UIView alloc] init];
+    self.accessoryView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.accessoryView];
     
-    UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 0.5)];
+    [self.accessoryView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view);
+        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        make.height.mas_equalTo(44);
+    }];
+    
+    [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.navigationView.mas_bottom);
+        make.left.right.equalTo(self.view);
+        make.bottom.equalTo(self.accessoryView.mas_top);
+    }];
+    
+    UIView *line = [[UIView alloc] init];
     line.backgroundColor = [UIColor lightGrayColor];
-    [accessoryView addSubview:line];
+    [self.accessoryView addSubview:line];
+    [line mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.top.equalTo(self.accessoryView);
+        make.height.mas_equalTo(0.5);
+    }];
     
     UIButton *linkBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [linkBtn setImage:[UIImage systemImageNamed:@"link"] forState:UIControlStateNormal];
     [linkBtn setTintColor:Color16(0x333333)];
-    linkBtn.frame = CGRectMake(15, 0, 44, 44);
     [linkBtn addTarget:self action:@selector(showLinkField) forControlEvents:UIControlEventTouchUpInside];
-    [accessoryView addSubview:linkBtn];
+    [self.accessoryView addSubview:linkBtn];
+    [linkBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.accessoryView).offset(15);
+        make.centerY.equalTo(self.accessoryView);
+        make.width.height.mas_equalTo(44);
+    }];
     
     UIButton *imageBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [imageBtn setImage:[UIImage systemImageNamed:@"photo"] forState:UIControlStateNormal];
     [imageBtn setTintColor:Color16(0x333333)];
-    imageBtn.frame = CGRectMake(74, 0, 44, 44);
     [imageBtn addTarget:self action:@selector(addImage) forControlEvents:UIControlEventTouchUpInside];
-    [accessoryView addSubview:imageBtn];
+    [self.accessoryView addSubview:imageBtn];
+    [imageBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(linkBtn.mas_right).offset(15);
+        make.centerY.equalTo(self.accessoryView);
+        make.width.height.mas_equalTo(44);
+    }];
     
-    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    [doneBtn setTitle:@"完成" forState:UIControlStateNormal];
-    [doneBtn setTintColor:Color16(0x333333)];
-    doneBtn.frame = CGRectMake(kScreenWidth - 70, 0, 60, 44);
-    [doneBtn addTarget:self action:@selector(keyboardDone) forControlEvents:UIControlEventTouchUpInside];
-    [accessoryView addSubview:doneBtn];
-    
-    self.textView.inputAccessoryView = accessoryView;
-    self.titleField.inputAccessoryView = accessoryView;
+//    UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+//    [doneBtn setTitle:@"完成" forState:UIControlStateNormal];
+//    [doneBtn setTintColor:Color16(0x333333)];
+//    [doneBtn addTarget:self action:@selector(keyboardDone) forControlEvents:UIControlEventTouchUpInside];
+//    [self.accessoryView addSubview:doneBtn];
+//    [doneBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.right.equalTo(self.accessoryView).offset(-15);
+//        make.centerY.equalTo(self.accessoryView);
+//        make.width.mas_equalTo(60);
+//        make.height.mas_equalTo(44);
+//    }];
 }
 
-- (void)keyboardDone {
-    [self.view endEditing:YES];
+- (void)keyboardWillShow:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    CGRect keyboardFrame = [userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    double duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    CGFloat keyboardHeight = keyboardFrame.size.height;
+    CGFloat safeAreaBottom = self.view.safeAreaInsets.bottom;
+    CGFloat offset = -(keyboardHeight - safeAreaBottom);
+    
+    [self.accessoryView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom).offset(offset);
+    }];
+    
+    [UIView animateWithDuration:duration animations:^{
+        [self.view layoutIfNeeded];
+    }];
 }
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    double duration = [userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    [self.accessoryView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom).offset(0);
+    }];
+    
+    [UIView animateWithDuration:duration animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+//- (void)keyboardDone {
+//    [self.view endEditing:YES];
+//}
 
 - (void)showLinkField {
     if (self.linkFieldVisible) {
