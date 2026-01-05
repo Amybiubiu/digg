@@ -156,9 +156,25 @@
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
+
+    [self.containerView addSubview:self.tagContainerView];
+    [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.line1View.mas_bottom).offset(16);
+        make.left.equalTo(self.containerView).offset(17);
+        make.right.equalTo(self.containerView).offset(-16);
+    }];
+    // 添加"+ 标签"按钮
+    [self.tagContainerView addSubview:self.addTagButton];
+    [self.addTagButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.tagContainerView);
+        make.centerY.equalTo(self.tagContainerView);
+        make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
+        make.width.mas_equalTo(100);
+    }];
+    
     [self.containerView addSubview:self.linkField];
     [self.linkField mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom);
+        make.top.equalTo(self.tagContainerView.mas_bottom).offset(10);
         make.left.equalTo(self.containerView).offset(12);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(0);
@@ -167,7 +183,7 @@
 
     [self.containerView addSubview:self.line2View];
     [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom);
+        make.top.equalTo(self.tagContainerView.mas_bottom).offset(10);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
@@ -224,23 +240,9 @@
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
-    [self.containerView addSubview:self.tagContainerView];
-    [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line3View.mas_bottom).offset(16);
-        make.left.equalTo(self.containerView).offset(17);
-        make.right.equalTo(self.containerView).offset(-16);
-    }];
-    // 添加"+ 标签"按钮
-    [self.tagContainerView addSubview:self.addTagButton];
-    [self.addTagButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.tagContainerView);
-        make.centerY.equalTo(self.tagContainerView);
-        make.height.mas_equalTo(TAG_DEFAULT_HEIGHT);
-        make.width.mas_equalTo(100);
-    }];
     
     [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.tagContainerView.mas_bottom).offset(16);
+        make.bottom.equalTo(self.line3View.mas_bottom).offset(16);
     }];
 }
 
@@ -785,14 +787,9 @@
             make.top.equalTo(self.textView.mas_bottom);
         }];
         
-        // 更新tagContainerView的位置
-        [self.tagContainerView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.line3View.mas_bottom).offset(16);
-        }];
-        
         // 更新containerView的底部约束
         [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(self.tagContainerView.mas_bottom).offset(16);
+            make.bottom.equalTo(self.line3View.mas_bottom).offset(16);
         }];
         
         // 强制布局更新
@@ -1114,7 +1111,7 @@
     }];
     
     [self.line2View mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom);
+        make.top.equalTo(self.tagContainerView.mas_bottom).offset(10);
         make.left.equalTo(self.containerView).offset(10);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
