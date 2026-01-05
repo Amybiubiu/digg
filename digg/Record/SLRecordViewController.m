@@ -9,7 +9,6 @@
 #import "SLGeneralMacro.h"
 #import "EnvConfigHeader.h"
 #import "Masonry.h"
-#import "SLHomeTagView.h"
 #import "SLRecordViewModel.h"
 #import "SVProgressHUD.h"
 #import "SLWebViewController.h"
@@ -18,6 +17,7 @@
 #import "digg-Swift.h"
 #import "UIView+SLToast.h"
 #import "TZImagePickerController.h"
+#import "SLPageControlView.h"
 
 #define FIELD_DEFAULT_HEIGHT 60
 #define TAG_DEFAULT_HEIGHT 24
@@ -30,7 +30,6 @@
 
 @property (nonatomic, strong) UIScrollView* contentView;
 @property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) SLHomeTagView *tagView;
 @property (nonatomic, strong) UITextField *titleField; // 标题输入框
 @property (nonatomic, strong) UITextField *linkField;  // 链接输入框
 @property (nonatomic, strong) UITextView *textView;    // 多行文本输入框
@@ -60,7 +59,7 @@
 @property (nonatomic, strong) UIButton *imagesAddButton;
 @property (nonatomic, strong) UIButton *imageDeleteOverlayButton;
 @property (nonatomic, assign) NSInteger selectedImageIndex;
-@property (nonatomic, strong) UIPageControl *pageControl;
+@property (nonatomic, strong) SLPageControlView *pageControl;
 
 @end
 
@@ -97,7 +96,6 @@
         // [self.textView becomeFirstResponder];
 
         [self.tags addObjectsFromArray:self.labels];
-        [self showTagView];
         
         // Load existing images if any
         if (self.imageUrls.count > 0) {
@@ -144,18 +142,12 @@
         make.edges.equalTo(self.contentView);
         make.width.equalTo(self.contentView);
     }];
-    
-    [self.containerView addSubview:self.tagView];
     [self.containerView addSubview:self.titleField];
     [self.titleField mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.containerView);
         make.left.equalTo(self.containerView).offset(12);
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
-    }];
-    [self.tagView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self.titleField);
-        make.left.equalTo(self.containerView).offset(13);
     }];
     [self.containerView addSubview:self.line1View];
     [self.line1View mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -193,23 +185,29 @@
     [self.imagesAddButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.imagesScrollView.mas_bottom).offset(-8);
         make.right.equalTo(self.containerView).offset(-12);
-        make.width.height.mas_equalTo(30);
+        make.size.mas_equalTo(CGSizeMake(64, 28));
     }];
     
     [self.containerView addSubview:self.imageDeleteOverlayButton];
     [self.imageDeleteOverlayButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.imagesScrollView.mas_top).offset(8);
         make.right.equalTo(self.containerView).offset(-12);
-        make.width.height.mas_equalTo(25);
+        make.width.height.mas_equalTo(32);
     }];
     
-    self.pageControl = [[UIPageControl alloc] init];
+    self.pageControl = [[SLPageControlView alloc] init];
     self.pageControl.hidden = YES;
+    self.pageControl.dotDiameter = 8.0;
+    self.pageControl.dotSpacing = 12.0;
+    self.pageControl.contentInsets = UIEdgeInsetsMake(6, 12, 6, 12);
+    self.pageControl.dotColor = [UIColor colorWithWhite:1 alpha:0.35];
+    self.pageControl.currentDotColor = [UIColor whiteColor];
+    self.pageControl.backgroundFillColor = [UIColor colorWithWhite:0 alpha:0.35];
     [self.containerView addSubview:self.pageControl];
     [self.pageControl mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.imagesScrollView.mas_bottom).offset(-8);
         make.centerX.equalTo(self.imagesScrollView);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(24);
     }];
     
     [self.containerView addSubview:self.textView];
@@ -291,8 +289,6 @@
     [self.tags removeAllObjects];
     [self refreshTagsDisplay];
     [self updateTagsLayout];
-    
-    [self.tagView setHidden:YES];
     [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.contentView);
         make.left.equalTo(self.contentView).offset(12);
@@ -301,26 +297,7 @@
     }];
 }
 
-- (void)showTagView {
-    if (self.tags.count > 0) {
-        [self.tagView setHidden:NO];
-        [self.tagView updateWithLabel:self.tags.firstObject];
-        [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.contentView);
-            make.left.equalTo(self.tagView.mas_right).offset(5);
-            make.right.equalTo(self.contentView).offset(-10);
-            make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
-        }];
-    } else {
-        [self.tagView setHidden:YES];
-        [self.titleField mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.contentView);
-            make.left.equalTo(self.contentView).offset(12);
-            make.right.equalTo(self.contentView).offset(-10);
-            make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
-        }];
-    }
-}
+ 
 
 - (void)updateLinkFieldHeight {
     CGFloat fixedWidth = self.linkField.frame.size.width > 0 ? self.linkField.frame.size.width : [UIScreen.mainScreen bounds].size.width - 40;
@@ -467,7 +444,6 @@
     NSString *tagText = [self.tagInputField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     if (tagText.length > 0) {
         [self.tags addObject:tagText];
-        [self showTagView]; // 更新顶部标签显示
         [self refreshTagsDisplay]; // 刷新标签显示
     }
     
@@ -548,7 +524,7 @@
         NSString *tagName = self.tags[i];
         
         // 计算标签宽度
-        UIFont *font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+        UIFont *font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
         CGSize textSize = [tagName sizeWithAttributes:@{NSFontAttributeName: font}];
         
         // 删除按钮宽度和间距
@@ -573,16 +549,16 @@
         
         // 创建标签视图
         UIView *tagView = [[UIView alloc] init];
-        tagView.backgroundColor = [SLColorManager recorderTagBgColor];
-        tagView.layer.cornerRadius = TAG_DEFAULT_HEIGHT/2;
+        tagView.backgroundColor = Color16(0xFF6B6B);
+        tagView.layer.cornerRadius = 12;
         tagView.layer.borderColor = [SLColorManager recorderTagBorderColor].CGColor;
-        tagView.layer.borderWidth = 1;
+        tagView.layer.borderWidth = 0;
         
         // 创建标签文本
         UILabel *tagLabel = [[UILabel alloc] init];
         tagLabel.text = tagName;
         tagLabel.font = font;
-        tagLabel.textColor = [SLColorManager recorderTagTextColor];
+        tagLabel.textColor = [UIColor whiteColor];
         
         // 只有当一行只有这一个标签且长度超过最大宽度时才使用省略号
         if (xOffset == 0 && actualTagWidth >= maxWidth) {
@@ -596,7 +572,7 @@
         // 创建删除按钮
         UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [deleteButton setImage:[[UIImage systemImageNamed:@"xmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-        [deleteButton setTintColor:[SLColorManager recorderTagTextColor]];
+        [deleteButton setTintColor:[UIColor whiteColor]];
         deleteButton.tag = i; // 使用tag存储索引
         [deleteButton addTarget:self action:@selector(deleteTag:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -647,7 +623,6 @@
     NSInteger index = sender.tag;
     if (index < self.tags.count) {
         [self.tags removeObjectAtIndex:index];
-        [self showTagView]; // 更新顶部标签显示
         [self refreshTagsDisplay]; // 刷新标签显示
     }
 }
@@ -730,14 +705,6 @@
         UILabel *placeholderLabel = [self.textView viewWithTag:997];
         placeholderLabel.hidden = textView.text.length > 0;
     }
-}
-
-- (void)textViewDidBeginEditing:(UITextView *)textView {
-    // 移除旧代码，titleField 现在是 UITextField
-}
-
-- (void)textViewDidEndEditing:(UITextView *)textView {
-    // 移除旧代码，titleField 现在是 UITextField
 }
 
 #pragma mark - UITextField Delegate
@@ -891,15 +858,6 @@
     return _containerView;
 }
 
-- (SLHomeTagView *)tagView {
-    if (!_tagView) {
-        _tagView = [[SLHomeTagView alloc] init];
-        [_tagView setContentCompressionResistancePriority:UILayoutPriorityRequired
-                                          forAxis:UILayoutConstraintAxisHorizontal];
-        [_tagView setHidden:YES];
-    }
-    return _tagView;
-}
 
 - (UITextField *)titleField {
     if (!_titleField) {
@@ -1089,18 +1047,21 @@
     
     UIButton *linkBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [linkBtn setImage:[UIImage systemImageNamed:@"link"] forState:UIControlStateNormal];
+    [linkBtn setTintColor:Color16(0x333333)];
     linkBtn.frame = CGRectMake(15, 0, 44, 44);
     [linkBtn addTarget:self action:@selector(showLinkField) forControlEvents:UIControlEventTouchUpInside];
     [accessoryView addSubview:linkBtn];
     
     UIButton *imageBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [imageBtn setImage:[UIImage systemImageNamed:@"photo"] forState:UIControlStateNormal];
+    [imageBtn setTintColor:Color16(0x333333)];
     imageBtn.frame = CGRectMake(74, 0, 44, 44);
     [imageBtn addTarget:self action:@selector(addImage) forControlEvents:UIControlEventTouchUpInside];
     [accessoryView addSubview:imageBtn];
     
     UIButton *doneBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [doneBtn setTitle:@"完成" forState:UIControlStateNormal];
+    [doneBtn setTintColor:Color16(0x333333)];
     doneBtn.frame = CGRectMake(kScreenWidth - 70, 0, 60, 44);
     [doneBtn addTarget:self action:@selector(keyboardDone) forControlEvents:UIControlEventTouchUpInside];
     [accessoryView addSubview:doneBtn];
@@ -1213,7 +1174,7 @@
     }
     
     self.imagesScrollView.hidden = NO;
-    CGFloat imageHeight = 150;
+    CGFloat imageHeight = 300;
     CGFloat padding = 0;
     CGFloat scrollWidth = kScreenWidth;
     CGFloat currentX = 0;
@@ -1270,7 +1231,7 @@
     self.pageControl.numberOfPages = self.selectedImages.count;
     self.pageControl.currentPage = 0;
     [self.pageControl mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(24);
     }];
     self.imagesAddButton.hidden = NO;
     self.imageDeleteOverlayButton.hidden = NO;
@@ -1339,9 +1300,20 @@
 
 - (UIButton *)imagesAddButton {
     if (!_imagesAddButton) {
-        _imagesAddButton = [UIButton buttonWithType:UIButtonTypeSystem];
-        [_imagesAddButton setImage:[UIImage systemImageNamed:@"plus.circle.fill"] forState:UIControlStateNormal];
-        _imagesAddButton.tintColor = [UIColor systemBlueColor];
+        _imagesAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_imagesAddButton setTitle:@"添加" forState:UIControlStateNormal];
+        _imagesAddButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
+        [_imagesAddButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:13 weight:UIImageSymbolWeightMedium scale:UIImageSymbolScaleMedium];
+        [_imagesAddButton setImage:[UIImage systemImageNamed:@"photo.on.rectangle" withConfiguration:config] forState:UIControlStateNormal];
+        
+        _imagesAddButton.tintColor = [UIColor whiteColor];
+        _imagesAddButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
+        _imagesAddButton.layer.cornerRadius = 14;
+        _imagesAddButton.layer.masksToBounds = YES;
+        _imagesAddButton.imageEdgeInsets = UIEdgeInsetsMake(0, -2, 0, 2);
+        _imagesAddButton.titleEdgeInsets = UIEdgeInsetsMake(0, 4, 0, -4);
         [_imagesAddButton addTarget:self action:@selector(addImage) forControlEvents:UIControlEventTouchUpInside];
         _imagesAddButton.hidden = YES;
     }
@@ -1351,8 +1323,14 @@
 - (UIButton *)imageDeleteOverlayButton {
     if (!_imageDeleteOverlayButton) {
         _imageDeleteOverlayButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_imageDeleteOverlayButton setImage:[UIImage systemImageNamed:@"xmark.circle.fill"] forState:UIControlStateNormal];
-        _imageDeleteOverlayButton.tintColor = [UIColor blackColor];
+        _imageDeleteOverlayButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.6];
+        _imageDeleteOverlayButton.layer.cornerRadius = 16;
+        _imageDeleteOverlayButton.layer.masksToBounds = YES;
+        
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightBold scale:UIImageSymbolScaleMedium];
+        [_imageDeleteOverlayButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:config] forState:UIControlStateNormal];
+        _imageDeleteOverlayButton.tintColor = [UIColor whiteColor];
+        
         [_imageDeleteOverlayButton addTarget:self action:@selector(deleteImageConfirm:) forControlEvents:UIControlEventTouchUpInside];
         _imageDeleteOverlayButton.hidden = YES;
     }

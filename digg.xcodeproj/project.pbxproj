@@ -59,6 +59,7 @@
 		345C12492DAC95AB005FCCDB /* QuicklySwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C120F2DAC95AB005FCCDB /* QuicklySwift.swift */; };
 		345C124A2DAC95AB005FCCDB /* QuicklyViewAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345C12162DAC95AB005FCCDB /* QuicklyViewAnimation.swift */; };
 		345C18A92DADEF36005FCCDB /* SLCustomAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */; };
+		3481032F2F0BCD9500E5B15E /* SLPageControlView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3481032E2F0BCD9500E5B15E /* SLPageControlView.m */; };
 		3486060C2DD9B96A00040009 /* SLAddLinkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3486060B2DD9B96A00040009 /* SLAddLinkViewController.m */; };
 		348628F42DB358AB00CB341C /* NSObject+SLEmpty.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F32DB358AA00CB341C /* NSObject+SLEmpty.m */; };
 		348628F72DB3CCB600CB341C /* UIView+SLToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 348628F62DB3CCB600CB341C /* UIView+SLToast.m */; };
@@ -191,6 +192,8 @@
 		345C12182DAC95AB005FCCDB /* QuicklyViewControllerAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuicklyViewControllerAnimation.swift; sourceTree = "<group>"; };
 		345C18A72DADEF36005FCCDB /* SLCustomAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLCustomAlertView.h; sourceTree = "<group>"; };
 		345C18A82DADEF36005FCCDB /* SLCustomAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLCustomAlertView.m; sourceTree = "<group>"; };
+		3481032D2F0BCD9500E5B15E /* SLPageControlView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLPageControlView.h; sourceTree = "<group>"; };
+		3481032E2F0BCD9500E5B15E /* SLPageControlView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLPageControlView.m; sourceTree = "<group>"; };
 		3486060A2DD9B96A00040009 /* SLAddLinkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SLAddLinkViewController.h; sourceTree = "<group>"; };
 		3486060B2DD9B96A00040009 /* SLAddLinkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SLAddLinkViewController.m; sourceTree = "<group>"; };
 		348628F22DB358AA00CB341C /* NSObject+SLEmpty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+SLEmpty.h"; sourceTree = "<group>"; };
@@ -426,6 +429,8 @@
 		349A12052EF8E8510000402E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				3481032D2F0BCD9500E5B15E /* SLPageControlView.h */,
+				3481032E2F0BCD9500E5B15E /* SLPageControlView.m */,
 				349A12062EF8E88B0000402E /* SLHomeTagView.h */,
 				349A12072EF8E88B0000402E /* SLHomeTagView.m */,
 			);
@@ -989,6 +994,7 @@
 				34D2EBDE2D3A01410067CC05 /* SLRecordViewModel.m in Sources */,
 				E76A45BC2CB8C08D008B2746 /* UIView+CommonKit.m in Sources */,
 				E76A45B92CB8C06F008B2746 /* CaocaoButton.m in Sources */,
+				3481032F2F0BCD9500E5B15E /* SLPageControlView.m in Sources */,
 				E76A45E82CBFB994008B2746 /* CaocaoRootViewController.m in Sources */,
 				3486EBC22D1D3C2700A55258 /* SLNavigationController.m in Sources */,
 				E7769E5B2CA2E63A00AE84F4 /* AppDelegate.m in Sources */,
