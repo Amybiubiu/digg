@@ -101,7 +101,10 @@
         
         // Load existing images if any
         if (self.imageUrls.count > 0) {
-            [self.selectedImages addObjectsFromArray:self.imageUrls];
+            for (NSString *url in self.imageUrls) {
+                NSMutableDictionary *item = [@{@"url": url} mutableCopy];
+                [self.selectedImages addObject:item];
+            }
             [self refreshImagesDisplay];
         }
     } else {
@@ -337,15 +340,16 @@
         return;
     }
     
-    // Filter images that need upload
+    // Gather urls; upload any remaining images without url
     NSMutableArray *imagesToUpload = [NSMutableArray array];
     NSMutableArray *finalImageUrls = [NSMutableArray array];
-    
-    for (id item in self.selectedImages) {
-        if ([item isKindOfClass:[UIImage class]]) {
-            [imagesToUpload addObject:item];
-        } else if ([item isKindOfClass:[NSString class]]) {
-            [finalImageUrls addObject:item];
+    for (NSDictionary *dict in self.selectedImages) {
+        NSString *url = dict[@"url"];
+        UIImage *img = dict[@"image"];
+        if (url.length > 0) {
+            [finalImageUrls addObject:url];
+        } else if (img) {
+            [imagesToUpload addObject:img];
         }
     }
     
@@ -383,6 +387,26 @@
             [result addObject:url];
         }
         [self uploadNextImage:images index:index+1 result:result completion:completion];
+    }];
+}
+
+- (void)uploadPendingImage:(UIImage *)image {
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.8);
+    
+    @weakobj(self)
+    [self.viewModel updateImage:imageData progress:nil resultHandler:^(BOOL isSuccess, NSString *url) {
+        @strongobj(self)
+        if (isSuccess && url) {
+            NSUInteger index = [self.selectedImages indexOfObjectPassingTest:^BOOL(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+                return obj[@"image"] == image;
+            }];
+            if (index != NSNotFound) {
+                NSMutableDictionary *item = [self.selectedImages[index] mutableCopy];
+                item[@"url"] = url;
+                self.selectedImages[index] = item;
+                [self refreshImagesDisplay];
+            }
+        }
     }];
 }
 
@@ -1115,8 +1139,15 @@
     [picker setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos, NSArray *assets, BOOL isSelectOriginalPhoto) {
         @strongobj(self)
         if (photos.count > 0) {
-            [self.selectedImages addObjectsFromArray:photos];
+            for (UIImage *img in photos) {
+                NSMutableDictionary *item = [@{@"image": img} mutableCopy];
+                [self.selectedImages addObject:item];
+            }
             [self refreshImagesDisplay];
+            
+            for (UIImage *img in photos) {
+                [self uploadPendingImage:img];
+            }
         }
     }];
     [self presentViewController:picker animated:YES completion:nil];
@@ -1149,7 +1180,9 @@
     CGFloat currentX = 0;
     
     for (int i = 0; i < self.selectedImages.count; i++) {
-        id item = self.selectedImages[i];
+        NSDictionary *item = self.selectedImages[i];
+        UIImage *displayImage = item[@"image"];
+        NSString *urlString = item[@"url"];
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(currentX, 0, scrollWidth, imageHeight)];
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         imageView.clipsToBounds = YES;
@@ -1159,29 +1192,32 @@
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
         [imageView addGestureRecognizer:tap];
         
-        if ([item isKindOfClass:[UIImage class]]) {
-            imageView.image = (UIImage *)item;
-        } else if ([item isKindOfClass:[NSString class]]) {
-            // Load from URL (using SDWebImage or similar if available, otherwise just placeholder or try loading)
-            // Assuming YYWebImage or SDWebImage is used in project based on previous context (YYModel used)
-            // Check if UIImageView+YYWebImage.h is available?
-            // I'll try generic approach or assume YYWebImage is available or just set placeholder for now if I can't confirm.
-            // But I should try to load it.
-            // Let's use simple data task if no library is imported, but that's bad.
-            // I'll check imports. 'SLRecordViewModel.m' imports YYModel.
-            // I'll just use a placeholder text or attempt to load if I can.
-            // Actually, in `SLRecordViewController.m` imports, I should check.
-            // But for now, I'll just set backgroundColor or placeholder.
+        if (displayImage) {
+            imageView.image = displayImage;
+            if (urlString.length == 0) {
+                UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleMedium];
+                spinner.center = CGPointMake(scrollWidth / 2, imageHeight / 2);
+                spinner.color = [UIColor whiteColor];
+                [spinner startAnimating];
+                [imageView addSubview:spinner];
+            }
+        } else if (urlString.length > 0) {
             imageView.backgroundColor = [UIColor lightGrayColor];
-            // Try to load asynchronously
-             dispatch_async(dispatch_get_global_queue(0,0), ^{
-                 NSData * data = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: (NSString*)item]];
-                 if ( data == nil )
-                     return;
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     imageView.image = [UIImage imageWithData: data];
-                 });
-             });
+            dispatch_async(dispatch_get_global_queue(0,0), ^{
+                NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:urlString]];
+                if (!data) return;
+                UIImage *downloaded = [UIImage imageWithData:data];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    imageView.image = downloaded;
+                    NSMutableDictionary *updated = [item mutableCopy];
+                    if (downloaded) {
+                        updated[@"image"] = downloaded;
+                        self.selectedImages[i] = updated;
+                    }
+                });
+            });
+        } else {
+            imageView.backgroundColor = [UIColor lightGrayColor];
         }
         
         [self.imagesScrollView addSubview:imageView];
