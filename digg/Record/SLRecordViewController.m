@@ -33,9 +33,6 @@
 @property (nonatomic, strong) UITextField *titleField; // 标题输入框
 @property (nonatomic, strong) UITextField *linkField;  // 链接输入框
 @property (nonatomic, strong) UITextView *textView;    // 多行文本输入框
-@property (nonatomic, strong) UIView *line1View;
-@property (nonatomic, strong) UIView *line2View;
-@property (nonatomic, strong) UIView *line3View;
 @property (nonatomic, strong) UIScrollView *imagesScrollView; // 图片滚动视图
 @property (nonatomic, strong) NSMutableArray *selectedImages; // 选中的图片数组
 
@@ -149,17 +146,10 @@
         make.right.equalTo(self.containerView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
-    [self.containerView addSubview:self.line1View];
-    [self.line1View mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.titleField.mas_bottom);
-        make.left.equalTo(self.containerView).offset(10);
-        make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
-    }];
 
     [self.containerView addSubview:self.tagContainerView];
     [self.tagContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line1View.mas_bottom).offset(16);
+        make.top.equalTo(self.titleField.mas_bottom).offset(10);
         make.left.equalTo(self.containerView).offset(17);
         make.right.equalTo(self.containerView).offset(-16);
     }];
@@ -181,18 +171,10 @@
     }];
     self.linkField.hidden = YES;
 
-    [self.containerView addSubview:self.line2View];
-    [self.line2View mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.tagContainerView.mas_bottom).offset(10);
-        make.left.equalTo(self.containerView).offset(10);
-        make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
-    }];
-    
     // Images ScrollView
     [self.containerView addSubview:self.imagesScrollView];
     [self.imagesScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.line2View.mas_bottom).offset(10);
+        make.top.equalTo(self.linkField.mas_bottom).offset(10);
         make.left.right.equalTo(self.containerView);
         make.height.mas_equalTo(0); // Initially 0, update when images added
     }];
@@ -233,16 +215,9 @@
         make.right.equalTo(self.containerView).offset(-12);
         make.height.mas_equalTo(300);
     }];
-    [self.containerView addSubview:self.line3View];
-    [self.line3View mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.textView.mas_bottom);
-        make.left.equalTo(self.containerView).offset(10);
-        make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
-    }];
     
     [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(self.line3View.mas_bottom).offset(16);
+        make.bottom.equalTo(self.textView.mas_bottom).offset(16);
     }];
 }
 
@@ -314,11 +289,6 @@
     // 更新linkField高度
     [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(newHeight);
-    }];
-    
-    // 更新line2的位置
-    [self.line2View mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.linkField.mas_bottom);
     }];
     
     // 强制布局更新
@@ -782,14 +752,9 @@
             make.height.mas_equalTo(newHeight);
         }];
         
-        // 更新line3View的位置
-        [self.line3View mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.textView.mas_bottom);
-        }];
-        
         // 更新containerView的底部约束
         [self.containerView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.bottom.equalTo(self.line3View.mas_bottom).offset(16);
+            make.bottom.equalTo(self.textView.mas_bottom).offset(16);
         }];
         
         // 强制布局更新
@@ -935,33 +900,6 @@
     return _textView;
 }
 
-- (UIView *)line1View {
-    if (!_line1View) {
-        _line1View = [[UIView alloc] init];
-        _line1View.backgroundColor = [SLColorManager cellDivideLineColor];
-        _line1View.contentScaleFactor = [UIScreen mainScreen].scale;
-    }
-    return _line1View;
-}
-
-- (UIView *)line2View {
-    if (!_line2View) {
-        _line2View = [[UIView alloc] init];
-        _line2View.backgroundColor = [SLColorManager cellDivideLineColor];
-        _line2View.contentScaleFactor = [UIScreen mainScreen].scale;
-    }
-    return _line2View;
-}
-
-- (UIView *)line3View {
-    if (!_line3View) {
-        _line3View = [[UIView alloc] init];
-        _line3View.backgroundColor = [SLColorManager cellDivideLineColor];
-        _line3View.contentScaleFactor = [UIScreen mainScreen].scale;
-    }
-    return _line3View;
-}
-
 - (UIView *)tagContainerView {
     if (!_tagContainerView) {
         _tagContainerView = [[UIView alloc] init];
@@ -1080,14 +1018,6 @@
     self.linkField.hidden = NO;
     self.linkCloseButton.hidden = NO;
     
-    // 更新 line2View 的位置
-    [self.line2View mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.linkField.mas_bottom);
-        make.left.equalTo(self.containerView).offset(10);
-        make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
-    }];
-    
     // 更新高度和按钮位置
     [self updateLinkFieldHeight];
     
@@ -1108,13 +1038,6 @@
     
     [self.linkField mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.mas_equalTo(0);
-    }];
-    
-    [self.line2View mas_remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.tagContainerView.mas_bottom).offset(10);
-        make.left.equalTo(self.containerView).offset(10);
-        make.right.equalTo(self.containerView).offset(-10);
-        make.height.mas_equalTo(1.0/[UIScreen mainScreen].scale);
     }];
     
     [self.view layoutIfNeeded];
@@ -1224,12 +1147,21 @@
         make.height.mas_equalTo(imageHeight);
     }];
     
-    self.pageControl.hidden = NO;
     self.pageControl.numberOfPages = self.selectedImages.count;
     self.pageControl.currentPage = 0;
-    [self.pageControl mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.height.mas_equalTo(24);
-    }];
+    
+    if (self.selectedImages.count > 1) {
+        self.pageControl.hidden = NO;
+        [self.pageControl mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(24);
+        }];
+    } else {
+        self.pageControl.hidden = YES;
+        [self.pageControl mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(0);
+        }];
+    }
+
     self.imagesAddButton.hidden = NO;
     self.imageDeleteOverlayButton.hidden = NO;
     [self.containerView setNeedsLayout];
