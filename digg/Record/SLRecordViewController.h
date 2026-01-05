@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString* titleText;
 @property (nonatomic, strong) NSString* url;
 @property (nonatomic, strong) NSString* content;
-@property (nonatomic, strong) NSString* htmlContent;
+@property (nonatomic, strong) NSArray* imageUrls;
 @property (nonatomic, strong) NSArray* labels;
 
 @end

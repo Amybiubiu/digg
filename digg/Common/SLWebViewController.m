@@ -409,7 +409,7 @@
                 dvc.titleText = titleText;
                 dvc.url = url;
                 dvc.content = content;
-                dvc.htmlContent = htmlContent;
+//                dvc.htmlContent = htmlContent;
                 dvc.labels = labels;
                 dvc.isEdit = YES;
                 [self.navigationController pushViewController:dvc animated:YES];

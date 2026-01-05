@@ -27,4 +27,7 @@ static NSString * const MY_PAGE_URL = H5BaseUrl @"/my";
 //登陆
 static NSString * const LOGIN_PAGE_URL = H5BaseUrl @"/login";
 
+//文章详情
+static NSString * const ARTICAL_PAGE_DETAIL_URL = H5BaseUrl @"/post/";
+
 #endif /* EnvConfigHeader_h */
