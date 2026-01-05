@@ -58,6 +58,7 @@
 @property (nonatomic, assign) NSInteger selectedImageIndex;
 @property (nonatomic, strong) SLPageControlView *pageControl;
 @property (nonatomic, strong) UIView *accessoryView;
+@property (nonatomic, copy) NSString *draftKey;
 
 @end
 
@@ -112,6 +113,9 @@
     }
     [self refreshTagsDisplay];
     [self updateTagsLayout];
+    [self loadDraft];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 #pragma mark - Methods
@@ -280,6 +284,7 @@
         make.right.equalTo(self.contentView).offset(-10);
         make.height.mas_equalTo(FIELD_DEFAULT_HEIGHT);
     }];
+    [self clearDraft];
 }
 
  
@@ -362,6 +367,7 @@
     } else {
         [self submitWithImageUrls:finalImageUrls];
     }
+    [self clearDraft];
 }
 
 - (void)uploadImages:(NSArray *)images completion:(void(^)(NSArray *urls))completion {
@@ -405,6 +411,7 @@
                 item[@"url"] = url;
                 self.selectedImages[index] = item;
                 [self refreshImagesDisplay];
+                [self saveDraft];
             }
         }
     }];
@@ -458,6 +465,7 @@
     [self.tagInputField resignFirstResponder];
     // 更新布局
     [self updateTagsLayout];
+    [self saveDraft];
 }
 
 // 刷新标签显示
@@ -625,6 +633,7 @@
     if (index < self.tags.count) {
         [self.tags removeObjectAtIndex:index];
         [self refreshTagsDisplay]; // 刷新标签显示
+        [self saveDraft];
     }
 }
 
@@ -670,6 +679,7 @@
         self.titleCountLabel.frame = frame;
         [textField bringSubviewToFront:self.titleCountLabel];
     }
+    [self saveDraft];
 }
 
 - (void)linkFieldDidChange:(UITextField *)textField {
@@ -696,6 +706,7 @@
     }
     
     [self updateLinkFieldHeight];
+    [self saveDraft];
 }
 
 #pragma mark - UITextViewDelegate
@@ -705,6 +716,7 @@
         
         UILabel *placeholderLabel = [self.textView viewWithTag:997];
         placeholderLabel.hidden = textView.text.length > 0;
+        [self saveDraft];
     }
 }
 
@@ -1277,11 +1289,13 @@
     
     [self.selectedImages removeObjectAtIndex:index];
     [self refreshImagesDisplay];
+    [self saveDraft];
 }
 
 - (void)deleteAllImages {
     [self.selectedImages removeAllObjects];
     [self refreshImagesDisplay];
+    [self saveDraft];
 }
 
 - (void)imageTapped:(UITapGestureRecognizer *)gesture {
@@ -1349,6 +1363,131 @@
         _imageDeleteOverlayButton.hidden = YES;
     }
     return _imageDeleteOverlayButton;
+}
+
+- (NSString *)currentDraftKey {
+    if (self.isEdit && self.articleId.length > 0) {
+        return [NSString stringWithFormat:@"SLRecordDraft_Update_%@", self.articleId];
+    }
+    return @"SLRecordDraft_Create";
+}
+
+- (NSString *)draftImagesDir {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDir = paths.firstObject;
+    NSString *dir = [cacheDir stringByAppendingPathComponent:@"RecordDraftImages"];
+    [[NSFileManager defaultManager] createDirectoryAtPath:dir withIntermediateDirectories:YES attributes:nil error:nil];
+    return dir;
+}
+
+- (NSString *)saveImageToCache:(UIImage *)image {
+    if (!image) return nil;
+    NSData *data = UIImageJPEGRepresentation(image, 0.85);
+    if (!data) return nil;
+    NSString *filename = [[NSUUID UUID].UUIDString stringByAppendingString:@".jpg"];
+    NSString *path = [[self draftImagesDir] stringByAppendingPathComponent:filename];
+    [data writeToFile:path atomically:YES];
+    return path;
+}
+
+- (void)saveDraft {
+    NSMutableDictionary *draft = [NSMutableDictionary dictionary];
+    draft[@"title"] = self.titleField.text ?: @"";
+    draft[@"link"] = self.linkField.text ?: @"";
+    draft[@"content"] = self.textView.text ?: @"";
+    draft[@"tags"] = self.tags ?: @[];
+    
+    NSMutableArray *imageItems = [NSMutableArray array];
+    for (NSDictionary *item in self.selectedImages) {
+        NSString *url = item[@"url"];
+        UIImage *img = item[@"image"];
+        NSMutableDictionary *store = [NSMutableDictionary dictionary];
+        if (url.length > 0) {
+            store[@"url"] = url;
+        }
+        if (img && url.length == 0) {
+            NSString *path = [self saveImageToCache:img];
+            if (path) {
+                store[@"localPath"] = path;
+            }
+        }
+        if (store.count > 0) {
+            [imageItems addObject:store];
+        }
+    }
+    draft[@"images"] = imageItems;
+    
+    NSString *key = [self currentDraftKey];
+    [[NSUserDefaults standardUserDefaults] setObject:draft forKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)loadDraft {
+    NSString *key = [self currentDraftKey];
+    NSDictionary *draft = [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    if (!draft) return;
+    
+    NSString *title = draft[@"title"];
+    NSString *link = draft[@"link"];
+    NSString *content = draft[@"content"];
+    NSArray *tags = draft[@"tags"];
+    NSArray *images = draft[@"images"];
+    
+    if (title.length > 0) {
+        self.titleField.text = title;
+        [self titleFieldDidChange:self.titleField];
+    }
+    if (link.length > 0) {
+        self.linkField.text = link;
+        [self showLinkField];
+        [self linkFieldDidChange:self.linkField];
+    }
+    if (content.length > 0) {
+        self.textView.text = content;
+        UILabel *textViewPlaceholder = [self.textView viewWithTag:997];
+        textViewPlaceholder.hidden = content.length > 0;
+    }
+    
+    if (tags.count > 0) {
+        [self.tags removeAllObjects];
+        [self.tags addObjectsFromArray:tags];
+        [self refreshTagsDisplay];
+        [self updateTagsLayout];
+    }
+    
+    if (images.count > 0) {
+        for (NSDictionary *it in images) {
+            NSString *url = it[@"url"];
+            NSString *localPath = it[@"localPath"];
+            NSMutableDictionary *compose = [NSMutableDictionary dictionary];
+            if (url.length > 0) compose[@"url"] = url;
+            if (localPath.length > 0) {
+                UIImage *img = [UIImage imageWithContentsOfFile:localPath];
+                if (img) compose[@"image"] = img;
+            }
+            if (compose.count > 0) {
+                [self.selectedImages addObject:compose];
+            }
+        }
+        [self refreshImagesDisplay];
+        for (NSDictionary *it in self.selectedImages) {
+            UIImage *img = it[@"image"];
+            NSString *url = it[@"url"];
+            if (img && url.length == 0) {
+                [self uploadPendingImage:img];
+            }
+        }
+    }
+}
+
+- (void)clearDraft {
+    NSString *key = [self currentDraftKey];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)appDidEnterBackground {
+    [self saveDraft];
 }
 
 @end
