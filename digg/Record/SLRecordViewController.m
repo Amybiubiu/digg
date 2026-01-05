@@ -77,7 +77,6 @@
     self.textViewContentHeight = 300;
     [self setupUI];
     [self setupInputAccessoryView];
-    [self setupContentPlaceholder];
     self.tagInputField.hidden = YES;
     if (self.isEdit) {
         [self.leftBackButton setTitle:@"取消" forState:UIControlStateNormal];
@@ -1068,7 +1067,7 @@
 
 - (void)setupContentPlaceholder {
     UILabel *placeholderLabel = [[UILabel alloc] init];
-    placeholderLabel.text = @"正文";
+    placeholderLabel.text = @"正文文本";
     placeholderLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
     placeholderLabel.textColor = [UIColor lightGrayColor];
     placeholderLabel.hidden = NO;
