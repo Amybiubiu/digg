@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface SLRecordViewController : UIViewController
 
 @property (nonatomic, assign) BOOL isEdit;
+@property (nonatomic, assign) BOOL isModalPresentation; // 是否以modal方式展示
 @property (nonatomic, strong) NSString* articleId;
 @property (nonatomic, strong) NSString* titleText;
 @property (nonatomic, strong) NSString* url;

@@ -122,7 +122,7 @@
     ]];
 
     // 5. 创建按钮
-    NSArray *titles = @[@"首页", @"关注", @"记录", @"我的"];
+    NSArray *titles = @[@"首页", @"关注", @"发布", @"我的"];
     self.tabButtons = [NSMutableArray array];
     
     for (int i = 0; i < titles.count; i++) {
@@ -157,6 +157,12 @@
 - (void)customTabBtnClicked:(UIButton *)sender {
     NSInteger index = sender.tag;
 
+    // 特殊处理：点击发布按钮(index == 2)时，以全屏modal方式打开
+    if (index == 2) {
+        [self presentRecordViewController];
+        return;
+    }
+
     // 1. 模拟 UITabBarControllerDelegate 的 shouldSelect 检查
     UIViewController *targetVC = self.viewControllers[index];
     BOOL shouldSelect = YES;
@@ -186,14 +192,31 @@
     }
 }
 
+// 全屏展示发布页面
+- (void)presentRecordViewController {
+    SLRecordViewController *recordVC = [[SLRecordViewController alloc] init];
+    recordVC.modalPresentationStyle = UIModalPresentationFullScreen;
+    recordVC.isModalPresentation = YES; // 标记为modal展示
+
+    // 使用自定义转场动画，缩短动画时间
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.2; // 缩短动画时间从0.3秒到0.2秒
+    transition.type = kCATransitionMoveIn;
+    transition.subtype = kCATransitionFromTop;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    [self.view.window.layer addAnimation:transition forKey:kCATransition];
+
+    [self presentViewController:recordVC animated:NO completion:nil]; // animated设为NO，因为使用了自定义动画
+}
+
 // 更新按钮的字体和颜色状态
 - (void)updateCustomTabBarState:(NSInteger)selectedIndex {
     for (int i = 0; i < self.tabButtons.count; i++) {
         UIButton *btn = self.tabButtons[i];
         BOOL isSelected = (i == selectedIndex);
-        
+
         btn.selected = isSelected;
-        
+
         if (isSelected) {
             // 选中：16.5 Bold
             btn.titleLabel.font = [UIFont systemFontOfSize:17 weight:UIFontWeightBold];
