@@ -148,6 +148,7 @@
         [self.bridge callHandler:@"refreshPageData" data:nil responseCallback:^(id responseData) {
             NSLog(@"refreshPageData 消息发送成功，H5响应: %@", responseData);
         }];
+        [self.wkwebView reload];
     } else {
         // 如果视图还没准备好，标记为需要刷新，在viewDidAppear时再执行
         self.needsRefresh = YES;
@@ -167,19 +168,9 @@
     // 重新注入token cookie
     NSString *token = [SLUser defaultUser].userEntity.token;
     if (!stringIsEmpty(token)) {
-        // 等待cookie注入完成后再加载
         WKHTTPCookieStore *cookieStore = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
-
-        NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
-        cookieProps[NSHTTPCookieName] = @"bp-token";
-        cookieProps[NSHTTPCookieValue] = token;
-        cookieProps[NSHTTPCookieDomain] = [NSURL URLWithString:self.requestUrl].host;
-        cookieProps[NSHTTPCookiePath] = @"/";
-        cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
-
-        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
-
-        [cookieStore setCookie:cookie completionHandler:^{
+        NSString *domain = [NSURL URLWithString:self.requestUrl].host;
+        [SLWebViewPreloaderManager injectBpTokenCookie:token forDomain:domain intoStore:cookieStore completion:^{
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSLog(@"[SLWebViewController] Cookie已重新注入，使用loadRequest刷新");
                 [self.wkwebView loadRequest:request];
@@ -221,17 +212,7 @@
         return;
     }
 
-    // 构造 bp-token Cookie
-    NSMutableDictionary *cookieProperties = [NSMutableDictionary dictionary];
-    [cookieProperties setObject:@"bp-token" forKey:NSHTTPCookieName]; // 你的 Key
-    [cookieProperties setObject:token forKey:NSHTTPCookieValue];      // 你的 Token 值
-    [cookieProperties setObject:domain forKey:NSHTTPCookieDomain];
-    [cookieProperties setObject:@"/" forKey:NSHTTPCookiePath];
-    [cookieProperties setObject:@"0" forKey:NSHTTPCookieVersion];
-    // 设置过期时间为1年后，防止 Session 过期
-    [cookieProperties setObject:[[NSDate date] dateByAddingTimeInterval:31536000] forKey:NSHTTPCookieExpires];
-    
-    NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProperties];
+    NSHTTPCookie *cookie = [SLWebViewPreloaderManager bpTokenCookieForDomain:domain token:token];
     
     // 4. 执行核心流程：清缓存 -> 种 Cookie -> 重新 Load
     [self forceSyncCookieAndReload:cookie];
@@ -521,6 +502,22 @@
     self.isSetUA = YES;
 }
 
+- (void)ensureUAAndTokenIfNeeded {
+    if (!self.isSetUA) {
+        [self setupDefailUA];
+    }
+    NSString *token = [SLUser defaultUser].userEntity.token;
+    if (stringIsEmpty(token)) {
+        return;
+    }
+    NSURL *currentURL = self.wkwebView.URL ?: [NSURL URLWithString:self.requestUrl ?: @""];
+    NSString *domain = currentURL.host;
+    if (stringIsEmpty(domain)) {
+        return;
+    }
+    WKHTTPCookieStore *store = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
+    [SLWebViewPreloaderManager injectBpTokenCookie:token forDomain:domain intoStore:store completion:nil];
+}
 - (void)startLoadRequestWithUrl:(NSString *)url {
     if(stringIsEmpty(url)){
         NSLog(@"url为空");
@@ -538,8 +535,8 @@
     }
     self.requestUrl = url;
     NSLog(@"加载的url = %@",url);
-    
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
+    NSURL *finalURL = [self addThemeToURL:url];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:finalURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
     [self.wkwebView loadRequest:request];
 }
 

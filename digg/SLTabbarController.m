@@ -345,6 +345,7 @@
         } else if ([topVC isKindOfClass:[SLWebViewController class]]) {
             SLWebViewController *webVC = (SLWebViewController *)topVC;
             // 向H5发送refreshPageData消息
+            [webVC ensureUAAndTokenIfNeeded];
             [webVC sendRefreshPageDataMessage];
         }
     }

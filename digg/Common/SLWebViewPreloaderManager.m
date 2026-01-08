@@ -21,6 +21,39 @@
     return mgr;
 }
 
++ (NSHTTPCookie *)bpTokenCookieForDomain:(NSString *)domain token:(NSString *)token {
+    if (token.length == 0 || domain.length == 0) {
+        return nil;
+    }
+    NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
+    cookieProps[NSHTTPCookieName] = @"bp-token";
+    cookieProps[NSHTTPCookieValue] = token;
+    cookieProps[NSHTTPCookieDomain] = domain;
+    cookieProps[NSHTTPCookiePath] = @"/";
+    cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
+    return [NSHTTPCookie cookieWithProperties:cookieProps];
+}
+
++ (void)injectBpTokenCookie:(NSString *)token
+                  forDomain:(NSString *)domain
+                  intoStore:(WKHTTPCookieStore *)store
+                 completion:(void (^)(void))completion {
+    NSHTTPCookie *cookie = [self bpTokenCookieForDomain:domain token:token];
+    if (!cookie || !store) {
+        if (completion) completion();
+        return;
+    }
+    [store setCookie:cookie completionHandler:completion];
+}
+
++ (void)attachBpTokenHeaderToRequest:(NSMutableURLRequest *)request token:(NSString *)token {
+    if (!request || token.length == 0) {
+        return;
+    }
+    NSString *cookieHeader = [NSString stringWithFormat:@"bp-token=%@", token];
+    [request setValue:cookieHeader forHTTPHeaderField:@"Cookie"];
+}
+
 - (WKWebView *)dequeuePreheatedWebViewWithFrame:(CGRect)frame {
     if (self.preloadedWebView && self.preloadCompleted) {
         WKWebView *webView = self.preloadedWebView;
@@ -56,15 +89,8 @@
         NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
         if (token.length > 0) {
             WKHTTPCookieStore *cookieStore = webView.configuration.websiteDataStore.httpCookieStore;
-            NSString *domain = [NSURL URLWithString:H5BaseUrl].host;
-            NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
-            cookieProps[NSHTTPCookieName] = @"bp-token";
-            cookieProps[NSHTTPCookieValue] = token;
-            cookieProps[NSHTTPCookieDomain] = domain ?: @"";
-            cookieProps[NSHTTPCookiePath] = @"/";
-            cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
-            NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
-            [cookieStore setCookie:cookie completionHandler:^{
+            NSString *domain = [NSURL URLWithString:H5BaseUrl].host ?: @"";
+            [SLWebViewPreloaderManager injectBpTokenCookie:token forDomain:domain intoStore:cookieStore completion:^{
                 [webView loadRequest:req];
             }];
         } else {

@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)reload;
 - (void)smartRefresh;
 - (void)sendRefreshPageDataMessage;
+- (void)ensureUAAndTokenIfNeeded;
 
 + (WKProcessPool *)sharedProcessPool;
 
