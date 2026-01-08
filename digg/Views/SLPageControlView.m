@@ -20,7 +20,8 @@
         _backgroundFillColor = [UIColor colorWithWhite:0 alpha:0.35];
         _dotLayers = [NSMutableArray array];
         self.backgroundColor = _backgroundFillColor;
-        self.layer.masksToBounds = YES;
+        // 移除 masksToBounds 以显示阴影
+        self.layer.masksToBounds = NO;
     }
     return self;
 }
@@ -79,6 +80,17 @@
     [super layoutSubviews];
     CGFloat height = self.bounds.size.height;
     self.layer.cornerRadius = height / 2.0;
+
+    // 添加细边框以提高清晰度
+    self.layer.borderWidth = 0.5;
+    self.layer.borderColor = [UIColor colorWithWhite:1 alpha:0.2].CGColor;
+
+    // 添加整体阴影效果以提高可见性
+    self.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.layer.shadowOffset = CGSizeMake(0, 1);
+    self.layer.shadowRadius = 3.0;
+    self.layer.shadowOpacity = 0.3;
+
     [self positionDots];
 }
 
@@ -87,17 +99,24 @@
         [layer removeFromSuperlayer];
     }
     [self.dotLayers removeAllObjects];
-    
+
     if (self.hidesForSinglePage && self.numberOfPages <= 1) {
         self.hidden = YES;
         return;
     }
     self.hidden = (self.numberOfPages == 0);
-    
+
     for (NSInteger i = 0; i < self.numberOfPages; i++) {
         CALayer *dot = [CALayer layer];
         dot.cornerRadius = self.dotDiameter / 2.0;
         dot.backgroundColor = (i == self.currentPage ? self.currentDotColor.CGColor : self.dotColor.CGColor);
+
+        // 添加阴影以提高可见性
+        dot.shadowColor = [UIColor blackColor].CGColor;
+        dot.shadowOffset = CGSizeMake(0, 1);
+        dot.shadowRadius = 2.0;
+        dot.shadowOpacity = 0.5;
+
         [self.layer addSublayer:dot];
         [self.dotLayers addObject:dot];
     }

@@ -17,27 +17,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch_icon" translatesAutoresizingMaskIntoConstraints="NO" id="yln-KT-tS8">
-                                <rect key="frame" x="126.66666666666669" y="758" width="60" height="60"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch_icon" translatesAutoresizingMaskIntoConstraints="NO" id="yln-KT-tS8">
+                                <rect key="frame" x="166.5" y="758" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="5Kx-ST-EHT"/>
                                     <constraint firstAttribute="height" constant="60" id="nnA-zz-w0p"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="沏茶" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2DU-ff-lny">
-                                <rect key="frame" x="206.66666666666666" y="767" width="59.999999999999972" height="42"/>
-                                <fontDescription key="fontDescription" name="PingFangSC-Semibold" family="PingFang SC" pointSize="30"/>
-                                <color key="textColor" red="0.91764705882352937" green="0.16470588235294117" blue="0.16470588235294117" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="2DU-ff-lny" firstAttribute="leading" secondItem="yln-KT-tS8" secondAttribute="trailing" constant="20" id="8IG-bE-QjZ"/>
-                            <constraint firstAttribute="centerX" secondItem="yln-KT-tS8" secondAttribute="trailing" constant="10" id="R9A-38-clG"/>
+                            <constraint firstItem="yln-KT-tS8" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="R9A-38-clG"/>
                             <constraint firstAttribute="bottom" secondItem="yln-KT-tS8" secondAttribute="bottom" constant="34" id="bAI-Qy-gy2"/>
-                            <constraint firstItem="2DU-ff-lny" firstAttribute="centerY" secondItem="yln-KT-tS8" secondAttribute="centerY" id="tto-Vd-H6h"/>
                         </constraints>
                     </view>
                 </viewController>

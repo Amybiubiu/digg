@@ -52,21 +52,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.needShowStatusBar = ![UIApplication sharedApplication].statusBarHidden;
-    if (@available(iOS 13.0, *)) {
-        self.view.backgroundColor = UIColor.tertiarySystemBackgroundColor;
-    } else {
-        self.view.backgroundColor = [UIColor whiteColor];
-    }
+    // 使用深色背景
+    self.view.backgroundColor = [UIColor colorWithWhite:0.1 alpha:1.0];
     self.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationBar.translucent = YES;
     [TZImageManager manager].shouldFixOrientation = NO;
 
     // Default appearance, you can reset these after this method
     // 默认的外观，你可以在这个方法后重置
-    self.oKButtonTitleColorNormal   = [UIColor colorWithRed:(83/255.0) green:(179/255.0) blue:(17/255.0) alpha:1.0];
-    self.oKButtonTitleColorDisabled = [UIColor colorWithRed:(83/255.0) green:(179/255.0) blue:(17/255.0) alpha:0.5];
-    
-    self.navigationBar.barTintColor = [UIColor colorWithRed:(34/255.0) green:(34/255.0)  blue:(34/255.0) alpha:1.0];
+    // 使用应用主题色 #497749 = rgb(73, 119, 73)
+    self.oKButtonTitleColorNormal   = [UIColor colorWithRed:(73/255.0) green:(119/255.0) blue:(73/255.0) alpha:1.0];
+    self.oKButtonTitleColorDisabled = [UIColor colorWithRed:(73/255.0) green:(119/255.0) blue:(73/255.0) alpha:0.5];
+
+    self.navigationBar.barTintColor = [UIColor blackColor];
     self.navigationBar.tintColor = [UIColor whiteColor];
     self.automaticallyAdjustsScrollViewInsets = NO;
     if (self.needShowStatusBar) [UIApplication sharedApplication].statusBarHidden = NO;
@@ -308,22 +306,42 @@
 #endif
     self.presetName = AVAssetExportPresetMediumQuality;
     self.maxCropVideoDuration = 30;
-    
-    self.iconThemeColor = [UIColor colorWithRed:31 / 255.0 green:185 / 255.0 blue:34 / 255.0 alpha:1.0];
+
+    // 使用应用主题色 #497749 = rgb(73, 119, 73)
+    self.iconThemeColor = [UIColor colorWithRed:73 / 255.0 green:119 / 255.0 blue:73 / 255.0 alpha:1.0];
+
+    // 启用选中序号显示
+    self.showSelectedIndex = YES;
+
     [self configDefaultBtnTitle];
-    
+
     CGFloat cropViewWH = MIN(self.view.tz_width, self.view.tz_height) / 3 * 2;
     self.cropRect = CGRectMake((self.view.tz_width - cropViewWH) / 2, (self.view.tz_height - cropViewWH) / 2, cropViewWH, cropViewWH);
 }
 
 - (void)configDefaultImageName {
     self.takePictureImageName = @"takePicture80";
-    self.photoSelImageName = @"photo_sel_photoPickerVc";
-    self.photoDefImageName = @"photo_def_photoPickerVc";
+
+    // 使用 SF Symbols 作为图片选中/未选中图标
+    UIImageSymbolConfiguration *photoIconConfig = [UIImageSymbolConfiguration configurationWithPointSize:24 weight:UIImageSymbolWeightLight]; // 使用更细的边框
+
+    // 未选中图标：白色空心圆圈
+    UIImage *circleIcon = [UIImage systemImageNamed:@"circle" withConfiguration:photoIconConfig];
+    self.photoDefImage = [circleIcon imageWithTintColor:[UIColor whiteColor] renderingMode:UIImageRenderingModeAlwaysOriginal];
+
+    // 选中图标：绿色圆圈背景 + 白色对勾
+    UIColor *themeColor = [UIColor colorWithRed:0x49/255.0 green:0x77/255.0 blue:0x49/255.0 alpha:1.0]; // #497749
+    UIImageSymbolConfiguration *paletteConfig = [UIImageSymbolConfiguration configurationWithPaletteColors:@[[UIColor whiteColor], themeColor]];
+    UIImageSymbolConfiguration *combinedConfig = [photoIconConfig configurationByApplyingConfiguration:paletteConfig];
+    self.photoSelImage = [UIImage systemImageNamed:@"checkmark.circle.fill" withConfiguration:combinedConfig];
+
     self.photoNumberIconImage = [self createImageWithColor:nil size:CGSizeMake(24, 24) radius:12]; // @"photo_number_icon";
     self.photoPreviewOriginDefImageName = @"preview_original_def";
     self.photoOriginDefImageName = @"photo_original_def";
-    self.photoOriginSelImageName = @"photo_original_sel";
+    // 使用系统图标 - 原图选中状态用圆点样式
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular];
+    UIImage *selectedIcon = [[UIImage systemImageNamed:@"smallcircle.filled.circle" withConfiguration:config] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    self.photoOriginSelImage = selectedIcon;
     self.addMorePhotoImage = [UIImage tz_imageNamedFromMyBundle:@"addMore"];
 }
 

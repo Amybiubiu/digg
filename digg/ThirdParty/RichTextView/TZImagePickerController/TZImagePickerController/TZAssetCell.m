@@ -57,9 +57,19 @@
     }
     self.imageRequestID = imageRequestID;
     self.selectPhotoButton.selected = model.isSelected;
-    self.selectImageView.image = self.selectPhotoButton.isSelected ? self.photoSelImage : self.photoDefImage;
-    self.indexLabel.hidden = !self.selectPhotoButton.isSelected;
-    
+
+    // 根据选中状态显示不同的视图
+    if (model.isSelected) {
+        // 选中时：隐藏图标，显示序号
+        self.selectImageView.hidden = YES;
+        self.indexLabel.hidden = NO;
+    } else {
+        // 未选中时：显示空心圆圈图标，隐藏序号
+        self.selectImageView.image = self.photoDefImage;
+        self.selectImageView.hidden = NO;
+        self.indexLabel.hidden = YES;
+    }
+
     self.type = (NSInteger)model.type;
     // 让宽度/高度小于 最小可选照片尺寸 的图片不能选中
     if (![[TZImageManager manager] isPhotoSelectableWithAsset:model.asset]) {
@@ -75,7 +85,7 @@
         [self cancelBigImageRequest];
     }
     [self setNeedsLayout];
-    
+
     if (self.assetCellDidSetModelBlock) {
         self.assetCellDidSetModelBlock(self, _imageView, _selectImageView, _indexLabel, _bottomView, _timeLength, _videoImgView);
     }
@@ -139,9 +149,20 @@
     if (self.didSelectPhotoBlock) {
         self.didSelectPhotoBlock(sender.isSelected);
     }
-    self.selectImageView.image = sender.isSelected ? self.photoSelImage : self.photoDefImage;
+
+    // 根据选中状态显示不同的视图
     if (sender.isSelected) {
-        [UIView showOscillatoryAnimationWithLayer:_selectImageView.layer type:TZOscillatoryAnimationToBigger];
+        // 选中时：隐藏图标，显示序号
+        self.selectImageView.hidden = YES;
+        self.indexLabel.hidden = NO;
+    } else {
+        // 未选中时：显示空心圆圈图标，隐藏序号
+        self.selectImageView.image = self.photoDefImage;
+        self.selectImageView.hidden = NO;
+        self.indexLabel.hidden = YES;
+    }
+
+    if (sender.isSelected) {
         // 用户选中了该图片，提前获取一下大图
         [self requestBigImage];
     } else { // 取消选中，取消大图的获取
@@ -167,13 +188,16 @@
     if (_bigImageRequestID) {
         [[PHImageManager defaultManager] cancelImageRequest:_bigImageRequestID];
     }
-    
+
     _bigImageRequestID = [[TZImageManager manager] requestImageDataForAsset:_model.asset completion:^(NSData *imageData, NSString *dataUTI, UIImageOrientation orientation, NSDictionary *info) {
         BOOL iCloudSyncFailed = !imageData && [TZCommonTools isICloudSyncError:info[PHImageErrorKey]];
         self.model.iCloudFailed = iCloudSyncFailed;
         if (iCloudSyncFailed && self.didSelectPhotoBlock) {
             self.didSelectPhotoBlock(YES);
+            // iCloud同步失败时，取消选中，显示空心圆圈
             self.selectImageView.image = self.photoDefImage;
+            self.selectImageView.hidden = NO;
+            self.indexLabel.hidden = YES;
         }
         [self hideProgressView];
     } progressHandler:^(double progress, NSError *error, BOOL *stop, NSDictionary *info) {
@@ -199,7 +223,10 @@
             if (iCloudSyncFailed && self.didSelectPhotoBlock) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.didSelectPhotoBlock(YES);
+                    // iCloud同步失败时，取消选中，显示空心圆圈
                     self.selectImageView.image = self.photoDefImage;
+                    self.selectImageView.hidden = NO;
+                    self.indexLabel.hidden = YES;
                 });
             }
         }];
@@ -217,7 +244,7 @@
 
 - (void)reload:(NSNotification *)noti {
     TZImagePickerController *tzImagePickerVc = (TZImagePickerController *)noti.object;
-    
+
     UIViewController *parentViewController = nil;
     UIResponder *responder = self.nextResponder;
     do {
@@ -227,15 +254,24 @@
         }
         responder = responder.nextResponder;
     } while (responder);
-    
+
     if (parentViewController.navigationController != tzImagePickerVc) {
         return;
     }
-    
+
     if (self.model.isSelected && tzImagePickerVc.showSelectedIndex) {
         self.index = [tzImagePickerVc.selectedAssetIds indexOfObject:self.model.asset.localIdentifier] + 1;
     }
-    self.indexLabel.hidden = !self.selectPhotoButton.isSelected;
+
+    // 根据选中状态显示不同的视图
+    if (self.selectPhotoButton.isSelected) {
+        self.selectImageView.hidden = YES;
+        self.indexLabel.hidden = NO;
+    } else {
+        self.selectImageView.hidden = NO;
+        self.indexLabel.hidden = YES;
+    }
+
     BOOL notSelectable = [TZCommonTools isAssetNotSelectable:self.model tzImagePickerVc:tzImagePickerVc];
     if (notSelectable && tzImagePickerVc.showPhotoCannotSelectLayer && !self.model.isSelected) {
         self.cannotSelectLayerButton.backgroundColor = tzImagePickerVc.cannotSelectLayerColor;
@@ -329,10 +365,18 @@
 - (UILabel *)indexLabel {
     if (_indexLabel == nil) {
         UILabel *indexLabel = [[UILabel alloc] init];
-        indexLabel.font = [UIFont systemFontOfSize:14];
+        indexLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
         indexLabel.adjustsFontSizeToFitWidth = YES;
         indexLabel.textColor = [UIColor whiteColor];
         indexLabel.textAlignment = NSTextAlignmentCenter;
+
+        // 绿色背景 + 细白边框
+        indexLabel.backgroundColor = [UIColor colorWithRed:73.0/255.0 green:119.0/255.0 blue:73.0/255.0 alpha:1.0]; // #497749 主题绿色
+        indexLabel.layer.cornerRadius = 12; // 24x24的圆形
+        indexLabel.layer.masksToBounds = YES;
+        indexLabel.layer.borderWidth = 0.5; // 更细的边框
+        indexLabel.layer.borderColor = [UIColor whiteColor].CGColor;
+
         [self.contentView addSubview:indexLabel];
         _indexLabel = indexLabel;
     }
