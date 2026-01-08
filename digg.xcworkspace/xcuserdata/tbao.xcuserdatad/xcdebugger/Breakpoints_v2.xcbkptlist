@@ -47,7 +47,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "360"
             endingLineNumber = "360"
-            landmarkName = "-commitBtnClick"
+            landmarkName = "-updateLinkFieldHeight"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

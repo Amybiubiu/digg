@@ -1,5 +1,7 @@
 #import "SLWebViewPreloaderManager.h"
 #import "SLWebViewController.h"
+#import "EnvConfigHeader.h"
+#import "SLUser.h"
 
 @interface SLWebViewPreloaderManager () <WKNavigationDelegate>
 @property (nonatomic, strong) WKWebView *preloadedWebView;
@@ -49,8 +51,25 @@
         WKWebViewConfiguration *configuration = [self createDefaultConfiguration];
         WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
         webView.navigationDelegate = self;
+        
+        NSString *token = [SLUser defaultUser].userEntity.token;
         NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
-        [webView loadRequest:req];
+        if (token.length > 0) {
+            WKHTTPCookieStore *cookieStore = webView.configuration.websiteDataStore.httpCookieStore;
+            NSString *domain = [NSURL URLWithString:H5BaseUrl].host;
+            NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
+            cookieProps[NSHTTPCookieName] = @"bp-token";
+            cookieProps[NSHTTPCookieValue] = token;
+            cookieProps[NSHTTPCookieDomain] = domain ?: @"";
+            cookieProps[NSHTTPCookiePath] = @"/";
+            cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
+            NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
+            [cookieStore setCookie:cookie completionHandler:^{
+                [webView loadRequest:req];
+            }];
+        } else {
+            [webView loadRequest:req];
+        }
         self.preloadedWebView = webView;
     });
 }
@@ -63,6 +82,13 @@
     preferences.javaScriptCanOpenWindowsAutomatically = YES;
     configuration.preferences = preferences;
     configuration.allowsInlineMediaPlayback = YES;
+    configuration.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    
+    if (@available(iOS 13.0, *)) {
+        WKWebpagePreferences *pagePrefs = [[WKWebpagePreferences alloc] init];
+        pagePrefs.preferredContentMode = WKContentModeMobile;
+        configuration.defaultWebpagePreferences = pagePrefs;
+    }
     return configuration;
 }
 

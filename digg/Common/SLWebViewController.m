@@ -536,37 +536,11 @@
 
         return;
     }
-    [self setupDefailUA];
     self.requestUrl = url;
     NSLog(@"加载的url = %@",url);
-
-    // 🌟修复：确保Cookie注入完成后再加载页面
-    NSString *token = [SLUser defaultUser].userEntity.token;
-    if (!stringIsEmpty(token)) {
-        WKHTTPCookieStore *cookieStore = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
-
-        NSMutableDictionary *cookieProps = [NSMutableDictionary dictionary];
-        cookieProps[NSHTTPCookieName] = @"bp-token";
-        cookieProps[NSHTTPCookieValue] = token;
-        cookieProps[NSHTTPCookieDomain] = [NSURL URLWithString:url].host;
-        cookieProps[NSHTTPCookiePath] = @"/";
-        cookieProps[NSHTTPCookieExpires] = [[NSDate date] dateByAddingTimeInterval:31536000];
-
-        NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProps];
-
-        // 🌟关键修复：等待Cookie注入完成后再加载页面
-        [cookieStore setCookie:cookie completionHandler:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"[SLWebViewController] Token Cookie已注入，开始加载页面");
-                NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:30];
-                [self.wkwebView loadRequest:request];
-            });
-        }];
-    } else {
-        // 没有token时直接加载
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
-        [self.wkwebView loadRequest:request];
-    }
+    
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[self addThemeToURL:url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
+    [self.wkwebView loadRequest:request];
 }
 
 - (NSURL *)addThemeToURL:(NSString *)url {
