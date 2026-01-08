@@ -793,7 +793,7 @@
     }
     
     TZImagePickerController *imagePickerVc = (TZImagePickerController *)self.navigationController;
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:imagePickerVc.cancelBtnTitleStr style:UIBarButtonItemStylePlain target:imagePickerVc action:@selector(cancelButtonClick)];
+    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:imagePickerVc.cancelBtnTitleStr style:UIBarButtonItemStylePlain target:self action:@selector(albumCancelButtonClick)];
     [TZCommonTools configBarButtonItem:cancelItem tzImagePickerVc:imagePickerVc];
     self.navigationItem.rightBarButtonItem = cancelItem;
 }
@@ -933,8 +933,26 @@
     photoPickerVc.columnNumber = self.columnNumber;
     TZAlbumModel *model = _albumArr[indexPath.row];
     photoPickerVc.model = model;
-    [self.navigationController pushViewController:photoPickerVc animated:YES];
+    [self.navigationController pushViewController:photoPickerVc animated:NO]; // 去掉动画
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
+
+- (void)albumCancelButtonClick {
+    // 检查导航栈中是否有其他页面
+    TZImagePickerController *imagePickerVc = (TZImagePickerController *)self.navigationController;
+    if (imagePickerVc.childViewControllers.count > 1) {
+        // 如果有图片选择页在上面，则返回到图片选择页
+        [self.navigationController popViewControllerAnimated:NO];
+    } else {
+        // 如果相册列表是唯一页面，则关闭整个图片选择器
+        if (imagePickerVc.autoDismiss) {
+            [imagePickerVc dismissViewControllerAnimated:YES completion:^{
+                [imagePickerVc callDelegateMethod];
+            }];
+        } else {
+            [imagePickerVc callDelegateMethod];
+        }
+    }
 }
 
 #pragma clang diagnostic pop
