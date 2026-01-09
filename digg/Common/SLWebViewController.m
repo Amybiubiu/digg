@@ -148,7 +148,7 @@
         [self.bridge callHandler:@"refreshPageData" data:nil responseCallback:^(id responseData) {
             NSLog(@"refreshPageData 消息发送成功，H5响应: %@", responseData);
         }];
-        [self.wkwebView reload];
+        // [self.wkwebView reload];
     } else {
         // 如果视图还没准备好，标记为需要刷新，在viewDidAppear时再执行
         self.needsRefresh = YES;

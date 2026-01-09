@@ -67,6 +67,12 @@
     } else {
         WKWebViewConfiguration *configuration = [self createDefaultConfiguration];
         WKWebView *webView = [[WKWebView alloc] initWithFrame:frame configuration:configuration];
+
+        // 启用 Safari 调试
+        if (@available(iOS 16.4, *)) {
+            webView.inspectable = YES;
+        }
+
         return webView;
     }
 }
@@ -84,7 +90,12 @@
         WKWebViewConfiguration *configuration = [self createDefaultConfiguration];
         WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration];
         webView.navigationDelegate = self;
-        
+
+        // 启用 Safari 调试
+        if (@available(iOS 16.4, *)) {
+            webView.inspectable = YES;
+        }
+
         NSString *token = [SLUser defaultUser].userEntity.token;
         NSURLRequest *req = [NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]];
         if (token.length > 0) {
