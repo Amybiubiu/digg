@@ -628,6 +628,11 @@
         // 禁用 WebView 内部的侧滑返回，防止与原生导航控制器的侧滑冲突或历史栈混乱
         _wkwebView.allowsBackForwardNavigationGestures = NO;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
+
+        // 确保 Safari 调试器可用
+        if (@available(iOS 16.4, *)) {
+            _wkwebView.inspectable = YES;
+        }
     }
     // 移除了 else 分支中的日志，减少日志噪音
     return _wkwebView;

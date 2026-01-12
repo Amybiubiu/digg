@@ -12,6 +12,7 @@
 
 #define H5BaseUrl @"http://39.106.147.0"
 #define APPBaseUrl @"http://115.159.103.82:8001"
+// #define H5BaseUrl @"http://192.168.0.100:5173"
 
 //首页H5 URL链接
 static NSString * const HOME_TODAY_PAGE_URL = H5BaseUrl @"/home/today";

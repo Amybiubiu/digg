@@ -63,6 +63,12 @@
             [self startPreloadingIfNeeded];
         });
         webView.frame = frame;
+
+        // 重新启用 Safari 调试（修复预加载 WebView 无法调试的问题）
+        if (@available(iOS 16.4, *)) {
+            webView.inspectable = YES;
+        }
+
         return webView;
     } else {
         WKWebViewConfiguration *configuration = [self createDefaultConfiguration];
