@@ -34,7 +34,6 @@
 @property (nonatomic, strong) SLNavigationController *recordNavi;
 @property (nonatomic, strong) SLRecordViewController *recordVC;
 @property (nonatomic, strong) SLNavigationController *mineNavi;
-@property (nonatomic, strong) WKWebView *wkWebView;
 
 // 自定义 TabBar 相关的视图
 @property (nonatomic, strong) UIView *customTabBarView;
@@ -54,9 +53,6 @@
     
     // 2. 创建子控制器
     [self createTabbarControllers];
-    
-    // 3. 设置 UA
-    [self setDefaultUA];
     
     // 4. 监听登录
     [self noticeUserLogin];
@@ -226,17 +222,6 @@
 }
 
 #pragma mark - System Logic
-
-- (void)setDefaultUA {
-    self.wkWebView = [[WKWebView alloc] initWithFrame:CGRectZero];
-    [self.wkWebView evaluateJavaScript:@"navigator.userAgent" completionHandler:^(id _Nullable defaultUserAgent, NSError * _Nullable error) {
-        if (stringIsEmpty(defaultUserAgent)) {
-            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"digg_default_userAgent"];
-        } else {
-            [[NSUserDefaults standardUserDefaults] setObject:defaultUserAgent forKey:@"digg_default_userAgent"];
-        }
-    }];
-}
 
 - (void)noticeUserLogin{
     [[NSNotificationCenter defaultCenter] addObserver:self
