@@ -198,15 +198,7 @@
     recordVC.modalPresentationStyle = UIModalPresentationFullScreen;
     recordVC.isModalPresentation = YES; // 标记为modal展示
 
-    // 使用自定义转场动画，缩短动画时间
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.2; // 缩短动画时间从0.3秒到0.2秒
-    transition.type = kCATransitionMoveIn;
-    transition.subtype = kCATransitionFromTop;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
-    [self.view.window.layer addAnimation:transition forKey:kCATransition];
-
-    [self presentViewController:recordVC animated:NO completion:nil]; // animated设为NO，因为使用了自定义动画
+    [self presentViewController:recordVC animated:YES completion:nil];
 }
 
 // 更新按钮的字体和颜色状态

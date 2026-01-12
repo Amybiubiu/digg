@@ -164,6 +164,8 @@
 - (JXCategoryListContainerView *)listContainerView {
     if (!_listContainerView) {
         _listContainerView = [[JXCategoryListContainerView alloc] initWithType:JXCategoryListContainerType_ScrollView delegate:self];
+        _listContainerView.scrollView.showsHorizontalScrollIndicator = false;
+        _listContainerView.scrollView.showsVerticalScrollIndicator = false;
         _listContainerView.backgroundColor = [SLColorManager primaryBackgroundColor];
     }
     return _listContainerView;
