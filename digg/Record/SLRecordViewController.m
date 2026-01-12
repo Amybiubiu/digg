@@ -81,8 +81,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.navigationController.navigationBar.hidden = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
+    self.navigationController.navigationBar.hidden = YES;
     [self.leftBackButton setHidden:NO];
     self.tags = [NSMutableArray array];
     self.selectedImages = [NSMutableArray array];
