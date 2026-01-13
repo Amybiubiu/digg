@@ -152,6 +152,7 @@
     self.titleField.inputAccessoryView = emptyAccessoryView;
     self.linkField.inputAccessoryView = emptyAccessoryView;
     self.textView.inputAccessoryView = emptyAccessoryView;
+    self.tagInputField.inputAccessoryView = emptyAccessoryView;
 }
 
 - (void)dismissKeyboard {
@@ -1265,6 +1266,7 @@
         _tagInputField = [[UITextField alloc] init];
         _tagInputField.font = [UIFont systemFontOfSize:14 weight:UIFontWeightSemibold];
         _tagInputField.textColor = [SLColorManager recorderTagTextColor];
+        _tagInputField.tintColor = [SLColorManager themeColor]; // 光标颜色改为主题绿色
         _tagInputField.backgroundColor = UIColor.clearColor;
         _tagInputField.returnKeyType = UIReturnKeyDone;
         _tagInputField.delegate = self;
@@ -1307,6 +1309,16 @@
         make.height.mas_equalTo(44);
     }];
 
+    // 添加顶部分割线 - 细且淡的设计，横跨整个屏幕宽度
+    UIView *topSeparator = [[UIView alloc] init];
+    topSeparator.backgroundColor = [UIColor colorWithWhite:0.85 alpha:0.6]; // 淡灰色，半透明
+    [self.view addSubview:topSeparator];
+    [topSeparator mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(self.view); // 横跨整个屏幕宽度
+        make.top.equalTo(self.accessoryView.mas_top);
+        make.height.mas_equalTo(0.5); // 0.5pt 细线
+    }];
+
     [self.contentView mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.navigationView.mas_bottom);
         make.left.right.equalTo(self.view);
@@ -1317,6 +1329,7 @@
     UIImageSymbolConfiguration *linkConfig = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightSemibold];
     [linkBtn setImage:[UIImage systemImageNamed:@"link" withConfiguration:linkConfig] forState:UIControlStateNormal];
     [linkBtn setTintColor:Color16(0x333333)];
+    linkBtn.imageView.contentMode = UIViewContentModeScaleAspectFit; // 保持等比例缩放
     [linkBtn addTarget:self action:@selector(showLinkField) forControlEvents:UIControlEventTouchUpInside];
     [self.accessoryView addSubview:linkBtn];
     [linkBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -1329,6 +1342,7 @@
     UIImageSymbolConfiguration *imageConfig = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightSemibold];
     [imageBtn setImage:[UIImage systemImageNamed:@"photo" withConfiguration:imageConfig] forState:UIControlStateNormal];
     [imageBtn setTintColor:Color16(0x333333)];
+    imageBtn.imageView.contentMode = UIViewContentModeScaleAspectFit; // 保持等比例缩放
     [imageBtn addTarget:self action:@selector(addImage) forControlEvents:UIControlEventTouchUpInside];
     [self.accessoryView addSubview:imageBtn];
     [imageBtn mas_makeConstraints:^(MASConstraintMaker *make) {

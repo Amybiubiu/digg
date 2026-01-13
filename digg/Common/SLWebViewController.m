@@ -74,7 +74,8 @@
     } else {
         self.navigationController.navigationBar.hidden = YES;
         [self.wkwebView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self.view);
+            make.top.left.right.equalTo(self.view);
+            make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom); // 使用安全区域底部，自动适配 tabBar
         }];
     }
     [self setupDefailUA];
