@@ -12,7 +12,6 @@
 @interface SLCommentInputViewController () <UITextViewDelegate>
 
 @property (nonatomic, strong) UIView *backgroundView;
-@property (nonatomic, strong) UIView *separatorLine;
 @property (nonatomic, strong) UIView *inputContainerView;
 @property (nonatomic, strong) UIButton *submitButton;
 
@@ -22,28 +21,23 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.view.backgroundColor = [UIColor clearColor];
-    
-    // 创建白色背景视图
+
+    // 创建背景视图 - 使用通用背景色 rgb(243, 241, 238)
     self.backgroundView = [[UIView alloc] init];
-    self.backgroundView.backgroundColor = [UIColor systemBackgroundColor];
+    self.backgroundView.backgroundColor = [SLColorManager primaryBackgroundColor];
     [self.view addSubview:self.backgroundView];
-    
-    // 创建顶部分割线
-    self.separatorLine = [[UIView alloc] init];
-    self.separatorLine.backgroundColor = [UIColor separatorColor];
-    [self.backgroundView addSubview:self.separatorLine];
-    
-    // 创建灰色输入容器视图
+
+    // 创建白色输入容器视图
     self.inputContainerView = [[UIView alloc] init];
-    self.inputContainerView.backgroundColor = [SLColorManager textViewBgColor];
+    self.inputContainerView.backgroundColor = [UIColor whiteColor];
     self.inputContainerView.layer.cornerRadius = 8.0;
     [self.backgroundView addSubview:self.inputContainerView];
-    
+
     // 创建文本输入框
     self.textView = [[UITextView alloc] init];
-    self.textView.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+    self.textView.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.textView.textColor = [SLColorManager textViewTextColor];
     self.textView.backgroundColor = [UIColor clearColor];
     self.textView.delegate = self;
@@ -57,85 +51,85 @@
     self.textView.textContainer.lineFragmentPadding = 0;
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineSpacing = 2.0; // 设置行间距
-    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: [UIFont systemFontOfSize:12 weight:UIFontWeightRegular], NSForegroundColorAttributeName: [SLColorManager textViewTextColor]};
+    self.textView.typingAttributes = @{NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: [UIFont systemFontOfSize:15 weight:UIFontWeightRegular], NSForegroundColorAttributeName: [SLColorManager textViewTextColor]};
     // 添加键盘工具栏
     UIToolbar *toolbar = [[UIToolbar alloc] init];
     toolbar.barStyle = UIBarStyleDefault;
     [toolbar sizeToFit];
-    
+
     // 创建完成按钮
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"完成" 
-                                                                   style:UIBarButtonItemStyleDone 
-                                                                  target:self 
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:@"完成"
+                                                                   style:UIBarButtonItemStyleDone
+                                                                  target:self
                                                                   action:@selector(doneButtonTapped)];
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                                   target:nil 
+                                                                                   target:nil
                                                                                    action:nil];
     toolbar.items = @[flexibleSpace, doneButton];
     self.textView.inputAccessoryView = toolbar;
     [self.inputContainerView addSubview:self.textView];
-    
+
     // 创建占位符标签
     self.placeholderLabel = [[UILabel alloc] init];
-    self.placeholderLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+    self.placeholderLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.placeholderLabel.textColor = [SLColorManager textViewPlaceholderColor];
     self.placeholderLabel.text = self.placeholder ?: @"写回复";
     [self.inputContainerView addSubview:self.placeholderLabel];
-    
+
     // 创建提交按钮
     self.submitButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.submitButton setTitle:@"发送" forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor systemBlueColor] forState:UIControlStateNormal];
     [self.submitButton setTitleColor:[UIColor systemGrayColor] forState:UIControlStateDisabled];
-    self.submitButton.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightRegular];
+    self.submitButton.titleLabel.font = [UIFont systemFontOfSize:15 weight:UIFontWeightRegular];
     self.submitButton.hidden = YES; // 初始状态隐藏
     [self.submitButton addTarget:self action:@selector(submitButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.inputContainerView addSubview:self.submitButton];
-    
+
     // 设置约束
-    [self.backgroundView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.bottom.equalTo(self.view);
-        make.height.greaterThanOrEqualTo(@100);
-    }];
-    
-    [self.separatorLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.backgroundView);
-        make.height.equalTo(@0.5);
-    }];
-    
+    // inputContainerView 最小高度69px，最大高度179px
     [self.inputContainerView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.backgroundView).offset(10);
-        make.right.equalTo(self.backgroundView).offset(-10);
-        make.top.equalTo(self.backgroundView).offset(10);
-        make.bottom.equalTo(self.backgroundView).offset(-10);
+        make.left.equalTo(self.backgroundView).offset(0);
+        make.right.equalTo(self.backgroundView).offset(0);
+        make.top.equalTo(self.backgroundView).offset(0);
+        make.bottom.equalTo(self.backgroundView).offset(0);
+        make.height.greaterThanOrEqualTo(@69);  // 最小高度69px
+        make.height.lessThanOrEqualTo(@179);    // 最大高度179px
     }];
-    
+
+    // backgroundView 外边距：上下12px 左右16px，高度根据 inputContainerView 自适应
+    [self.backgroundView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(16);
+        make.right.equalTo(self.view).offset(-16);
+        make.bottom.equalTo(self.view).offset(-12);
+        // backgroundView 高度 = inputContainerView 高度 + 上边距5px + 下边距20px
+    }];
+
     [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.inputContainerView).offset(5);
-        make.right.equalTo(self.inputContainerView).offset(-5);
+        make.left.equalTo(self.inputContainerView).offset(10);
+        make.right.equalTo(self.inputContainerView).offset(-10);
         make.top.equalTo(self.inputContainerView).offset(5);
         make.bottom.equalTo(self.submitButton.mas_top).offset(-5);
-        make.height.greaterThanOrEqualTo(@45);
     }];
-    
+
     [self.placeholderLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.textView).offset(1);
         make.top.equalTo(self.textView).offset(1);
         make.right.lessThanOrEqualTo(self.textView);
     }];
-    
-    // 修改发送按钮约束，使其位于输入框下方
+
+    // 发送按钮：相对 inputContainerView 定位，right: 10px; bottom: 6px
     [self.submitButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.inputContainerView).offset(-8);
-        make.bottom.equalTo(self.inputContainerView).offset(-8);
+        make.right.equalTo(self.inputContainerView).offset(-10);
+        make.bottom.equalTo(self.inputContainerView).offset(-6);
         make.width.equalTo(@40);
         make.height.equalTo(@25);
     }];
-    
+
     // 添加键盘通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    
+
     // 添加点击背景关闭键盘的手势
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:tapGesture];
@@ -211,17 +205,20 @@
     BOOL hasText = textView.text.length > 0;
     self.placeholderLabel.hidden = hasText;
     self.submitButton.hidden = !hasText; // 根据是否有文本内容来显示或隐藏按钮
-    
+
     // 自动调整高度
-    CGFloat maxHeight = 200.0;
+    // inputContainerView = 69-179px
+    // 固定部分(上5 + 间距5 + 按钮25 + 底部6) = 41px
+    // 所以 textView 高度范围 = 28-138px
+    CGFloat minHeight = 28.0;
+    CGFloat maxHeight = 138.0;
     CGSize size = [textView sizeThatFits:CGSizeMake(textView.frame.size.width, CGFLOAT_MAX)];
     CGFloat newHeight = MIN(size.height, maxHeight);
-    CGFloat minHeight = 45.0;
     newHeight = MAX(newHeight, minHeight);
     [self.textView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.height.greaterThanOrEqualTo(@(newHeight));
     }];
-    
+
     [UIView animateWithDuration:0.1 animations:^{
         [self.view layoutIfNeeded];
     }];

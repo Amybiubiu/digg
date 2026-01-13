@@ -295,7 +295,8 @@
 
     if ([viewController isEqual:self.homeNavi]
         || [viewController isEqual:self.mineNavi]
-        || [viewController isEqual:self.recordNavi]) {
+        || [viewController isEqual:self.recordNavi]
+        || [viewController isEqual:self.noticeNavi]) {
         return YES;
     } else {
         if (![SLUser defaultUser].isLogin) {

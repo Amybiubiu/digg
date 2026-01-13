@@ -75,7 +75,15 @@
         self.navigationController.navigationBar.hidden = YES;
         [self.wkwebView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.top.left.right.equalTo(self.view);
-            make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom); // 使用安全区域底部，自动适配 tabBar
+
+            // 判断是否是Tab页面：如果 hidesBottomBarWhenPushed = NO，说明是Tab常驻页面
+            if (!self.hidesBottomBarWhenPushed) {
+                // Tab页面：使用安全区域底部，自动适配 TabBar
+                make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+            } else {
+                // 修复非Tab页面（push进来的页面）；例如详情页；底部过高问题，支持h5 fit：cover模式去自定义安全区高度
+                make.bottom.equalTo(self.view);
+            }
         }];
     }
     [self setupDefailUA];
@@ -626,6 +634,12 @@
         [_wkwebView setOpaque:NO];
         _wkwebView.scrollView.bounces = YES;
         _wkwebView.navigationDelegate = self;
+
+        // 禁用自动调整内容边距，避免系统自动添加安全区域边距
+        // if (@available(iOS 11.0, *)) {
+        //     _wkwebView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        // }
+
         // 禁用 WebView 内部的侧滑返回，防止与原生导航控制器的侧滑冲突或历史栈混乱
         _wkwebView.allowsBackForwardNavigationGestures = NO;
         [_wkwebView.scrollView.panGestureRecognizer setEnabled:YES];
