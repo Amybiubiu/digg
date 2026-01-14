@@ -687,10 +687,11 @@
     NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString* url = [self.linkField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString* content = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSString* htmlContent = [self htmlFromText:content];
 
     @weakobj(self)
     if (self.isEdit) {
-        [self.viewModel updateRecord:title link:url content:content imageUrls:imageUrls labels:self.tags articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
+        [self.viewModel updateRecord:title link:url content:content imageUrls:imageUrls labels:self.tags htmlContent:htmlContent articleId:self.articleId resultHandler:^(BOOL isSuccess, NSString * _Nonnull articleId) {
             @strongobj(self)
             // 如果已经超时，不再处理结果
             if (self.isCommitTimeout) {
@@ -708,7 +709,7 @@
             }
         }];
     } else {
-        [self.viewModel subimtRecord:title link:url content:content imageUrls:imageUrls labels:self.tags resultHandler:^(BOOL isSuccess, NSString * articleId) {
+        [self.viewModel subimtRecord:title link:url content:content imageUrls:imageUrls labels:self.tags htmlContent:htmlContent resultHandler:^(BOOL isSuccess, NSString * articleId) {
             @strongobj(self)
             // 如果已经超时，不再处理结果
             if (self.isCommitTimeout) {
@@ -727,6 +728,29 @@
             }
         }];
     }
+}
+
+- (NSString *)htmlFromText:(NSString *)text {
+    NSString *s = text ?: @"";
+    if (s.length == 0) {
+        return @"";
+    }
+    s = [s stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+    s = [s stringByReplacingOccurrencesOfString:@"\r" withString:@"\n"];
+    NSArray<NSString *> *lines = [s componentsSeparatedByString:@"\n"];
+    NSMutableArray<NSString *> *paragraphs = [NSMutableArray arrayWithCapacity:lines.count];
+    for (NSString *line in lines) {
+        NSString *escaped = line ?: @"";
+        escaped = [escaped stringByReplacingOccurrencesOfString:@"&" withString:@"&amp;"];
+        escaped = [escaped stringByReplacingOccurrencesOfString:@"<" withString:@"&lt;"];
+        escaped = [escaped stringByReplacingOccurrencesOfString:@">" withString:@"&gt;"];
+        if (escaped.length == 0) {
+            [paragraphs addObject:@"<p><br/></p>"];
+        } else {
+            [paragraphs addObject:[NSString stringWithFormat:@"<p>%@</p>", escaped]];
+        }
+    }
+    return [paragraphs componentsJoinedByString:@""];
 }
 
 - (void)addTagFromInput {

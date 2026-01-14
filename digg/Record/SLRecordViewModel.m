@@ -14,7 +14,7 @@
 
 @implementation SLRecordViewModel
 
-- (void)subimtRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels resultHandler:(void(^)(BOOL isSuccess, NSString *articleId))handler {
+- (void)subimtRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels htmlContent:(NSString *)htmlContent resultHandler:(void(^)(BOOL isSuccess, NSString *articleId))handler {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *urlString = [NSString stringWithFormat:@"%@/article/submit", APPBaseUrl];
@@ -29,6 +29,9 @@
     parameters[@"url"] = url;
     NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     parameters[@"content"] = trimmedContent;
+    if (htmlContent.length > 0) {
+        parameters[@"richContent"] = htmlContent;
+    }
     parameters[@"imageUrls"] = imageUrls;
     parameters[@"labels"] = labels;
     [manager POST:urlString parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -51,7 +54,7 @@
     }];
 }
 
-- (void)updateRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels articleId:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler {
+- (void)updateRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels htmlContent:(NSString *)htmlContent articleId:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     NSString *urlString = [NSString stringWithFormat:@"%@/article/update", APPBaseUrl];
@@ -67,6 +70,9 @@
     parameters[@"url"] = url;
      NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     parameters[@"content"] = trimmedContent;
+    if (htmlContent.length > 0) {
+        parameters[@"richContent"] = htmlContent;
+    }
     parameters[@"imageUrls"] = imageUrls;
     parameters[@"labels"] = labels;
     parameters[@"userId"] = [SLUser defaultUser].userEntity.userId;

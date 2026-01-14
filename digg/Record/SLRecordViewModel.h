@@ -11,9 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SLRecordViewModel : NSObject
 
-- (void)subimtRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler;
+- (void)subimtRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels htmlContent:(NSString *)htmlContent resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler;
 
-- (void)updateRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels articleId:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler;
+- (void)updateRecord:(NSString *)title link:(NSString *)url content:(NSString *)content imageUrls:(NSArray *)imageUrls labels:(NSArray *)labels htmlContent:(NSString *)htmlContent articleId:(NSString *)articleId resultHandler:(void(^)(BOOL isSuccess, NSString* articleId))handler;
 
 - (void)updateImage:(NSData *)imageData progress:(void(^)(CGFloat total, CGFloat current))progressHandler resultHandler:(void(^)(BOOL isSuccess, NSString *url))handler;
 
