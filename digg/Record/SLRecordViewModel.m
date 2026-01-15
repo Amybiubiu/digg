@@ -30,7 +30,7 @@
     NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     parameters[@"content"] = trimmedContent;
     if (htmlContent.length > 0) {
-        parameters[@"richContent"] = htmlContent;
+        parameters[@"htmlContent"] = htmlContent;
     }
     parameters[@"imageUrls"] = imageUrls;
     parameters[@"labels"] = labels;
@@ -71,7 +71,7 @@
      NSString *trimmedContent = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     parameters[@"content"] = trimmedContent;
     if (htmlContent.length > 0) {
-        parameters[@"richContent"] = htmlContent;
+        parameters[@"htmlContent"] = htmlContent;
     }
     parameters[@"imageUrls"] = imageUrls;
     parameters[@"labels"] = labels;
