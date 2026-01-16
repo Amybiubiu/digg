@@ -105,7 +105,7 @@
 
 // 返回各个列表菜单下的实例，该实例需要遵守并实现 <JXCategoryListContentViewDelegate> 协议
 - (id<JXCategoryListContentViewDelegate>)listContainerView:(JXCategoryListContainerView *)listContainerView initListForIndex:(NSInteger)index {
-    
+
     NSString *targetTitle = self.titles[index];
     id<JXCategoryListContentViewDelegate> list = _listCache[targetTitle];
     if (list) {
@@ -117,7 +117,10 @@
         if (index == 0) {
             url = HOME_TODAY_PAGE_URL;
         } else if (index == 1) {
+            // 发现页面：设置5分钟间隔刷新策略
             url = HOME_RECENT_PAGE_URL;
+            vc.refreshPolicy = SLWebViewRefreshPolicyInterval;
+            vc.refreshInterval = 300; // 5分钟（300秒）
         } else if (index == 2) {
             url = HOME_FORYOU_PAGE_URL;
         }

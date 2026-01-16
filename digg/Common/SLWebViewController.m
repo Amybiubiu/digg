@@ -32,6 +32,7 @@
 @property (nonatomic, strong) NSString *requestUrl;
 @property (nonatomic, strong) UIProgressView* progressView;
 @property (nonatomic, strong) SLCommentInputViewController *commentVC;
+@property (nonatomic, assign) NSTimeInterval lastAppearTime; // 上次显示的时间戳
 
 @end
 
@@ -53,6 +54,11 @@
 
     NSLog(@"🔵 [DEBUG] viewDidLoad - URL: %@, shouldReuseWebView: %d, WebView exists: %d",
           self.requestUrl ?: @"nil", self.shouldReuseWebView, self.wkwebView != nil);
+
+    // 设置默认值
+    if (self.refreshInterval == 0) {
+        self.refreshInterval = 300; // 默认5分钟
+    }
 
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];;
@@ -86,8 +92,7 @@
             }
         }];
     }
-    [self setupDefailUA];
-    
+
     if (self.navigationController.interactivePopGestureRecognizer != nil) {
         [self.wkwebView.scrollView.panGestureRecognizer shouldRequireFailureOfGestureRecognizer:self.navigationController.interactivePopGestureRecognizer];
     }
@@ -128,6 +133,15 @@
                                              selector:@selector(reloadAfterLogin:)
                                                  name:@"WebViewShouldReloadAfterLogin"
                                                object:nil];
+
+    // 监听退出登录后刷新通知
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadAfterLogout:)
+                                                 name:NEUserDidLogoutNotification
+                                               object:nil];
+
+    // 根据刷新策略决定是否刷新
+    [self checkAndRefreshIfNeeded];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -160,6 +174,7 @@
 
     // 移除通知监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebViewShouldReloadAfterLogin" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NEUserDidLogoutNotification object:nil];
 }
 
 - (void)dealloc {
@@ -196,6 +211,51 @@
         // [self.wkwebView reload];
     } else {
         // 如果视图还没准备好，标记为需要刷新，在viewDidAppear时再执行
+        self.needsRefresh = YES;
+    }
+}
+
+// 检查并根据策略决定是否刷新
+- (void)checkAndRefreshIfNeeded {
+    NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
+    NSTimeInterval timeSinceLastAppear = currentTime - self.lastAppearTime;
+
+    BOOL shouldRefresh = NO;
+
+    switch (self.refreshPolicy) {
+        case SLWebViewRefreshPolicyNone:
+            // 不刷新
+            NSLog(@"🔄 [REFRESH] 策略: None - 不刷新");
+            break;
+
+        case SLWebViewRefreshPolicyAlways:
+            // 总是刷新
+            NSLog(@"🔄 [REFRESH] 策略: Always - 总是刷新");
+            shouldRefresh = YES;
+            break;
+
+        case SLWebViewRefreshPolicyInterval:
+            // 间隔时间刷新
+            if (self.lastAppearTime == 0) {
+                // 首次进入，不刷新，只记录时间
+                NSLog(@"🔄 [REFRESH] 策略: Interval - 首次进入，不刷新");
+            } else if (timeSinceLastAppear >= self.refreshInterval) {
+                // 超过间隔时间，需要刷新
+                NSLog(@"🔄 [REFRESH] 策略: Interval - 超过间隔(%.0f秒 >= %.0f秒)，需要刷新",
+                      timeSinceLastAppear, self.refreshInterval);
+                shouldRefresh = YES;
+            } else {
+                NSLog(@"🔄 [REFRESH] 策略: Interval - 未超过间隔(%.0f秒 < %.0f秒)，不刷新",
+                      timeSinceLastAppear, self.refreshInterval);
+            }
+            break;
+    }
+
+    // 更新最后显示时间
+    self.lastAppearTime = currentTime;
+
+    // 设置刷新标记，交给 viewDidAppear 统一处理
+    if (shouldRefresh) {
         self.needsRefresh = YES;
     }
 }
@@ -286,6 +346,18 @@
             });
         }];
     }];
+}
+
+- (void)reloadAfterLogout:(NSNotification *)notification {
+    // 1. 基础校验：如果是登录页本身，或者是未加载的页面，不处理
+    if (!self.isViewLoaded || !self.view.window || self.isLoginPage) {
+        return;
+    }
+
+    NSLog(@"[SLWebViewController] 检测到退出登录，准备清除 Cookie 并刷新");
+
+    // 2. 清除 Cookie 并刷新页面
+    [self clearCacheAndReload];
 }
 
 // 退出登录时用的辅助方法
@@ -579,6 +651,10 @@
     }
     self.requestUrl = url;
     NSLog(@"加载的url = %@",url);
+
+    // 确保在加载 URL 之前设置 UA、bridge 和 token
+    [self ensureUAAndTokenIfNeeded];
+
     NSURL *finalURL = [self addThemeToURL:url];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:finalURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:30];
     [self.wkwebView loadRequest:request];
@@ -648,6 +724,9 @@
         if (@available(iOS 16.4, *)) {
             _wkwebView.inspectable = YES;
         }
+
+        // 在 WebView 创建后立即设置 UA 和 bridge
+        [self setupDefailUA];
     }
     // 移除了 else 分支中的日志，减少日志噪音
     return _wkwebView;

@@ -177,12 +177,9 @@
     // 3. 更新 UI 状态
     [self updateCustomTabBarState:index];
 
-    // 4. 刷新首页(0)、关注(1)和我的(3)页面的webview
-    if (index == 0 || index == 1 || index == 3) {
-        [self refreshWebViewForTab:index];
-    }
+    // 注意：刷新逻辑已移至各个页面的 viewWillAppear 中，根据刷新策略自动执行
 
-    // 5. 通知代理 didSelect
+    // 4. 通知代理 didSelect
     if ([self.delegate respondsToSelector:@selector(tabBarController:didSelectViewController:)]) {
         [self.delegate tabBarController:self didSelectViewController:targetVC];
     }
@@ -228,13 +225,32 @@
                                              selector:@selector(didLogin:)
                                                  name:NEUserDidLoginNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didLogout:)
+                                                 name:NEUserDidLogoutNotification
+                                               object:nil];
 }
 
 - (void)didLogin:(NSNotification *)object {
     BOOL fromLocal = [object.object boolValue];
     if (fromLocal) return;
     //登录成功之后
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        // 登录成功后刷新关注页面（index = 1）
+        [self refreshWebViewForTab:1];
+    }];
+}
+
+- (void)didLogout:(NSNotification *)object {
+    // 退出登录后清除 cookie 并重载关注页面（index = 1）
+    UINavigationController *navi = self.viewControllers[1];
+    if (navi && navi.viewControllers.count > 0) {
+        UIViewController *topVC = navi.viewControllers[0];
+        if ([topVC isKindOfClass:[SLWebViewController class]]) {
+            SLWebViewController *webVC = (SLWebViewController *)topVC;
+            [webVC clearCacheAndReload];
+        }
+    }
 }
 
 - (void)createTabbarControllers{
@@ -255,6 +271,8 @@
     SLWebViewController *noticeVC = [[SLWebViewController alloc] init];
     [noticeVC ensureUAAndTokenIfNeeded];
     noticeVC.shouldReuseWebView = NO; // Tab 常驻页面，禁止回收 WebView
+    noticeVC.refreshPolicy = SLWebViewRefreshPolicyInterval; // 间隔刷新策略
+    noticeVC.refreshInterval = 300; // 5分钟（300秒）
     [noticeVC startLoadRequestWithUrl:FOLLOW_PAGE_URL];
     noticeVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *noticeNavi = [self createRootNavi];
@@ -275,6 +293,7 @@
     SLWebViewController *userVC = [[SLWebViewController alloc] init];
     [userVC ensureUAAndTokenIfNeeded];
     userVC.shouldReuseWebView = NO; // Tab 常驻页面，禁止回收 WebView
+    userVC.refreshPolicy = SLWebViewRefreshPolicyAlways; // 每次进入都刷新
     [userVC startLoadRequestWithUrl:MY_PAGE_URL];
     userVC.hidesBottomBarWhenPushed = NO; // 保持 tabbar 显示
     SLNavigationController *userNavi = [self createRootNavi];
