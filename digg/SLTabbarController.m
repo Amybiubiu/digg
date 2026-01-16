@@ -39,24 +39,30 @@
 @property (nonatomic, strong) UIView *customTabBarView;
 @property (nonatomic, strong) NSMutableArray<SLCustomTabButton *> *tabButtons;
 
+// 记录上次点击的 tab index，用于检测重复点击
+@property (nonatomic, assign) NSInteger lastClickedTabIndex;
+
 @end
 
 @implementation SLTabbarController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     // 1. 基础设置
     self.view.backgroundColor = [SLColorManager primaryBackgroundColor];
     self.delegate = self; // 保持 delegate 以处理登录拦截逻辑
     [SLWebViewPreloaderManager shared];
-    
+
+    // 初始化 lastClickedTabIndex 为 -1，表示还没有点击过任何 tab
+    self.lastClickedTabIndex = -1;
+
     // 2. 创建子控制器
     [self createTabbarControllers];
-    
+
     // 4. 监听登录
     [self noticeUserLogin];
-    
+
     // 5. 初始化自定义 TabBar UI
     // 注意：要在 createTabbarControllers 之后调用
     [self setupCustomTabBarUI];
@@ -159,6 +165,9 @@
         return;
     }
 
+    // 检测是否是重复点击当前 tab
+    BOOL isRepeatClick = (index == self.lastClickedTabIndex && index == self.selectedIndex);
+
     // 1. 模拟 UITabBarControllerDelegate 的 shouldSelect 检查
     UIViewController *targetVC = self.viewControllers[index];
     BOOL shouldSelect = YES;
@@ -171,15 +180,27 @@
         return;
     }
 
-    // 2. 切换控制器
+    // 2. 如果是重复点击，发送刷新通知
+    if (isRepeatClick) {
+        NSLog(@"🔄 检测到重复点击 tab %ld，发送刷新通知", (long)index);
+        // 首页（index 0）、关注页（index 1）支持重复点击刷新
+        if (index == 0 || index == 1) {
+            [self refreshWebViewForTab:index];
+        }
+    }
+
+    // 3. 切换控制器
     self.selectedIndex = index;
 
-    // 3. 更新 UI 状态
+    // 4. 更新 UI 状态
     [self updateCustomTabBarState:index];
+
+    // 5. 记录本次点击的 tab index
+    self.lastClickedTabIndex = index;
 
     // 注意：刷新逻辑已移至各个页面的 viewWillAppear 中，根据刷新策略自动执行
 
-    // 4. 通知代理 didSelect
+    // 6. 通知代理 didSelect
     if ([self.delegate respondsToSelector:@selector(tabBarController:didSelectViewController:)]) {
         [self.delegate tabBarController:self didSelectViewController:targetVC];
     }

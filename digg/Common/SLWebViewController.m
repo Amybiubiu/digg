@@ -23,6 +23,7 @@
 #import "SLCommentInputViewController.h"
 #import "NSObject+SLEmpty.h"
 #import "SLWebViewPreloaderManager.h"
+#import <StoreKit/StoreKit.h>
 
 
 @interface SLWebViewController ()<UIWebViewDelegate,WKScriptMessageHandler,WKNavigationDelegate>
@@ -119,6 +120,10 @@
         [self startLoadRequestWithUrl:self.requestUrl];
     } else if (self.wkwebView) {
         NSLog(@"✅ [DEBUG] WebView 存在，URL: %@", self.wkwebView.URL);
+        // WebView 存在时，也需要应用 bounces 设置（处理复用的情况）
+        if (!stringIsEmpty(self.requestUrl)) {
+            [self applyBouncesSettingFromURL:self.requestUrl];
+        }
     } else {
         NSLog(@"❌ [DEBUG] WebView 和 requestUrl 都为空！");
     }
@@ -596,6 +601,71 @@
         }
         responseCallback(data);
     }];
+
+    [self.bridge registerHandler:@"requestAppStoreReview" handler:^(id data, WVJBResponseCallback responseCallback) {
+        NSLog(@"requestAppStoreReview called");
+        @strongobj(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (@available(iOS 14.0, *)) {
+                // iOS 14+ 使用 SKStoreReviewController 的新 API
+                UIWindowScene *windowScene = nil;
+                for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                    if ([scene isKindOfClass:[UIWindowScene class]]) {
+                        windowScene = (UIWindowScene *)scene;
+                        break;
+                    }
+                }
+
+                if (windowScene) {
+                    [SKStoreReviewController requestReviewInScene:windowScene];
+                    responseCallback(@{@"success": @YES, @"message": @"评分请求已发送"});
+                } else {
+                    NSLog(@"无法获取 UIWindowScene");
+                    responseCallback(@{@"success": @NO, @"message": @"无法获取窗口场景"});
+                }
+            } else {
+                // iOS 10.3 - iOS 13 使用旧 API
+                [SKStoreReviewController requestReview];
+                responseCallback(@{@"success": @YES, @"message": @"评分请求已发送"});
+            }
+        });
+    }];
+
+    [self.bridge registerHandler:@"openAppStoreReviewPage" handler:^(id data, WVJBResponseCallback responseCallback) {
+        NSLog(@"openAppStoreReviewPage called with data: %@", data);
+        @strongobj(self);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // 从 data 中获取 App Store ID，如果没有提供则使用默认值
+            NSString *appId = @"6738596193"; // 默认 App ID
+            if ([data isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *dic = (NSDictionary *)data;
+                NSString *customAppId = [dic objectForKey:@"appId"];
+                if (customAppId && ![customAppId isEqual:[NSNull null]] && customAppId.length > 0) {
+                    appId = customAppId;
+                }
+            }
+
+            // 这个页面可以直接由h5 跳转
+            // 构造 App Store 评分页面 URL
+            NSString *appStoreUrl = [NSString stringWithFormat:@"https://apps.apple.com/app/id%@?action=write-review", appId];
+            NSURL *url = [NSURL URLWithString:appStoreUrl];
+
+            if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                    if (success) {
+                        NSLog(@"成功跳转到 App Store 评分页面");
+                        responseCallback(@{@"success": @YES, @"message": @"已跳转到 App Store"});
+                    } else {
+                        NSLog(@"跳转 App Store 失败");
+                        responseCallback(@{@"success": @NO, @"message": @"跳转失败"});
+                    }
+                }];
+            } else {
+                NSLog(@"无法打开 App Store URL: %@", appStoreUrl);
+                responseCallback(@{@"success": @NO, @"message": @"无法打开 App Store"});
+            }
+        });
+    }];
 }
 - (void)setupDefailUA{
     if (self.isSetUA) {
@@ -634,6 +704,40 @@
     WKHTTPCookieStore *store = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
     [SLWebViewPreloaderManager injectBpTokenCookie:token forDomain:domain intoStore:store completion:nil];
 }
+
+- (void)applyBouncesSettingFromURL:(NSString *)url {
+    // 解析 URL 参数
+    NSURL *nsurl = [NSURL URLWithString:url];
+    if (!nsurl) {
+        return;
+    }
+
+    NSURLComponents *components = [NSURLComponents componentsWithURL:nsurl resolvingAgainstBaseURL:NO];
+    if (!components.queryItems) {
+        return;
+    }
+
+    // 查找 bounces 参数
+    for (NSURLQueryItem *item in components.queryItems) {
+        if ([item.name isEqualToString:@"bounces"]) {
+            // 解析参数值：true/1/yes -> YES, false/0/no -> NO
+            NSString *value = [item.value lowercaseString];
+            BOOL bounces = YES; // 默认值
+
+            if ([value isEqualToString:@"0"]) {
+                bounces = NO;
+            } else if ([value isEqualToString:@"1"]) {
+                bounces = YES;
+            }
+
+            // 应用设置
+            self.wkwebView.scrollView.bounces = bounces;
+            NSLog(@"从 URL 参数设置 bounces = %@", bounces ? @"YES" : @"NO");
+            break;
+        }
+    }
+}
+
 - (void)startLoadRequestWithUrl:(NSString *)url {
     if(stringIsEmpty(url)){
         NSLog(@"url为空");
@@ -651,6 +755,9 @@
     }
     self.requestUrl = url;
     NSLog(@"加载的url = %@",url);
+
+    // 从 URL 参数中读取 bounces 设置并应用
+    [self applyBouncesSettingFromURL:url];
 
     // 确保在加载 URL 之前设置 UA、bridge 和 token
     [self ensureUAAndTokenIfNeeded];
@@ -708,7 +815,7 @@
         _wkwebView = [[SLWebViewPreloaderManager shared] dequeuePreheatedWebViewWithFrame:CGRectZero];
         _wkwebView.backgroundColor = [UIColor clearColor];
         [_wkwebView setOpaque:NO];
-        _wkwebView.scrollView.bounces = YES;
+        _wkwebView.scrollView.bounces = YES; // 默认值
         _wkwebView.navigationDelegate = self;
 
         // 禁用自动调整内容边距，避免系统自动添加安全区域边距

@@ -73,6 +73,7 @@
 @property (nonatomic, assign) BOOL isCommitTimeout; // 提交是否超时
 @property (nonatomic, strong) MASConstraint *commitButtonWidthConstraint; // 按钮宽度约束
 @property (nonatomic, strong) UIButton *dismissKeyboardButton; // 收起键盘按钮
+@property (nonatomic, assign) BOOL isCommitting; // 是否正在提交中（防抖标志）
 
 @end
 
@@ -590,12 +591,20 @@
     // 标记为超时
     self.isCommitTimeout = YES;
 
+    // 重置防抖标志
+    self.isCommitting = NO;
+
     // 超时处理
     [self hideCommitButtonLoading];
     [self.view sl_showToast:@"发布超时，请重试"];
 }
 
 - (void)commitBtnClick {
+    // 防抖：如果正在提交中，直接返回
+    if (self.isCommitting) {
+        return;
+    }
+
     NSString* title = [self.titleField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSString* content = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
@@ -603,6 +612,9 @@
         [self.view sl_showToast:@"请添加标题或正文"];
         return;
     }
+
+    // 设置提交中标志
+    self.isCommitting = YES;
 
     // 显示按钮loading状态
     [self showCommitButtonLoading];
@@ -654,6 +666,7 @@
             [result addObject:url];
         } else {
             // 图片上传失败，显示提示并恢复按钮状态
+            self.isCommitting = NO; // 重置防抖标志
             [self hideCommitButtonLoading];
             [self.view sl_showToast:@"图片上传失败，请重试"];
             return;
@@ -695,9 +708,12 @@
             @strongobj(self)
             // 如果已经超时，不再处理结果
             if (self.isCommitTimeout) {
+                self.isCommitting = NO; // 重置防抖标志
                 return;
             }
 
+            // 重置防抖标志
+            self.isCommitting = NO;
             [self hideCommitButtonLoading];
             if (isSuccess) {
                 // 编辑成功，清空草稿并跳转
@@ -713,9 +729,12 @@
             @strongobj(self)
             // 如果已经超时，不再处理结果
             if (self.isCommitTimeout) {
+                self.isCommitting = NO; // 重置防抖标志
                 return;
             }
 
+            // 重置防抖标志
+            self.isCommitting = NO;
             [self hideCommitButtonLoading];
             if (isSuccess) {
                 // 发布成功，清空草稿和内容，跳转到详情页
