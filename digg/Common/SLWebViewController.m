@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UIProgressView* progressView;
 @property (nonatomic, strong) SLCommentInputViewController *commentVC;
 @property (nonatomic, assign) NSTimeInterval lastAppearTime; // 上次显示的时间戳
+@property (nonatomic, assign) BOOL needReload; // 记录更新后需要刷新的标志
 
 @end
 
@@ -145,6 +146,12 @@
                                                  name:NEUserDidLogoutNotification
                                                object:nil];
 
+    // 监听记录更新后刷新通知
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appearReload:)
+                                                 name:@"RecordDidUpdateNotification"
+                                               object:nil];
+
     // 根据刷新策略决定是否刷新
     [self checkAndRefreshIfNeeded];
 }
@@ -156,10 +163,14 @@
           self.wkwebView ? @"exists" : @"nil",
           self.wkwebView.isLoading);
 
-    // 检查是否需要刷新，如果需要则调用刷新逻辑
     if (self.needsRefresh) {
         [self sendRefreshPageDataMessage];
         self.needsRefresh = NO;
+    }
+
+    if(self.needReload){
+        [self.wkwebView reload];
+        self.needReload = NO;
     }
 }
 
@@ -180,9 +191,13 @@
     // 移除通知监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebViewShouldReloadAfterLogin" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NEUserDidLogoutNotification object:nil];
+    // 注意：不移除 RecordDidUpdateNotification，因为需要在页面不可见时也能接收通知
 }
 
 - (void)dealloc {
+    // 移除所有通知监听
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     [self.bridge setWebViewDelegate:nil];
     if ([self isViewLoaded]) {
         [self.wkwebView removeObserver:self forKeyPath:NSStringFromSelector(@selector(estimatedProgress))];
@@ -374,6 +389,10 @@
             [self.wkwebView reload];
         });
     }];
+}
+
+- (void) appearReload:(NSNotification *)notification {
+    self.needReload = YES;
 }
 
 - (void)backTo:(BOOL)rootVC {
@@ -653,7 +672,6 @@
             if ([[UIApplication sharedApplication] canOpenURL:url]) {
                 [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
                     if (success) {
-                        NSLog(@"成功跳转到 App Store 评分页面");
                         responseCallback(@{@"success": @YES, @"message": @"已跳转到 App Store"});
                     } else {
                         NSLog(@"跳转 App Store 失败");
@@ -665,6 +683,53 @@
                 responseCallback(@{@"success": @NO, @"message": @"无法打开 App Store"});
             }
         });
+    }];
+
+    [self.bridge registerHandler:@"toggleTabbarMask" handler:^(id data, WVJBResponseCallback responseCallback) {
+        NSLog(@"toggleTabbarMask called with: %@", data);
+        if ([data isKindOfClass:[NSDictionary class]]) {
+            @strongobj(self);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary *dic = (NSDictionary *)data;
+
+                // 获取 status 参数 (1=显示, 0=隐藏)
+                NSNumber *statusNum = [dic objectForKey:@"status"];
+                NSInteger status = statusNum ? [statusNum integerValue] : 0;
+
+                // 获取 tabBarController
+                UITabBarController *tabBarController = self.tabBarController;
+                if (!tabBarController || ![tabBarController respondsToSelector:@selector(showTabbarMaskWithColor:)]) {
+                    NSLog(@"⚠️ tabBarController 不支持 mask 控制");
+                    responseCallback(@{@"success": @NO, @"message": @"TabBar controller not available"});
+                    return;
+                }
+
+                if (status == 1) {
+                    // 显示遮罩
+                    NSString *colorHex = [dic objectForKey:@"color"];
+                    UIColor *maskColor = nil;
+
+                    if (colorHex && [colorHex isKindOfClass:[NSString class]] && colorHex.length > 0) {
+                        maskColor = [self colorFromHexString:colorHex];
+                    }
+
+                    // 如果没有提供颜色或解析失败，使用默认颜色（半透明黑色）
+                    if (!maskColor) {
+                        maskColor = [UIColor colorWithWhite:0 alpha:0.5];
+                    }
+
+                    // 调用 showTabbarMaskWithColor 方法
+                    [tabBarController performSelector:@selector(showTabbarMaskWithColor:) withObject:maskColor];
+                    responseCallback(@{@"success": @YES, @"message": @"Mask shown"});
+                } else {
+                    // 隐藏遮罩
+                    [tabBarController performSelector:@selector(hideTabbarMask)];
+                    responseCallback(@{@"success": @YES, @"message": @"Mask hidden"});
+                }
+            });
+        } else {
+            responseCallback(@{@"success": @NO, @"message": @"Invalid data format"});
+        }
     }];
 }
 - (void)setupDefailUA{
@@ -703,6 +768,44 @@
     }
     WKHTTPCookieStore *store = self.wkwebView.configuration.websiteDataStore.httpCookieStore;
     [SLWebViewPreloaderManager injectBpTokenCookie:token forDomain:domain intoStore:store completion:nil];
+}
+
+// 将 hex 颜色字符串转换为 UIColor (支持 #RGB, #RRGGBB, #RRGGBBAA)
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+    if (!hexString || hexString.length == 0) {
+        return nil;
+    }
+
+    // 移除 # 前缀
+    NSString *colorString = [hexString stringByReplacingOccurrencesOfString:@"#" withString:@""];
+
+    unsigned int hex = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:colorString];
+    [scanner scanHexInt:&hex];
+
+    CGFloat r, g, b, a = 1.0;
+
+    if (colorString.length == 3) {
+        // #RGB 格式
+        r = ((hex & 0xF00) >> 8) / 15.0;
+        g = ((hex & 0x0F0) >> 4) / 15.0;
+        b = (hex & 0x00F) / 15.0;
+    } else if (colorString.length == 6) {
+        // #RRGGBB 格式
+        r = ((hex & 0xFF0000) >> 16) / 255.0;
+        g = ((hex & 0x00FF00) >> 8) / 255.0;
+        b = (hex & 0x0000FF) / 255.0;
+    } else if (colorString.length == 8) {
+        // #RRGGBBAA 格式
+        r = ((hex & 0xFF000000) >> 24) / 255.0;
+        g = ((hex & 0x00FF0000) >> 16) / 255.0;
+        b = ((hex & 0x0000FF00) >> 8) / 255.0;
+        a = (hex & 0x000000FF) / 255.0;
+    } else {
+        return nil;
+    }
+
+    return [UIColor colorWithRed:r green:g blue:b alpha:a];
 }
 
 - (void)applyBouncesSettingFromURL:(NSString *)url {

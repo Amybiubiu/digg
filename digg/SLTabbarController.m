@@ -39,6 +39,9 @@
 @property (nonatomic, strong) UIView *customTabBarView;
 @property (nonatomic, strong) NSMutableArray<SLCustomTabButton *> *tabButtons;
 
+// TabBar 遮罩视图
+@property (nonatomic, strong) UIView *tabBarMaskView;
+
 // 记录上次点击的 tab index，用于检测重复点击
 @property (nonatomic, assign) NSInteger lastClickedTabIndex;
 
@@ -369,6 +372,35 @@
             // 向H5发送refreshPageData消息
             [webVC sendRefreshPageDataMessage];
         }
+    }
+}
+
+#pragma mark - TabBar Mask Control
+
+// 显示 TabBar 遮罩并设置颜色
+- (void)showTabbarMaskWithColor:(UIColor *)color {
+    if (!self.tabBarMaskView) {
+        // 创建遮罩视图
+        self.tabBarMaskView = [[UIView alloc] initWithFrame:self.tabBar.bounds];
+        self.tabBarMaskView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        self.tabBarMaskView.userInteractionEnabled = YES; // 拦截点击事件
+        [self.tabBar addSubview:self.tabBarMaskView];
+    }
+
+    // 设置遮罩颜色
+    self.tabBarMaskView.backgroundColor = color ?: [UIColor colorWithWhite:0 alpha:0.5];
+
+    // 显示遮罩
+    self.tabBarMaskView.hidden = NO;
+
+    // 确保遮罩在最上层
+    [self.tabBar bringSubviewToFront:self.tabBarMaskView];
+}
+
+// 隐藏 TabBar 遮罩
+- (void)hideTabbarMask {
+    if (self.tabBarMaskView) {
+        self.tabBarMaskView.hidden = YES;
     }
 }
 

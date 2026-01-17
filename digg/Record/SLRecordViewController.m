@@ -718,6 +718,8 @@
             if (isSuccess) {
                 // 编辑成功，清空草稿并跳转
                 [self clearDraft];
+                // 发送通知，让 H5 页面刷新
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RecordDidUpdateNotification" object:nil];
                 [self backPage];
             } else {
                 // 编辑失败，显示错误提示
